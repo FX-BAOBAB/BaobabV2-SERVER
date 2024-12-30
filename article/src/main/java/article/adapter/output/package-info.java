@@ -1,0 +1,1 @@
+package article.adapter.output;
