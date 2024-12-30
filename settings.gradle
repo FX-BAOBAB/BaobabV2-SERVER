@@ -1,6 +1,6 @@
 rootProject.name = 'baobab'
+include 'gateway'
+include 'global'
 include 'user'
 include 'article'
 include 'file'
-include 'global'
-
