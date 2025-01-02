@@ -17,4 +17,5 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfig {
+    // config 수정용
 }
