@@ -1,0 +1,43 @@
+server:
+  port: 8082
+
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
+
+spring:
+  application:
+    name: baobab_user
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  session:
+    redis:
+      namespace: baobab:session
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: baobab
+      repositories:
+        enabled: true
+
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017
+      database: baobab
+
+jwt:
+  secret:
+    key: shinyangjunglee_baobab_passwordkey
+  access-token:
+    plus-hour: 1
+  refresh-token:
+    plus-hour: 12

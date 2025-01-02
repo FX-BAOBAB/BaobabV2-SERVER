@@ -1,16 +1,14 @@
-package user.domain.command;
+package user.adapter.input.web.request;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterCommand {
+public class UserRegisterRequest {
 
     private String email;
 

@@ -1,13 +1,16 @@
 package user.adapter.output.persistence;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import user.adapter.output.persistence.enums.UserRole;
+import user.adapter.output.persistence.enums.UserStatus;
 
-@Document(collation = "user")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,12 +18,6 @@ public class User {
 
     @Id
     private String id;
-
-    private String email;
-
-    private String password;
-
-    private String name;
 
     private String nickName;
 
@@ -37,5 +34,13 @@ public class User {
     private String post;
 
     private Long imageId;
+
+    private UserRole role;
+
+    private UserStatus status;
+
+    private LocalDateTime registeredAt;
+
+    private LocalDateTime unregisteredAt;
 
 }
