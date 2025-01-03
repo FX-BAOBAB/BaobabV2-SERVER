@@ -1,4 +1,4 @@
-package user.adapter.output.persistence;
+package user.domain.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class AccountRegisterCommand {
+
+    private String userId;
 
     private String email;
 
     private String password;
 
     private String nickName;
-
-    private String userId;
 
 }

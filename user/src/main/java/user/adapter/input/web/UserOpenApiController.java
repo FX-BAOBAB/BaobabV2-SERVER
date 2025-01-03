@@ -10,6 +10,7 @@ import user.adapter.input.web.converter.UserConverter;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.application.port.input.UserRegisterUseCase;
 import user.core.common.annotation.DupleCheck;
+import user.domain.command.AccountRegisterCommand;
 import user.domain.command.UserRegisterCommand;
 
 @RestController
@@ -24,7 +25,8 @@ public class UserOpenApiController {
     @DupleCheck
     public Api<Boolean> register(@RequestBody UserRegisterRequest userRegisterRequest) {
         UserRegisterCommand command = userConverter.toCommand(userRegisterRequest);
-        boolean isRegistered = userRegisterUseCase.register(command);
+        AccountRegisterCommand accountCommand = userConverter.toAccountCommand(userRegisterRequest);
+        boolean isRegistered = userRegisterUseCase.register(command, accountCommand);
         return Api.OK(isRegistered);
     }
 

@@ -34,9 +34,9 @@ public class DupleCheckAdvice {
                 // TODO nickName 검증 Logic 제외??
                 // nickName & email 검증
                 boolean isRegisteredEmail = accountReaderPort.checkEmailDuplicate(userRegisterRequest.getEmail());
-                boolean isRegisteredName = accountReaderPort.checkNickNameDuplicate(userRegisterRequest.getNickName());
+                boolean isRegisteredNickName = accountReaderPort.checkNickNameDuplicate(userRegisterRequest.getNickName());
 
-                if(isRegisteredEmail || isRegisteredName) {
+                if(isRegisteredEmail || isRegisteredNickName) {
                     throw new RuntimeException("이미 존재하는 계정입니다."); // TODO 예외처리
                 }
             }

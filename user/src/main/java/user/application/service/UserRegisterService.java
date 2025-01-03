@@ -1,12 +1,14 @@
 package user.application.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import user.adapter.output.persistence.Account;
+import user.adapter.output.persistence.enums.UserRole;
+import user.adapter.output.persistence.enums.UserStatus;
 import user.application.port.input.UserRegisterUseCase;
 import user.application.port.output.AccountRegisterPort;
 import user.application.port.output.UserRegisterPort;
-import user.adapter.output.persistence.User;
+import user.domain.command.AccountRegisterCommand;
 import user.domain.command.UserRegisterCommand;
 
 @Service
@@ -17,24 +19,17 @@ public class UserRegisterService implements UserRegisterUseCase {
     private final AccountRegisterPort accountRegisterPort;
 
     @Override
-    public boolean register(UserRegisterCommand userRegisterCommand) {
-        User savedUser = userRegisterPort.save(User.builder()
-            .nickName(userRegisterCommand.getNickName())
-            .birth(userRegisterCommand.getBirth())
-            .department(userRegisterCommand.getDepartment())
-            .address(userRegisterCommand.getAddress())
-            .detailAddress(userRegisterCommand.getDetailAddress())
-            .basicAddress(userRegisterCommand.getBasicAddress())
-            .post(userRegisterCommand.getPost())
-            .imageId(userRegisterCommand.getImageId())
-            .build());
+    public boolean register(
+        UserRegisterCommand userRegisterCommand,
+        AccountRegisterCommand accountRegisterCommand
+    ) {
+        userRegisterCommand.setRole(UserRole.BASIC_USER);
+        userRegisterCommand.setRegisteredAt(LocalDateTime.now());
+        userRegisterCommand.setStatus(UserStatus.REGISTERED);
 
-        return accountRegisterPort.save(Account.builder()
-                .email(userRegisterCommand.getEmail())
-                .password(userRegisterCommand.getPassword())
-                .name(userRegisterCommand.getName())
-                .userId(savedUser.getId())
-            .build());
+        UserRegisterCommand registeredCommand = userRegisterPort.save(userRegisterCommand);
+        accountRegisterCommand.setUserId(registeredCommand.getId());
+        return accountRegisterPort.save(accountRegisterCommand);
     }
 
 }

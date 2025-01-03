@@ -1,10 +1,9 @@
 package user.application.port.output;
 
-import user.adapter.output.persistence.Account;
+import user.domain.command.AccountRegisterCommand;
 
 public interface AccountRegisterPort {
 
-    boolean save(Account account);
-
+    boolean save(AccountRegisterCommand accountRegisterCommand);
 
 }

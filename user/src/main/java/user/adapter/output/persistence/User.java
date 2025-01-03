@@ -19,7 +19,7 @@ public class User {
     @Id
     private String id;
 
-    private String nickName;
+    private String name;
 
     private LocalDate birth;
 

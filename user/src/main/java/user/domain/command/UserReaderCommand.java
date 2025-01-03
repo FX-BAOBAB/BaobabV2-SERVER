@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfoCommand {
+public class UserReaderCommand {
 
     private String email;
 

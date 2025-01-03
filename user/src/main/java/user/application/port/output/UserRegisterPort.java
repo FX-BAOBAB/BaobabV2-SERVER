@@ -1,9 +1,9 @@
 package user.application.port.output;
 
-import user.adapter.output.persistence.User;
+import user.domain.command.UserRegisterCommand;
 
 public interface UserRegisterPort {
 
-    User save(User user);
+    UserRegisterCommand save(UserRegisterCommand userRegisterCommand);
 
 }
