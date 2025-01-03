@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TestMessageProducerImpl implements MessageProducer {
+public class TestMessageProducerImpl implements MessageProducer<UserMessage> {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, UserMessage> kafkaTemplate;
 
     @Override
-    public void send(String topic, String message) {
+    public void send(String topic, UserMessage message) {
         kafkaTemplate.send(topic, message);
     }
 

@@ -1,5 +1,5 @@
 package global.message;
 
-public interface MessageProducer {
-    void send(String topic, String message);
+public interface MessageProducer<T> {
+    void send(String topic, T message);
 }

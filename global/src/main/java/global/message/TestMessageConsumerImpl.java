@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TestMessageConsumerImpl implements MessageConsumer {
+public class TestMessageConsumerImpl implements MessageConsumer<UserMessage> {
 
     @KafkaListener(topics = "test-topic")
     @Override
-    public String consumeMessage(String message) {
-        log.info(message);
+    public UserMessage consumeMessage(UserMessage message) {
+        log.info(message.toString());
         return message;
     }
 }
