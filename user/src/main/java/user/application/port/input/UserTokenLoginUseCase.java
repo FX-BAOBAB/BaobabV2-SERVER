@@ -3,8 +3,8 @@ package user.application.port.input;
 import user.domain.command.UserLoginCommand;
 import user.domain.command.TokenCommand;
 
-public interface UserLoginUseCase {
+public interface UserTokenLoginUseCase {
 
-    TokenCommand login(UserLoginCommand userLoginCommand);
+    TokenCommand tokenLogin(UserLoginCommand userLoginCommand);
 
 }

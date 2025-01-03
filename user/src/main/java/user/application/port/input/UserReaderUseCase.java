@@ -4,6 +4,6 @@ import user.domain.command.UserReaderCommand;
 
 public interface UserReaderUseCase {
 
-    UserReaderCommand findByUserId(String userId);
+    UserReaderCommand getUserInfoBy(String userId);
 
 }

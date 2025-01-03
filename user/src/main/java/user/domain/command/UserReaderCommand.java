@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserReaderCommand {
 
+    private String userId;
+
     private String email;
 
     private String name;

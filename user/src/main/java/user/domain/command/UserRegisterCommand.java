@@ -15,7 +15,11 @@ import user.adapter.output.persistence.enums.UserStatus;
 @AllArgsConstructor
 public class UserRegisterCommand {
 
-    private String id;
+    private String email;
+
+    private String password;
+
+    private String nickName;
 
     private String name;
 
