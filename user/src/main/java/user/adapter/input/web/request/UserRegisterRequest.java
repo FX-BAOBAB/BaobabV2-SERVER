@@ -1,20 +1,15 @@
-package user.domain.command;
+package user.adapter.input.web.request;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import user.adapter.output.persistence.enums.UserRole;
-import user.adapter.output.persistence.enums.UserStatus;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterCommand {
-
+public class UserRegisterRequest {
+    // TODO 유효성 검사
     private String email;
 
     private String password;
@@ -36,13 +31,5 @@ public class UserRegisterCommand {
     private String post;
 
     private String imageId;
-
-    private UserRole role;
-
-    private UserStatus status;
-
-    private LocalDateTime registeredAt;
-
-    private LocalDateTime unregisteredAt;
 
 }
