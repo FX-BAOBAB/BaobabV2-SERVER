@@ -1,11 +1,15 @@
-package user.domain.command;
+package user.adapter.output.persistence.repository;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 
@@ -13,7 +17,10 @@ import user.adapter.output.persistence.enums.UserStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterCommand {
+public class User {
+
+    @Id
+    private String id;
 
     private String email;
 
