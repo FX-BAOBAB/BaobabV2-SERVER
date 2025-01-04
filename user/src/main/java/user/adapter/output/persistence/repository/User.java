@@ -1,5 +1,8 @@
 package user.adapter.output.persistence.repository;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -23,13 +26,15 @@ public class User {
 
     private String password;
 
-    private String name;
-
     private String nickName;
 
-    private LocalDate birth;
+    private String name;
+
+    private String phone;
 
     private String department;
+
+    private LocalDate birth;
 
     private String address;
 

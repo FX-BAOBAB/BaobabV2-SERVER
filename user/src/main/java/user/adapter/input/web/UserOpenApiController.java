@@ -1,5 +1,7 @@
 package user.adapter.input.web;
 
+import global.api.Api;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,10 +23,10 @@ public class UserOpenApiController {
 
     @PostMapping()
     @DupleCheck
-    public boolean register(@RequestBody UserRegisterRequest userRegisterRequest) {
-        UserRegisterCommand registerCommand = userConverter.toRegisterCommand(userRegisterRequest);
+    public Api<Boolean> register(@RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest) {
+        UserRegisterCommand registerCommand = userConverter.toRegisterCommand(userRegisterRequest.getBody());
         boolean isRegistered = userRegisterUseCase.register(registerCommand);
-        return isRegistered;
+        return Api.OK(isRegistered);
     }
 
 }

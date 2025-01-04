@@ -23,6 +23,8 @@ public class UserRegisterCommand {
 
     private String name;
 
+    private String phone;
+
     private String department;
 
     private LocalDate birth;

@@ -1,5 +1,6 @@
 package user.core.common.aop;
 
+import global.api.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -9,6 +10,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.application.port.output.UserPersistencePort;
+import user.core.common.error.UserErrorCode;
+import user.core.common.exception.user.UserExistsException;
 
 @Slf4j
 @Aspect
@@ -29,16 +32,22 @@ public class DupleCheckAdvice {
         var args = joinPoint.getArgs();
 
         for (Object arg : args) {
-            if(arg instanceof UserRegisterRequest) {
-                UserRegisterRequest userRegisterRequest = (UserRegisterRequest) arg;
+            if(arg instanceof Api) {
+                Api<?> apiRequest = (Api<?>) arg;
+                Object requestBody = apiRequest.getBody();
 
-                // email & nickName 검증
-                boolean isRegisteredEmail = userPersistencePort.checkEmailDuplicate(userRegisterRequest.getEmail());
-                boolean isRegisteredNickName = userPersistencePort.checkNickNameDuplicate(userRegisterRequest.getNickName());
+                if (requestBody instanceof UserRegisterRequest) {
+                    UserRegisterRequest userRegisterRequest = (UserRegisterRequest) requestBody;
 
-                if(isRegisteredEmail || isRegisteredNickName) {
-                    throw new RuntimeException("이미 존재하는 계정입니다."); // TODO 예외처리
+                    // email & nickName 검증
+                    boolean isRegisteredEmail = userPersistencePort.checkEmailDuplicate(userRegisterRequest.getEmail());
+                    boolean isRegisteredNickName = userPersistencePort.checkNickNameDuplicate(userRegisterRequest.getNickName());
+
+                    if (isRegisteredEmail || isRegisteredNickName) {
+                        throw new UserExistsException(UserErrorCode.EXIST_USER);
+                    }
                 }
+
             }
         }
     }
