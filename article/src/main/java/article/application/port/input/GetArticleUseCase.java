@@ -1,16 +1,17 @@
 package article.application.port.input;
 
-import article.domain.command.ArticleSaveCommand;
+import article.domain.command.ArticleCommand;
+import article.domain.command.ArticleSearchCommand;
 import java.util.List;
 
 public interface GetArticleUseCase {
 
-    ArticleSaveCommand getArticleById(Long articleId);
+    ArticleCommand getArticleById(String articleId);
 
-    ArticleSaveCommand getArticleByTitle(String articleTitle);
+    ArticleCommand getArticleByUserId(String userId);
 
-    ArticleSaveCommand getArticleByContent(String articleContent);
+    List<ArticleCommand> getArticleList(ArticleSearchCommand articleSearchCommand);
 
-    List<ArticleSaveCommand> getArticleList();
+    List<ArticleCommand> getAllArticleList();
 
 }

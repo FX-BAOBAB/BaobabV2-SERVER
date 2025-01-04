@@ -30,5 +30,5 @@ public class Article {
 
     private ArticleStatus status;
 
-    private Long userId;
+    private String userId;
 }

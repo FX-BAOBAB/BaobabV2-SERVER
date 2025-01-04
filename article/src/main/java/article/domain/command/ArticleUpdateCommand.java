@@ -1,5 +1,7 @@
 package article.domain.command;
 
+import article.adapter.output.persistence.enums.ArticleCategory;
+import article.adapter.output.persistence.enums.ArticleStatus;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,12 +18,12 @@ public class ArticleUpdateCommand {
 
     private String content;
 
-    private String category;
+    private ArticleCategory category;
 
     private int price;
 
-    private String status;
+    private ArticleStatus status;
 
-    private List<Long> imageIdList;
+    private List<String> imageIdList;
 
 }

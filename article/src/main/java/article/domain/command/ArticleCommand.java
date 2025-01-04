@@ -1,5 +1,7 @@
 package article.domain.command;
 
+import article.adapter.output.persistence.enums.ArticleCategory;
+import article.adapter.output.persistence.enums.ArticleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -11,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleSaveCommand {
+public class ArticleCommand {
 
     private String title;
 
     private String content;
 
-    private String category;
+    private ArticleCategory category;
 
     private int price;
 
@@ -25,8 +27,8 @@ public class ArticleSaveCommand {
 
     private LocalDateTime registeredAt;
 
-    private String status;
+    private ArticleStatus status;
 
-    private Long userId;
+    private String userId;
 
 }

@@ -1,9 +1,9 @@
 package article.application.port.input;
 
-import article.domain.command.ArticleSaveCommand;
+import article.domain.command.ArticleCommand;
 
 public interface SaveArticleUseCase {
 
-    boolean saveArticle(ArticleSaveCommand articleSaveCommand);
+    boolean saveArticle(ArticleCommand articleSaveCommand);
 
 }
