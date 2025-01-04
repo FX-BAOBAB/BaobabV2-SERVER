@@ -20,3 +20,8 @@ spring:
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/baobab?authSource=baobab
+
