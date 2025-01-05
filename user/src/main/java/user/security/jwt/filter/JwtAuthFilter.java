@@ -11,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
+import user.core.common.error.UserErrorCode;
+import user.core.common.exception.token.TokenException;
 import user.security.jwt.service.TokenHelperService;
 import user.security.service.AuthorizationService;
 
@@ -35,8 +37,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String userId = tokenHelperService.validationToken(token);
 
             if (userId == null) {
-//                throw new TokenException(UserErrorCode.USER_NOT_FOUND); // TODO 예외처리
-                throw new RuntimeException("사용자 없음");
+                throw new TokenException(UserErrorCode.USER_NOT_FOUND);
             }
 
             //유저와 토큰 일치 시 userDetails 생성

@@ -16,6 +16,10 @@ import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import user.core.common.error.TokenErrorCode;
+import user.core.common.exception.token.TokenException;
+import user.core.common.exception.token.TokenExpiredException;
+import user.core.common.exception.token.TokenSignatureException;
 import user.security.jwt.ifs.TokenHelperIfs;
 import user.security.jwt.model.TokenDto;
 
@@ -54,19 +58,16 @@ public class TokenHelper implements TokenHelperIfs {
         try{
             Jws<Claims> result = parser.parseSignedClaims(token);
             return new HashMap<>(result.getPayload());
-        }catch (Exception e){ // TODO 예외처리
+        }catch (Exception e){
             if (e instanceof SignatureException){
                 // 토큰 유효하지 않음
-                throw new RuntimeException("토큰 에러");
-//                throw new TokenSignatureException(TokenErrorCode.INVALID_TOKEN,e);
+                throw new TokenSignatureException(TokenErrorCode.INVALID_TOKEN,e);
             }else if (e instanceof ExpiredJwtException){
                 // 토큰 만료
-                throw new RuntimeException("토큰 에러");
-//                throw new TokenExpiredException(TokenErrorCode.EXPIRED_TOKEN,e);
+                throw new TokenExpiredException(TokenErrorCode.EXPIRED_TOKEN,e);
             }else {
                 // 그 외
-                throw new RuntimeException("토큰 에러");
-//                throw new TokenException(TokenErrorCode.TOKEN_EXCEPTION,e);
+                throw new TokenException(TokenErrorCode.TOKEN_EXCEPTION,e);
             }
         }
     }

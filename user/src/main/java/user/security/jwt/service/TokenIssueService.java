@@ -1,9 +1,13 @@
 package user.security.jwt.service;
 
+import global.errorcode.ErrorCode;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import user.core.common.converter.TokenConverter;
+import user.core.common.error.TokenErrorCode;
+import user.core.common.exception.token.TokenException;
+import user.core.common.exception.token.TokenSignatureException;
 import user.domain.command.TokenCommand;
 import user.security.jwt.model.TokenDto;
 
@@ -25,7 +29,7 @@ public class TokenIssueService {
 
             return tokenConverter.toTokenCommand(accessToken, refreshToken);
 
-        }).orElseThrow(() -> new RuntimeException("userId가 null입니다.")); // TODO 적절한 예외 처리
+        }).orElseThrow(() -> new TokenException(ErrorCode.NULL_POINT));
     }
 
     public TokenDto reIssueAccessToken(String refreshToken) {
@@ -33,8 +37,7 @@ public class TokenIssueService {
             String token = refreshToken.substring(7);
             return tokenHelperService.reIssueAccessToken(token);
         }
-        throw new RuntimeException("토큰 에러"); // TODO 예외처리
+        throw new TokenSignatureException(TokenErrorCode.INVALID_TOKEN);
     }
-
 
 }

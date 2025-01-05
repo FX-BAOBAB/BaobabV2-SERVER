@@ -6,17 +6,15 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum UserErrorCode implements ErrorCodeIfs {
+public enum TokenErrorCode implements ErrorCodeIfs {
 
-    EXIST_USER(403, 1150, "이미 존재하는 계정입니다."),
-    USER_NOT_FOUND(404, 1151, "사용자를 찾을 수 없습니다.")
+    INVALID_TOKEN(401,1102,"유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(401,1103,"만료된 토큰입니다."),
+    TOKEN_EXCEPTION(401,1104,"알 수 없는 토큰 에러입니다."),
     ;
 
-
     private final Integer httpCode;
-
     private final Integer errorCode;
-
     private final String description;
 
 }

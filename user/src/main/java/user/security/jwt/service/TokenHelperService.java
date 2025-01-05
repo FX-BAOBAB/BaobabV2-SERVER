@@ -1,5 +1,6 @@
 package user.security.jwt.service;
 
+import global.errorcode.ErrorCode;
 import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,8 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import user.core.common.error.TokenErrorCode;
+import user.core.common.exception.token.TokenException;
 import user.security.jwt.ifs.TokenHelperIfs;
 import user.security.jwt.model.TokenDto;
 
@@ -37,8 +40,7 @@ public class TokenHelperService {
 
         String storedToken = (String) httpSession.getAttribute("refreshToken:" + userId);
         if (storedToken == null || !storedToken.equals(refreshToken)) {
-            throw new RuntimeException("Invalid refresh token.");
-            // throw new TokenException(TokenErrorCode.INVALID_TOKEN); // TODO: 예외처리
+            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
         }
 
         return issueRefreshToken(userId);
@@ -49,8 +51,7 @@ public class TokenHelperService {
 
         Object userId = userData.get("userId");
         Objects.requireNonNull(userId, () -> {
-            throw new RuntimeException("토큰 에러");
-//            throw new TokenException(ErrorCode.NULL_POINT); // TODO 예외처리
+            throw new TokenException(ErrorCode.NULL_POINT);
         });
         return userId.toString();
     }
