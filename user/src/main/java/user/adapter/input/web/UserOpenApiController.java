@@ -5,13 +5,22 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.application.port.input.ReIssueAccessTokenUseCase;
+import user.application.port.input.UserLoginUseCase;
 import user.application.port.input.UserRegisterUseCase;
 import user.core.common.annotation.DupleCheck;
+import user.core.common.converter.TokenConverter;
 import user.core.common.converter.UserConverter;
+import user.domain.command.TokenCommand;
+import user.domain.command.UserLoginCommand;
 import user.domain.command.UserRegisterCommand;
+import user.adapter.input.web.response.TokenResponse;
+import user.security.jwt.model.TokenDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +28,11 @@ import user.domain.command.UserRegisterCommand;
 public class UserOpenApiController {
 
     private final UserRegisterUseCase userRegisterUseCase;
+    private final UserLoginUseCase userLoginUseCase;
+    private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
+
     private final UserConverter userConverter;
+    private final TokenConverter tokenConverter;
 
     @PostMapping()
     @DupleCheck
@@ -27,6 +40,20 @@ public class UserOpenApiController {
         UserRegisterCommand registerCommand = userConverter.toRegisterCommand(userRegisterRequest.getBody());
         boolean isRegistered = userRegisterUseCase.register(registerCommand);
         return Api.OK(isRegistered);
+    }
+
+    @PostMapping("/login")
+    public Api<TokenResponse> login(@RequestBody @Valid Api<UserLoginRequest> userLoginRequest) {
+        UserLoginCommand loginCommand = tokenConverter.toLoginCommand(userLoginRequest.getBody());
+        TokenCommand tokenCommand = userLoginUseCase.login(loginCommand);
+        TokenResponse response = tokenConverter.toTokenResponse(tokenCommand);
+        return Api.OK(response);
+    }
+
+    @PostMapping("/reissue")
+    public Api<TokenDto> reIssueAccessToken(@RequestHeader("Authorization") String refreshToken) {
+        TokenDto response = reIssueAccessTokenUseCase.reIssueAccessToken(refreshToken);
+        return Api.OK(response);
     }
 
 }

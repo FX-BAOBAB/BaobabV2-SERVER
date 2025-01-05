@@ -42,7 +42,25 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public UserReaderCommand getUserInfoBy(String userId, UserStatus status) {
-        return null;
+        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(userId, status)
+            .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않음"));
+        return userConverter.toReaderCommand(user);
+    }
+
+    @Override
+    public UserReaderCommand getUserInfo(String email, UserStatus status) {
+        User user = userMongoRepository.findFirstByEmailAndStatusOrderByIdDesc(email, status)
+            .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않음"));
+        return userConverter.toReaderCommand(user);
+    }
+
+    @Override
+    public void setLastLoginAt(UserReaderCommand userReaderCommand) {
+        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(
+                userReaderCommand.getUserId(), userReaderCommand.getStatus())
+            .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않음"));
+        user.setLastLoginAt(userReaderCommand.getLastLoginAt());
+        userMongoRepository.save(user);
     }
 
 }
