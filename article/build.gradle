@@ -34,6 +34,9 @@ dependencies {
     //kafka
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    //Netflix eureka client
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0'
 }
 
 tasks.named('test') {
