@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 0 # 랜덤 포트를 사용하기 위함
 
   servlet:
     session:
@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: baobab_user
+    name: baobab-users
 
   jpa:
     show-sql: true
@@ -41,3 +41,12 @@ jwt:
     plus-hour: 1
   refresh-token:
     plus-hour: 12
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
