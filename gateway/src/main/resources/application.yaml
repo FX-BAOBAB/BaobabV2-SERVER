@@ -22,7 +22,7 @@ spring:
           predicates:
             - Path=/files/**
         - id: baobab-users
-          uri: lb://BAOBAB_USERS
+          uri: lb://BAOBAB-USERS
           predicates:
             - Path=/users/**
 
