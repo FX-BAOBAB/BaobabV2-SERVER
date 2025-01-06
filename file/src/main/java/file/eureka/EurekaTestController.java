@@ -1,12 +1,16 @@
 package file.eureka;
 
+import file.application.port.input.ImageStorageUseCase;
+import file.domain.ImageCommand;
+import file.domain.ImageKind;
+import file.domain.ImageMetaData;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/files")
@@ -15,8 +19,11 @@ public class EurekaTestController {
 
     Environment env;
 
-    public EurekaTestController(Environment env){
+    private final ImageStorageUseCase imageStorageUseCase;
+
+    public EurekaTestController(Environment env, ImageStorageUseCase imageStorageUseCase){
         this.env = env;
+        this.imageStorageUseCase = imageStorageUseCase;
     }
 
     @GetMapping("/welcome")
@@ -35,6 +42,15 @@ public class EurekaTestController {
         // 포트를 가져오는 방법 두 가지
         log.info("Server port={}", request.getServerPort());
         return String.format("Check First Service on PORT %s", env.getProperty("local.server.port"));
+    }
+
+    @PostMapping("/image/upload")
+    public CompletableFuture<ImageMetaData> upload(@RequestParam("file") MultipartFile file){
+        return imageStorageUseCase.saveImage(ImageCommand.builder()
+                        .id("imageABC")
+                        .kind(ImageKind.USER)
+                        .file(file)
+                .build());
     }
 
 }

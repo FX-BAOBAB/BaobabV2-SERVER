@@ -4,7 +4,7 @@ import global.errorcode.ErrorCodeIfs;
 import lombok.Getter;
 
 @Getter
-public class ImageStorageException extends RuntimeException implements ApiExceptionIfs {
+public class ImageStorageException extends RuntimeException {
 
     private final ErrorCodeIfs errorCodeIfs;
     private final String description;
@@ -26,8 +26,7 @@ public class ImageStorageException extends RuntimeException implements ApiExcept
         this.description = errorCodeIfs.getDescription();
     }
 
-    public ImageStorageException(ErrorCodeIfs errorCodeIfs, Throwable throwable,
-        String errorDescription) {
+    public ImageStorageException(ErrorCodeIfs errorCodeIfs, Throwable throwable, String errorDescription) {
         super(throwable);
         this.errorCodeIfs = errorCodeIfs;
         this.description = errorDescription;

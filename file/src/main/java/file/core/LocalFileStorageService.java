@@ -1,6 +1,6 @@
 package file.core;
 
-import file.application.port.output.FileStorage;
+import file.application.port.output.FileDirStorage;
 import file.application.port.output.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,13 +16,15 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class LocalFileStorageService {
-    private final FileStorage fileStorage;
+
+    private final FileDirStorage filedirStorage;
+
     @Value("${file.upload-dir}")
     private String dirPath;
 
     public Path uploadImage(MultipartFile file) {
         Path filePath = createFilePath(file);
-        fileStorage.store(file, filePath);
+        filedirStorage.store(filePath,file);
         return filePath;
     }
 
