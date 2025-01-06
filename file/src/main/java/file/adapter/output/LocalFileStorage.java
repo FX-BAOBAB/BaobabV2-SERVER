@@ -2,6 +2,7 @@ package file.adapter.output;
 
 import file.adapter.output.exception.FileStorageException;
 import file.application.port.output.FileStorage;
+import file.application.port.output.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -28,9 +29,7 @@ public class LocalFileStorage implements FileStorage {
         File directory = new File(dirPath);
         if (!directory.exists()) directory.mkdirs();
 
-        String originalFileName = imageFile.getOriginalFilename();
-        String cleanedFileName = StringUtils.cleanPath(Objects.requireNonNull(originalFileName));
-        String extension = originalFileName.substring(cleanedFileName.lastIndexOf("."));
+        String extension = FileUtils.extractFileExtension(imageFile.getOriginalFilename());
         String serverName = UUID.randomUUID().toString();
 
         Path filePath = Paths.get(dirPath, serverName + extension);
