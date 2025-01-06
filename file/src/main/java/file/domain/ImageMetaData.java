@@ -23,6 +23,8 @@ public class ImageMetaData {
     private String originalName;
     @Field("server_name")
     private String serverName;
+    @Field("extension")
+    private String extension;
     @Field("kind")
     private ImageKind kind;
 }
