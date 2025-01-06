@@ -6,6 +6,22 @@ spring:
   application:
     name: baobab-files
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: foo
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/baobab?authSource=baobab
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -26,3 +42,8 @@ logging:
 log:
   config:
     path: logs
+
+file:
+  upload-dir: /src/main/resources/static/images/
+  path: /images/
+

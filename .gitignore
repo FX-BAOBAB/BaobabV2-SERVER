@@ -38,3 +38,5 @@ out/
 
 ### VS Code ###
 .vscode/
+article/src/main/java/article/application/port/input/GetArticleUseCase.java
+article/src/main/java/article/application/port/input/SaveArticleUseCase.java
