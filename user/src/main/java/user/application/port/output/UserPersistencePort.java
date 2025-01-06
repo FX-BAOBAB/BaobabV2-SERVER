@@ -17,4 +17,8 @@ public interface UserPersistencePort {
 
     UserReaderCommand getUserInfoBy(String userId, UserStatus status);
 
+    UserReaderCommand getUserInfo(String email, UserStatus status);
+
+    void setLastLoginAt(UserReaderCommand userReaderCommand);
+
 }

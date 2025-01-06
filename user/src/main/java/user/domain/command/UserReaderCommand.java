@@ -1,10 +1,13 @@
 package user.domain.command;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import user.adapter.output.persistence.enums.UserRole;
+import user.adapter.output.persistence.enums.UserStatus;
 
 @Data
 @Builder
@@ -16,13 +19,17 @@ public class UserReaderCommand {
 
     private String email;
 
-    private String name;
+    private String password;
 
     private String nickName;
 
-    private LocalDate birth;
+    private String name;
+
+    private String phone;
 
     private String department;
+
+    private LocalDate birth;
 
     private String address;
 
@@ -32,6 +39,16 @@ public class UserReaderCommand {
 
     private String post;
 
-    private Long imageId;
+    private String imageId;
+
+    private UserRole role;
+
+    private UserStatus status;
+
+    private LocalDateTime registeredAt;
+
+    private LocalDateTime unregisteredAt;
+
+    private LocalDateTime lastLoginAt;
 
 }

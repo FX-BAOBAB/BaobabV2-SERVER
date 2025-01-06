@@ -7,6 +7,8 @@ import user.adapter.output.persistence.repository.User;
 import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.converter.UserConverter;
+import user.core.common.error.UserErrorCode;
+import user.core.common.exception.token.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
 import user.domain.command.UserUpdateCommand;
@@ -42,7 +44,25 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public UserReaderCommand getUserInfoBy(String userId, UserStatus status) {
-        return null;
+        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(userId, status)
+            .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+        return userConverter.toReaderCommand(user);
+    }
+
+    @Override
+    public UserReaderCommand getUserInfo(String email, UserStatus status) {
+        User user = userMongoRepository.findFirstByEmailAndStatusOrderByIdDesc(email, status)
+            .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+        return userConverter.toReaderCommand(user);
+    }
+
+    @Override
+    public void setLastLoginAt(UserReaderCommand userReaderCommand) {
+        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(
+                userReaderCommand.getUserId(), userReaderCommand.getStatus())
+            .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+        user.setLastLoginAt(userReaderCommand.getLastLoginAt());
+        userMongoRepository.save(user);
     }
 
 }

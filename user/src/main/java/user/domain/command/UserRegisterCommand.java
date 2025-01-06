@@ -45,6 +45,4 @@ public class UserRegisterCommand {
 
     private LocalDateTime registeredAt;
 
-    private LocalDateTime unregisteredAt;
-
 }
