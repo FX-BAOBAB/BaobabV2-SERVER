@@ -25,3 +25,14 @@ spring:
           uri: lb://BAOBAB_USERS
           predicates:
             - Path=/users/**
+
+# logging
+logging:
+  level:
+    org:
+      springframework.web: DEBUG
+      hibernate: ERROR
+
+log:
+  config:
+    path: logs
