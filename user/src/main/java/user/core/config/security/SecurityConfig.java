@@ -16,10 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import user.security.jwt.service.TokenHelperService;
-import user.security.jwt.filter.JwtAuthFilter;
-import user.security.service.AuthorizationService;
 
 @Configuration
 @EnableWebSecurity
@@ -29,19 +25,12 @@ public class SecurityConfig {
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
-    private final AuthorizationService authorizationService;
-    private final TokenHelperService tokenHelperService;
-
     private final List<String> WHITE_LIST = List.of("/open-api/**");
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.cors(cors -> cors.disable())
-            .addFilterBefore(
-                new JwtAuthFilter(authorizationService, tokenHelperService)
-                , UsernamePasswordAuthenticationFilter.class
-            )
             .csrf(csrfConfig -> csrfConfig.disable())
             .sessionManagement(sessionManagement ->
                 sessionManagement

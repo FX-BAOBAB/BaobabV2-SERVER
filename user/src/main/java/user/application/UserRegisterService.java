@@ -19,12 +19,12 @@ public class UserRegisterService implements UserRegisterUseCase {
 
     @Override
     public boolean register(UserRegisterCommand userRegisterCommand) {
-        initializeUser(userRegisterCommand);
+        initUserParameter(userRegisterCommand);
         boolean isRegistered = userPersistencePort.saveUser(userRegisterCommand);
         return isRegistered;
     }
 
-    private void initializeUser(UserRegisterCommand userRegisterCommand) {
+    private void initUserParameter(UserRegisterCommand userRegisterCommand) {
         userRegisterCommand.setPassword(passwordEncoder.encode(userRegisterCommand.getPassword()));
         userRegisterCommand.setRegisteredAt(LocalDateTime.now());
         userRegisterCommand.setRole(UserRole.BASIC_USER);
