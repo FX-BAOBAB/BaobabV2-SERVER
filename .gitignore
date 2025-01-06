@@ -1,3 +1,6 @@
+# 로그 파일 제외
+logs/
+
 HELP.md
 .gradle
 build/

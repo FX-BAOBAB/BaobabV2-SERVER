@@ -25,7 +25,7 @@ public class SecurityConfig {
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
-    private final List<String> WHITE_LIST = List.of("/open-api/**");
+    private final List<String> WHITE_LIST = List.of("/open-api/**", "/users/**");
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
