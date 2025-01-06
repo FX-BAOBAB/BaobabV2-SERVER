@@ -8,9 +8,13 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+import user.adapter.input.web.request.DuplicationEmailRequest;
+import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
+import user.core.common.exception.user.EmailExistsException;
+import user.core.common.exception.user.NickNameExistsException;
 import user.core.common.exception.user.UserExistsException;
 
 @Slf4j
@@ -44,10 +48,29 @@ public class DupleCheckAdvice {
                     boolean isRegisteredNickName = userPersistencePort.checkNickNameDuplicate(userRegisterRequest.getNickName());
 
                     if (isRegisteredEmail || isRegisteredNickName) {
-                        throw new UserExistsException(UserErrorCode.EXIST_USER);
+                        throw new UserExistsException(UserErrorCode.USER_EXISTS);
                     }
                 }
 
+                if(requestBody instanceof DuplicationEmailRequest) {
+                    DuplicationEmailRequest duplicationEmailRequest = (DuplicationEmailRequest) requestBody;
+
+                    boolean isRegisteredEmail = userPersistencePort.checkEmailDuplicate(duplicationEmailRequest.getEmail());
+
+                    if (isRegisteredEmail) {
+                        throw new EmailExistsException(UserErrorCode.EMAIL_EXISTS);
+                    }
+                }
+
+                if(requestBody instanceof DuplicationNickNameRequest) {
+                    DuplicationNickNameRequest duplicationNickNameRequest = (DuplicationNickNameRequest) requestBody;
+
+                    boolean isRegisteredNickName = userPersistencePort.checkNickNameDuplicate(duplicationNickNameRequest.getNickName());
+
+                    if (isRegisteredNickName) {
+                        throw new NickNameExistsException(UserErrorCode.NICKNAME_EXISTS);
+                    }
+                }
             }
         }
     }

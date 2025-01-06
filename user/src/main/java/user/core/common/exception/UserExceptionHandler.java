@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
+import user.core.common.exception.user.EmailExistsException;
+import user.core.common.exception.user.NickNameExistsException;
 import user.core.common.exception.user.UserExistsException;
 
 @Slf4j
@@ -17,8 +19,22 @@ public class UserExceptionHandler {
     @ExceptionHandler(value = UserExistsException.class)
     public ResponseEntity<Api<Object>> existsUserException(UserExistsException e) {
         log.info("", e);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(Api.ERROR(UserErrorCode.EXIST_USER));
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(Api.ERROR(UserErrorCode.USER_EXISTS));
+    }
+
+    @ExceptionHandler(value = EmailExistsException.class)
+    public ResponseEntity<Api<Object>> existsEmailException(EmailExistsException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(Api.ERROR(UserErrorCode.EMAIL_EXISTS));
+    }
+
+    @ExceptionHandler(value = NickNameExistsException.class)
+    public ResponseEntity<Api<Object>> existsNickNameException(NickNameExistsException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(Api.ERROR(UserErrorCode.NICKNAME_EXISTS));
     }
 
     @ExceptionHandler(value = UserNotFoundException.class)
@@ -27,6 +43,5 @@ public class UserExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Api.ERROR(UserErrorCode.USER_NOT_FOUND));
     }
-
 
 }

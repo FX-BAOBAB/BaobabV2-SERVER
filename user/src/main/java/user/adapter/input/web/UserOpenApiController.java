@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import user.adapter.input.web.request.DuplicationEmailRequest;
+import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.application.port.input.ReIssueAccessTokenUseCase;
@@ -54,6 +56,22 @@ public class UserOpenApiController {
     public Api<TokenDto> reIssueAccessToken(@RequestHeader("Authorization") String refreshToken) {
         TokenDto response = reIssueAccessTokenUseCase.reIssueAccessToken(refreshToken);
         return Api.OK(response);
+    }
+
+    @PostMapping("/duplication/email")
+    @DupleCheck
+    public Api<Boolean> checkDuplicateEmail(
+        @RequestBody @Valid Api<DuplicationEmailRequest> duplicationEmailRequest
+    ) {
+        return Api.OK(true);
+    }
+
+    @PostMapping("/duplication/nickname")
+    @DupleCheck
+    public Api<Boolean> checkDuplicateNickName(
+        @RequestBody @Valid Api<DuplicationNickNameRequest> duplicationNickNameRequest
+    ) {
+        return Api.OK(true);
     }
 
 }
