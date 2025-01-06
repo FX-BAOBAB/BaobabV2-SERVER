@@ -1,12 +1,12 @@
 package file.adapter.output;
 
-import file.adapter.output.exception.FileStorageException;
 import file.application.port.output.FileStorage;
 import file.application.port.output.utils.FileUtils;
+import file.core.common.error.ImageErrorCode;
+import file.core.common.exception.image.ImageStorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
 import java.util.UUID;
 
 @Repository
@@ -37,7 +36,7 @@ public class LocalFileStorage implements FileStorage {
         try {
             Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new FileStorageException("이미지 파일 저장에 실패했습니다.");
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
         log.info("Uploaded image to {}", filePath);

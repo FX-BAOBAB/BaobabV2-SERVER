@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @AllArgsConstructor
-public class ImageRequest {
-    private MultipartFile imageFile;
+public class ImageCommand {
+    private MultipartFile file;
     private ImageKind kind;
 }

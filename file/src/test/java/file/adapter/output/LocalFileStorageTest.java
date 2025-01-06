@@ -1,6 +1,6 @@
 package file.adapter.output;
 
-import file.adapter.output.exception.FileStorageException;
+import file.core.common.exception.image.ImageStorageException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,10 +69,10 @@ public class LocalFileStorageTest {
             mockedFiles.when(() -> Files.copy(any(InputStream.class), any(Path.class), any(StandardCopyOption.class)))
                     .thenThrow(new IOException());
 
-            FileStorageException exception = assertThrows(FileStorageException.class, () ->
+            ImageStorageException exception = assertThrows(ImageStorageException.class, () ->
                 localFileStorage.store(imageFile));
 
-            assertEquals("이미지 파일 저장에 실패했습니다.", exception.getMessage());
+            assertEquals(exception.getDescription(), "이미지를 저장할 수 없습니다.");
         }
     }
 }
