@@ -1,6 +1,9 @@
 
 
 spring:
+  application:
+    name: baobab-global
+
   kafka:
     consumer:
       bootstrap-servers: localhost:9092
@@ -18,3 +21,14 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       #value-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+# logging
+logging:
+  level:
+    org:
+      springframework.web: DEBUG
+      hibernate: ERROR
+
+log:
+  config:
+    path: logs
