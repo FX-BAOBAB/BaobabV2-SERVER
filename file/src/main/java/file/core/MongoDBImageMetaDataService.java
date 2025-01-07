@@ -1,6 +1,6 @@
 package file.core;
 
-import file.application.port.output.ImagePersistencePort;
+import file.application.port.output.ImageMetaDataPersistencePort;
 import file.application.port.output.utils.FileUtils;
 import file.domain.ImageCommand;
 import file.domain.ImageMetaData;
@@ -15,10 +15,10 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class MongoDBImageMetaDataService {
-    private final ImagePersistencePort imagePersistencePort;
+    private final ImageMetaDataPersistencePort imageMetaDataPersistencePort;
 
     public ImageMetaData saveImage(ImageCommand imageCommand, Path filePath) {
-        return imagePersistencePort.save(createImageMetaData(imageCommand, filePath));
+        return imageMetaDataPersistencePort.save(createImageMetaData(imageCommand, filePath));
     }
 
     private ImageMetaData createImageMetaData(ImageCommand imageCommand, Path filePath) {
