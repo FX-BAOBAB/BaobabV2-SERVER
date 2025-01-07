@@ -4,6 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 
-public interface FileStorage {
-    void store(MultipartFile imageFile, Path filePath);
+public interface FileDirStorage {
+    void store(Path filePath,MultipartFile imageFile);
 }

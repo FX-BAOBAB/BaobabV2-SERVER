@@ -13,10 +13,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @ToString
 @Builder
 @AllArgsConstructor
-@Document(collection = "image")
+@Document(collection = "images")
 public class ImageMetaData {
     @Id
-    private ObjectId id;
+    private String id;
     @Field("image_url")
     private String url;
     @Field("original_name")

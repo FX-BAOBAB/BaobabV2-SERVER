@@ -20,7 +20,8 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://admin:admin@localhost:27017/baobab?authSource=baobab
+      uri: mongodb://admin:admin@localhost:27017/test?authSource=admin
+      authentication-database: admin
 
 eureka:
   instance:
@@ -44,6 +45,5 @@ log:
     path: logs
 
 file:
-  upload-dir: /src/main/resources/static/images/
-  path: /images/
+  upload-dir: file/src/main/resources/images
 

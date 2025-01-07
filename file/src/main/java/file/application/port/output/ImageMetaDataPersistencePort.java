@@ -2,6 +2,6 @@ package file.application.port.output;
 
 import file.domain.ImageMetaData;
 
-public interface ImageMetaDataRepository {
+public interface ImageMetaDataPersistencePort {
     ImageMetaData save(ImageMetaData metaData);
 }

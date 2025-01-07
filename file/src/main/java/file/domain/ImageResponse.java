@@ -7,6 +7,6 @@ import org.bson.types.ObjectId;
 @Getter
 @AllArgsConstructor
 public class ImageResponse {
-    private ObjectId id;
+    private String id;
     private String url;
 }
