@@ -2,6 +2,8 @@ package user.core.common.converter;
 
 import global.annotation.Converter;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.output.persistence.repository.Account;
+import user.adapter.output.persistence.repository.Address;
 import user.adapter.output.persistence.repository.User;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
@@ -28,38 +30,42 @@ public class UserConverter {
 
     public User toUser(UserRegisterCommand userRegisterCommand) {
         return User.builder()
-            .email(userRegisterCommand.getEmail())
-            .password(userRegisterCommand.getPassword())
             .nickName(userRegisterCommand.getNickName())
-            .name(userRegisterCommand.getName())
             .phone(userRegisterCommand.getPhone())
             .birth(userRegisterCommand.getBirth())
             .department(userRegisterCommand.getDepartment())
-            .address(userRegisterCommand.getAddress())
-            .detailAddress(userRegisterCommand.getDetailAddress())
-            .basicAddress(userRegisterCommand.getBasicAddress())
-            .post(userRegisterCommand.getPost())
             .imageId(userRegisterCommand.getImageId())
             .role(userRegisterCommand.getRole())
             .status(userRegisterCommand.getStatus())
             .registeredAt(userRegisterCommand.getRegisteredAt())
+            .account(Account.builder()
+                .email(userRegisterCommand.getEmail())
+                .password(userRegisterCommand.getPassword())
+                .name(userRegisterCommand.getName())
+                .build())
+            .address(Address.builder()
+                .address(userRegisterCommand.getAddress())
+                .detailAddress(userRegisterCommand.getDetailAddress())
+                .basicAddress(userRegisterCommand.getBasicAddress())
+                .post(userRegisterCommand.getPost())
+                .build())
             .build();
     }
 
     public UserReaderCommand toReaderCommand(User user) {
         return UserReaderCommand.builder()
             .userId(user.getId())
-            .email(user.getEmail())
-            .password(user.getPassword())
+            .email(user.getAccount().getEmail())
+            .password(user.getAccount().getPassword())
             .nickName(user.getNickName())
-            .name(user.getNickName())
+            .name(user.getAccount().getName())
             .phone(user.getPhone())
             .department(user.getDepartment())
             .birth(user.getBirth())
-            .address(user.getAddress())
-            .detailAddress(user.getDetailAddress())
-            .basicAddress(user.getBasicAddress())
-            .post(user.getPost())
+            .address(user.getAddress().getAddress())
+            .detailAddress(user.getAddress().getDetailAddress())
+            .basicAddress(user.getAddress().getBasicAddress())
+            .post(user.getAddress().getPost())
             .imageId(user.getImageId())
             .role(user.getRole())
             .status(user.getStatus())

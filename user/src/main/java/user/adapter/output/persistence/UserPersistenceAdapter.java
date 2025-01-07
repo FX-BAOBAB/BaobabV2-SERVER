@@ -22,7 +22,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public boolean checkEmailDuplicate(String email) {
-        return userMongoRepository.existsByEmail(email);
+        return userMongoRepository.existsByAccount_Email(email);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public UserReaderCommand getUserInfo(String email, UserStatus status) {
-        User user = userMongoRepository.findFirstByEmailAndStatusOrderByIdDesc(email, status)
+        User user = userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(email, status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
         return userConverter.toReaderCommand(user);
     }
