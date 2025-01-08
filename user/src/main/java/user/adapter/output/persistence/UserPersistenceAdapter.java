@@ -1,7 +1,7 @@
 package user.adapter.output.persistence;
 
+import global.annotation.output.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.User;
 import user.adapter.output.persistence.repository.UserMongoRepository;
@@ -13,7 +13,7 @@ import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
 import user.domain.command.UserUpdateCommand;
 
-@Component // TODO @OutputAdapter
+@PersistenceAdapter
 @RequiredArgsConstructor
 public class UserPersistenceAdapter implements UserPersistencePort {
 
@@ -38,8 +38,10 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     }
 
     @Override
-    public boolean updateUser(UserUpdateCommand userUpdateCommand) {
-        return false;
+    public boolean updateUser(UserReaderCommand userReaderCommand) {
+        User user = userConverter.toUser(userReaderCommand);
+        User savedUser = userMongoRepository.save(user);
+        return savedUser.getId() != null;
     }
 
     @Override

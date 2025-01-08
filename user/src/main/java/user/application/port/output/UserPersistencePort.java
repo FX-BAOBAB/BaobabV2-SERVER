@@ -13,7 +13,7 @@ public interface UserPersistencePort {
 
     boolean saveUser(UserRegisterCommand userRegisterCommand);
 
-    boolean updateUser(UserUpdateCommand userUpdateCommand);
+    boolean updateUser(UserReaderCommand userReaderCommand);
 
     UserReaderCommand getUserInfoBy(String userId, UserStatus status);
 

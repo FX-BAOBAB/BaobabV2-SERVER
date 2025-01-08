@@ -1,5 +1,8 @@
 package user.domain.command;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +15,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserUpdateCommand {
 
+    private String userId;
+
+    private String password;
+
     private String nickName;
+
+    private String name;
+
+    private String phone;
 
     private LocalDate birth;
 
@@ -26,6 +37,6 @@ public class UserUpdateCommand {
 
     private String post;
 
-    private Long imageId;
+    private String imageId;
 
 }
