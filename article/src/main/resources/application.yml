@@ -1,10 +1,17 @@
-
 server:
-  port: 0 # 랜덤포트를 주기 위해
+  port: 0
 
 spring:
   application:
     name: baobab-article
+
+  jpa:
+    show-sql: true
+
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017
+      database: baobab
 
 eureka:
   instance:
@@ -26,3 +33,6 @@ logging:
 log:
   config:
     path: logs
+
+cipher:
+  key: ABO6jnQHzqrupXWDW5HyHXOD+FZA1gYLNgqFdPge/tg=
