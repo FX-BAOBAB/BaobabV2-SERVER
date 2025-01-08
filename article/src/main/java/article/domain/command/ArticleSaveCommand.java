@@ -2,19 +2,19 @@ package article.domain.command;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
-import file.domain.ImageMetaData;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleCommand {
+public class ArticleSaveCommand {
 
     private String title;
 
@@ -30,6 +30,6 @@ public class ArticleCommand {
 
     private String userId;
 
-    private List<ImageMetaData> imageList;
+    private List<MultipartFile> imageList;
 
 }

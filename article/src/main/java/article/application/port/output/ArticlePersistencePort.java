@@ -1,17 +1,20 @@
 package article.application.port.output;
 
-import article.adapter.output.persistence.Article;
+import article.adapter.output.persistence.repository.Article;
+import article.domain.command.ArticleCommand;
+import article.domain.command.ArticleSearchCommand;
+import article.domain.command.ArticleUpdateCommand;
 import java.util.List;
 
 public interface ArticlePersistencePort {
 
-    boolean saveArticle(Article article);
+    boolean saveArticle(ArticleCommand articleCommand);
 
-    Article getArticle(Article article);
+    ArticleCommand getArticle(ArticleSearchCommand articleSearchCommand);
 
-    List<Article> getArticleList(Article article);
+    List<ArticleCommand> getArticleList(ArticleSearchCommand articleSearchCommand);
 
-    List<Article> getAllArticleList();
+    List<ArticleCommand> getAllArticleList();
 
     boolean updateArticle(Article article);
 
