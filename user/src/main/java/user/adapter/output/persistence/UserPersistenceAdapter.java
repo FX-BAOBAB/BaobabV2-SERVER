@@ -1,7 +1,7 @@
 package user.adapter.output.persistence;
 
+import global.annotation.output.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.User;
 import user.adapter.output.persistence.repository.UserMongoRepository;
@@ -13,7 +13,7 @@ import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
 import user.domain.command.UserUpdateCommand;
 
-@Component // TODO @OutputAdapter
+@PersistenceAdapter
 @RequiredArgsConstructor
 public class UserPersistenceAdapter implements UserPersistencePort {
 
@@ -39,7 +39,14 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public boolean updateUser(UserUpdateCommand userUpdateCommand) {
-        return false;
+        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(
+                userUpdateCommand.getUserId(), UserStatus.REGISTERED)
+            .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+
+        user.updateUserInfo(userUpdateCommand);
+
+        User savedUser = userMongoRepository.save(user);
+        return savedUser.getId() != null;
     }
 
     @Override
@@ -51,7 +58,8 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public UserReaderCommand getUserInfo(String email, UserStatus status) {
-        User user = userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(email, status)
+        User user = userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(email,
+                status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
         return userConverter.toReaderCommand(user);
     }

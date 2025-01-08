@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.domain.command.UserUpdateCommand;
 
 @Data
 @Builder
@@ -44,5 +45,17 @@ public class User {
     private Account account;
 
     private Address address;
+
+    public User updateUserInfo(UserUpdateCommand userUpdateCommand) {
+        this.nickName = userUpdateCommand.getNickName();
+        this.phone = userUpdateCommand.getPhone();
+        this.department = userUpdateCommand.getDepartment();
+        this.birth = userUpdateCommand.getBirth();
+        this.imageId = userUpdateCommand.getImageId();
+        this.account.updateAccountInfo(userUpdateCommand.getAccountCommand());
+        this.address.updateAddressInfo(userUpdateCommand.getAddressCommand());
+        return this;
+    }
+
 
 }

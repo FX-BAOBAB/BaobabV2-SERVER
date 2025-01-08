@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.input.web.request.UserUpdateRequest;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.user.EmailExistsException;
@@ -50,6 +51,10 @@ public class DupleCheckAdvice {
                     if (isRegisteredEmail || isRegisteredNickName) {
                         throw new UserExistsException(UserErrorCode.USER_EXISTS);
                     }
+                }
+
+                if(requestBody instanceof UserUpdateRequest) { // TODO 닉네임 중복 예외처리, 요청자 닉네임 중복 고려
+                    UserUpdateRequest userUpdateRequest = (UserUpdateRequest) requestBody;
                 }
 
                 if(requestBody instanceof DuplicationEmailRequest) {

@@ -12,20 +12,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserUpdateCommand {
 
+    private String userId;
+
     private String nickName;
+
+    private String phone;
 
     private LocalDate birth;
 
     private String department;
 
-    private String address;
+    private String imageId;
 
-    private String detailAddress;
+    private AccountCommand accountCommand;
 
-    private String basicAddress;
-
-    private String post;
-
-    private Long imageId;
+    private AddressCommand addressCommand;
 
 }

@@ -2,11 +2,15 @@ package user.core.common.converter;
 
 import global.annotation.Converter;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.output.persistence.repository.Account;
 import user.adapter.output.persistence.repository.Address;
 import user.adapter.output.persistence.repository.User;
+import user.domain.command.AccountCommand;
+import user.domain.command.AddressCommand;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
+import user.domain.command.UserUpdateCommand;
 
 @Converter
 public class UserConverter {
@@ -72,6 +76,31 @@ public class UserConverter {
             .registeredAt(user.getRegisteredAt())
             .unregisteredAt(user.getUnregisteredAt())
             .lastLoginAt(user.getLastLoginAt())
+            .build();
+    }
+
+    public UserUpdateCommand toUpdateCommand(UserUpdateRequest userUpdateRequest, String userId) {
+        return UserUpdateCommand.builder()
+            .userId(userId)
+            .nickName(userUpdateRequest.getNickName())
+            .phone(userUpdateRequest.getPhone())
+            .birth(userUpdateRequest.getBirth())
+            .department(userUpdateRequest.getDepartment())
+            .imageId(userUpdateRequest.getImageId())
+            .accountCommand(
+                AccountCommand.builder()
+                    .password(userUpdateRequest.getAccount().getPassword())
+                    .name(userUpdateRequest.getAccount().getName())
+                    .build()
+            )
+            .addressCommand(
+                AddressCommand.builder()
+                    .address(userUpdateRequest.getAddress().getAddress())
+                    .detailAddress(userUpdateRequest.getAddress().getDetailAddress())
+                    .basicAddress(userUpdateRequest.getAddress().getBasicAddress())
+                    .post(userUpdateRequest.getAddress().getPost())
+                    .build()
+            )
             .build();
     }
 
