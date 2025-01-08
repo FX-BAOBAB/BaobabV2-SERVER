@@ -3,9 +3,9 @@ package global.utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
 @RequiredArgsConstructor
-public class ImageUtils {
+@Component
+public class ImageIdUtils {
 
     private final CipherUtils cipherUtils;
 
