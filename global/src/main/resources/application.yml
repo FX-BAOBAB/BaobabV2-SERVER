@@ -1,5 +1,3 @@
-
-
 spring:
   application:
     name: baobab-global
@@ -32,3 +30,6 @@ logging:
 log:
   config:
     path: logs
+
+cipher:
+  key: ABO6jnQHzqrupXWDW5HyHXOD+FZA1gYLNgqFdPge/tg=
