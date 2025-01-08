@@ -39,7 +39,13 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public boolean updateUser(UserUpdateCommand userUpdateCommand) {
-        return false;
+        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(
+                userUpdateCommand.getUserId(), UserStatus.REGISTERED)
+            .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+
+        user.updateUserInfo(userUpdateCommand);
+        User updatedUser = userMongoRepository.save(user);
+        return updatedUser.getId() != null;
     }
 
     @Override

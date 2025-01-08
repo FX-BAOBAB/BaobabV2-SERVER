@@ -12,7 +12,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserUpdateCommand {
 
+    private String userId;
+
+    private String password;
+
     private String nickName;
+
+    private String name;
+
+    private String phone;
 
     private LocalDate birth;
 
@@ -26,6 +34,6 @@ public class UserUpdateCommand {
 
     private String post;
 
-    private Long imageId;
+    private String imageId;
 
 }

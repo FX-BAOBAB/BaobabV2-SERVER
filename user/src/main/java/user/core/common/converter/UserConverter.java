@@ -2,11 +2,13 @@ package user.core.common.converter;
 
 import global.annotation.Converter;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.output.persistence.repository.Account;
 import user.adapter.output.persistence.repository.Address;
 import user.adapter.output.persistence.repository.User;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
+import user.domain.command.UserUpdateCommand;
 
 @Converter
 public class UserConverter {
@@ -72,6 +74,23 @@ public class UserConverter {
             .registeredAt(user.getRegisteredAt())
             .unregisteredAt(user.getUnregisteredAt())
             .lastLoginAt(user.getLastLoginAt())
+            .build();
+    }
+
+    public UserUpdateCommand toUpdateCommand(UserUpdateRequest userUpdateRequest, String userId) {
+        return UserUpdateCommand.builder()
+            .userId(userId)
+            .password(userUpdateRequest.getPassword())
+            .nickName(userUpdateRequest.getNickName())
+            .name(userUpdateRequest.getName())
+            .phone(userUpdateRequest.getPhone())
+            .birth(userUpdateRequest.getBirth())
+            .department(userUpdateRequest.getDepartment())
+            .address(userUpdateRequest.getAddress())
+            .detailAddress(userUpdateRequest.getDetailAddress())
+            .basicAddress(userUpdateRequest.getBasicAddress())
+            .post(userUpdateRequest.getPost())
+            .imageId(userUpdateRequest.getImageId())
             .build();
     }
 
