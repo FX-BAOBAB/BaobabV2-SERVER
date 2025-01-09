@@ -1,13 +1,14 @@
 package file.application.port.input;
 
-import file.domain.ImageListCommand;
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface ImageStorageUseCase {
     CompletableFuture<ImageMetaData> saveImage(ImageCommand imageCommand);
-    CompletableFuture<List<ImageMetaData>> saveImageList(ImageListCommand imageListCommand);
+    @Async
+    CompletableFuture<List<ImageMetaData>> saveImageList(List<ImageCommand> imageCommandList);
 }

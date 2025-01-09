@@ -3,7 +3,6 @@ package file.core;
 import file.application.port.input.ImageStorageUseCase;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
-import file.domain.ImageListCommand;
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +35,9 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
 
     @Async
     @Override
-    public CompletableFuture<List<ImageMetaData>> saveImageList(ImageListCommand imageListCommand) {
-
-        List<CompletableFuture<ImageMetaData>> futures = Arrays.stream(imageListCommand.getFiles())
-                .map(file -> saveImage(new ImageCommand(imageListCommand.getId(), file, imageListCommand.getImageKind())))
+    public CompletableFuture<List<ImageMetaData>> saveImageList(List<ImageCommand> imageCommandList) {
+        List<CompletableFuture<ImageMetaData>> futures = imageCommandList.stream()
+                .map(this::saveImage)
                 .toList();
 
         CompletableFuture<Void> allDone = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
