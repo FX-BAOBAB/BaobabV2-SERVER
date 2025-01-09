@@ -3,42 +3,47 @@ package user.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.User;
 import user.application.port.input.UserUpdateUseCase;
 import user.application.port.output.UserPersistencePort;
+import user.core.common.converter.UserConverter;
 import user.domain.command.UserReaderCommand;
+import user.domain.command.UserRegisterCommand;
 import user.domain.command.UserUpdateCommand;
+import user.domain.dto.UserDto;
 
 @Service
 @RequiredArgsConstructor
 public class UserUpdateService implements UserUpdateUseCase {
 
     private final UserPersistencePort userPersistencePort;
+    private final UserConverter userConverter;
 
     @Override
     public boolean updateUser(UserUpdateCommand userUpdateCommand) {
-        UserReaderCommand userInfo = userPersistencePort.getUserInfoBy(
+        UserDto userDto = userPersistencePort.getUserInfoBy(
             userUpdateCommand.getUserId(), UserStatus.REGISTERED);
 
-        updateUserInfo(userUpdateCommand, userInfo);
+        updateUserInfo(userUpdateCommand, userDto);
+        User user = userConverter.toUser(userDto);
 
-        boolean isUpdated = userPersistencePort.updateUser(userInfo);
+        boolean isUpdated = userPersistencePort.saveUser(user);
         return isUpdated;
     }
 
-    private static void updateUserInfo(UserUpdateCommand userUpdateCommand, UserReaderCommand userInfo) {
-        userInfo.setUserId(userUpdateCommand.getUserId());
-        userInfo.setPassword(userUpdateCommand.getPassword());
-        userInfo.setNickName(userUpdateCommand.getNickName());
-        userInfo.setName(userUpdateCommand.getName());
-        userInfo.setPhone(userUpdateCommand.getPhone());
-        userInfo.setBirth(userUpdateCommand.getBirth());
-        userInfo.setDepartment(userUpdateCommand.getDepartment());
-        userInfo.setAddress(userUpdateCommand.getAddress());
-        userInfo.setBasicAddress(userUpdateCommand.getBasicAddress());
-        userInfo.setDetailAddress(userUpdateCommand.getDetailAddress());
-        userInfo.setPost(userUpdateCommand.getPost());
-        userInfo.setImageId(userUpdateCommand.getImageId());
+    private static void updateUserInfo(UserUpdateCommand userUpdateCommand, UserDto userDto) {
+        userDto.setUserId(userUpdateCommand.getUserId());
+        userDto.setPassword(userUpdateCommand.getPassword());
+        userDto.setNickName(userUpdateCommand.getNickName());
+        userDto.setName(userUpdateCommand.getName());
+        userDto.setPhone(userUpdateCommand.getPhone());
+        userDto.setBirth(userUpdateCommand.getBirth());
+        userDto.setDepartment(userUpdateCommand.getDepartment());
+        userDto.setAddress(userUpdateCommand.getAddress());
+        userDto.setBasicAddress(userUpdateCommand.getBasicAddress());
+        userDto.setDetailAddress(userUpdateCommand.getDetailAddress());
+        userDto.setPost(userUpdateCommand.getPost());
+        userDto.setImageId(userUpdateCommand.getImageId());
     }
-
 
 }

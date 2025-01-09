@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.application.port.output.UserPersistencePort;
 import user.domain.command.UserReaderCommand;
+import user.domain.dto.UserDto;
 
 @Service
 @RequiredArgsConstructor
@@ -19,13 +20,13 @@ public class AuthorizationService  implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
-        UserReaderCommand userReaderCommand = userPersistencePort.getUserInfoBy(userId,
+        UserDto userDto = userPersistencePort.getUserInfoBy(userId,
             UserStatus.REGISTERED);
 
         return User.builder()
-            .username(userReaderCommand.getEmail())
-            .password(userReaderCommand.getPassword())
-            .roles(userReaderCommand.getRole().toString())
+            .username(userDto.getEmail())
+            .password(userDto.getPassword())
+            .roles(userDto.getRole().toString())
             .build();
     }
 

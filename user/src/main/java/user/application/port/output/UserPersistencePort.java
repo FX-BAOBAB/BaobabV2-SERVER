@@ -1,9 +1,10 @@
 package user.application.port.output;
 
 import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.User;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
-import user.domain.command.UserUpdateCommand;
+import user.domain.dto.UserDto;
 
 public interface UserPersistencePort {
 
@@ -13,9 +14,9 @@ public interface UserPersistencePort {
 
     boolean saveUser(UserRegisterCommand userRegisterCommand);
 
-    boolean updateUser(UserReaderCommand userReaderCommand);
+    boolean saveUser(User user);
 
-    UserReaderCommand getUserInfoBy(String userId, UserStatus status);
+    UserDto getUserInfoBy(String userId, UserStatus status);
 
     UserReaderCommand getUserInfo(String email, UserStatus status);
 

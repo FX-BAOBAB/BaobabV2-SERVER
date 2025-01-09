@@ -11,7 +11,7 @@ import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
-import user.domain.command.UserUpdateCommand;
+import user.domain.dto.UserDto;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -38,17 +38,16 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     }
 
     @Override
-    public boolean updateUser(UserReaderCommand userReaderCommand) {
-        User user = userConverter.toUser(userReaderCommand);
+    public boolean saveUser(User user) {
         User savedUser = userMongoRepository.save(user);
         return savedUser.getId() != null;
     }
 
     @Override
-    public UserReaderCommand getUserInfoBy(String userId, UserStatus status) {
+    public UserDto getUserInfoBy(String userId, UserStatus status) {
         User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(userId, status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
-        return userConverter.toReaderCommand(user);
+        return userConverter.toUserDto(user);
     }
 
     @Override
