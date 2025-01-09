@@ -18,9 +18,7 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     private final LocalFileStorageService fileStorageService;
     private final MongoDBImageMetaDataService imageMetaDataService;
 
-    // 주석을 풀면 Path 설정 부분에 ERROR 발생하는데
-    // 공부 겸 원인 파악해보세요! Context 생명주기와 관련 있음
-    //@Async
+    @Async
     @Override
     public CompletableFuture<ImageMetaData> saveImage(ImageCommand imageCommand) {
 
