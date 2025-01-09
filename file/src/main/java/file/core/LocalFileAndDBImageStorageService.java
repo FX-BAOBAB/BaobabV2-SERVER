@@ -10,6 +10,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -18,9 +20,7 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     private final LocalFileStorageService fileStorageService;
     private final MongoDBImageMetaDataService imageMetaDataService;
 
-    // 주석을 풀면 Path 설정 부분에 ERROR 발생하는데
-    // 공부 겸 원인 파악해보세요! Context 생명주기와 관련 있음
-    //@Async
+    @Async
     @Override
     public CompletableFuture<ImageMetaData> saveImage(ImageCommand imageCommand) {
 
@@ -32,4 +32,21 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
 
         return CompletableFuture.completedFuture(metaData);
     }
+
+    @Async
+    @Override
+    public CompletableFuture<List<ImageMetaData>> saveImageList(List<ImageCommand> imageCommandList) {
+        List<CompletableFuture<ImageMetaData>> futures = imageCommandList.stream()
+                .map(this::saveImage)
+                .toList();
+
+        CompletableFuture<Void> allDone = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+
+        return allDone.thenApply(v ->
+                futures.stream()
+                        .map(CompletableFuture::join)
+                        .toList()
+        );
+    }
+
 }
