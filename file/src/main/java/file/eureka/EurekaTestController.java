@@ -3,6 +3,7 @@ package file.eureka;
 import file.application.port.input.ImageStorageUseCase;
 import file.domain.ImageCommand;
 import file.domain.ImageKind;
+import file.domain.ImageListCommand;
 import file.domain.ImageMetaData;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -50,6 +52,15 @@ public class EurekaTestController {
                         .id("imageABC")
                         .kind(ImageKind.USER)
                         .file(file)
+                .build());
+    }
+
+    @PostMapping("/images/upload")
+    public CompletableFuture<List<ImageMetaData>> upload(@RequestParam("files") MultipartFile[] files){
+        return imageStorageUseCase.saveImageList(ImageListCommand.builder()
+                        .id("imageABC")
+                        .files(files)
+                        .imageKind(ImageKind.USER)
                 .build());
     }
 
