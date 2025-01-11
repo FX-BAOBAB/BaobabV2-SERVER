@@ -4,6 +4,6 @@ import user.domain.command.UserUpdateCommand;
 
 public interface UserUpdateUseCase {
 
-    boolean updateUser(UserUpdateCommand userUpdateCommand);
+    boolean updateUserInfo(UserUpdateCommand userUpdateCommand);
 
 }

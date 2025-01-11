@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.domain.dto.ProfileImage;
 
 @Data
 @Builder
@@ -37,7 +38,7 @@ public class UserRegisterCommand {
 
     private String post;
 
-    private String imageId;
+    private ProfileImage profileImage;
 
     private UserRole role;
 

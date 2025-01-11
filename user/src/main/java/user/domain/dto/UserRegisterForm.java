@@ -1,4 +1,4 @@
-package user.domain.command;
+package user.domain.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,19 +8,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
-import user.domain.dto.ProfileImage;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReaderCommand {
-
-    private String userId;
+public class UserRegisterForm {
 
     private String email;
 
-    private String password;
+    private String encodingPassword;
 
     private String nickName;
 
@@ -47,9 +44,5 @@ public class UserReaderCommand {
     private UserStatus status;
 
     private LocalDateTime registeredAt;
-
-    private LocalDateTime unregisteredAt;
-
-    private LocalDateTime lastLoginAt;
 
 }

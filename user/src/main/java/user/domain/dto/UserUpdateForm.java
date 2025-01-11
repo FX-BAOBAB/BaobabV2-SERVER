@@ -1,29 +1,30 @@
-package user.domain.command;
+package user.domain.dto;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import user.domain.dto.ProfileImage;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserUpdateCommand {
+@NoArgsConstructor
+public class UserUpdateForm {
 
     private String userId;
 
-    private String nickName;
-
     private String name;
+
+    private String nickName;
 
     private String phone;
 
+    private String department;
+
     private LocalDate birth;
 
-    private String department;
+    private ProfileImage profileImage;
 
     private String address;
 
@@ -32,7 +33,5 @@ public class UserUpdateCommand {
     private String basicAddress;
 
     private String post;
-
-    private ProfileImage profileImage;
 
 }

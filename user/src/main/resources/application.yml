@@ -62,3 +62,9 @@ logging:
 log:
   config:
     path: logs
+
+file:
+  upload-dir: file/src/main/resources/images
+
+cipher:
+  key: ABO6jnQHzqrupXWDW5HyHXOD+FZA1gYLNgqFdPge/tg=

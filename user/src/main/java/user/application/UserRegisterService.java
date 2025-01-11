@@ -1,34 +1,29 @@
 package user.application;
 
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import user.adapter.output.persistence.enums.UserRole;
-import user.adapter.output.persistence.enums.UserStatus;
 import user.application.port.input.UserRegisterUseCase;
 import user.application.port.output.UserPersistencePort;
+import user.core.common.converter.UserConverter;
 import user.domain.command.UserRegisterCommand;
+import user.domain.dto.UserRegisterForm;
 
 @Service
 @RequiredArgsConstructor
 public class UserRegisterService implements UserRegisterUseCase {
 
     private final UserPersistencePort userPersistencePort;
-    private final PasswordEncoder passwordEncoder;
+    private final UserConverter userConverter;
 
     @Override
     public boolean register(UserRegisterCommand userRegisterCommand) {
-        initUserParameter(userRegisterCommand);
-        boolean isRegistered = userPersistencePort.saveUser(userRegisterCommand);
-        return isRegistered;
+        var target = initUserParameter(userRegisterCommand);
+        return userPersistencePort.saveUser(target);
     }
 
-    private void initUserParameter(UserRegisterCommand userRegisterCommand) {
-        userRegisterCommand.setPassword(passwordEncoder.encode(userRegisterCommand.getPassword()));
-        userRegisterCommand.setRegisteredAt(LocalDateTime.now());
-        userRegisterCommand.setRole(UserRole.BASIC_USER);
-        userRegisterCommand.setStatus(UserStatus.REGISTERED);
+    private UserRegisterForm initUserParameter(UserRegisterCommand userRegisterCommand) {
+        return userConverter.toUserRegisterForm(userRegisterCommand);
     }
+
     
 }
