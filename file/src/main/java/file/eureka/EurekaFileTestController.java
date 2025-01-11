@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
@@ -18,13 +17,13 @@ import java.util.stream.IntStream;
 @RestController
 @RequestMapping("/files")
 @Slf4j
-public class EurekaTestController {
+public class EurekaFileTestController {
 
     Environment env;
 
     private final ImageStorageUseCase imageStorageUseCase;
 
-    public EurekaTestController(Environment env, ImageStorageUseCase imageStorageUseCase){
+    public EurekaFileTestController(Environment env, ImageStorageUseCase imageStorageUseCase){
         this.env = env;
         this.imageStorageUseCase = imageStorageUseCase;
     }
