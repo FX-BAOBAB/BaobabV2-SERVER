@@ -52,4 +52,13 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
                         .toList()
         );
     }
+
+    @Override
+    public CompletableFuture<ImageMetaData> updateImage(ImageCommand imageCommand) {
+        return getBeanImageStorageUseCase().saveImage(imageCommand);
+    }
+
+    private ImageStorageUseCase getBeanImageStorageUseCase() {
+        return context.getBean(ImageStorageUseCase.class);
+    }
 }
