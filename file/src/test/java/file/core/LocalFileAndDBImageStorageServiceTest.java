@@ -75,4 +75,51 @@ class LocalFileAndDBImageStorageServiceTest {
         assertThat(savedImageMetaData.getId()).isEqualTo("image_4");
         assertThat(updatedImageMetaData.getId()).isEqualTo("image_5");
     }
+
+    @Test
+    void 이미지_리스트_수정_성공하면_수정된_ImageMetaData리스트를_반환한다() throws ExecutionException, InterruptedException {
+        ImageCommand oldCommand1 = ImageCommand.builder()
+                .id("image_567")
+                .file(imageFile)
+                .kind(ImageKind.USER)
+                .build();
+        ImageCommand oldCommand2 = ImageCommand.builder()
+                .id("image_2473")
+                .file(imageFile)
+                .kind(ImageKind.USER)
+                .build();
+        when(imageFile.getOriginalFilename()).thenReturn("test2.jpg");
+        ImageCommand newCommand1 = ImageCommand.builder()
+                .id("image_567")
+                .file(imageFile)
+                .kind(ImageKind.ARTICLE)
+                .build();
+        ImageCommand newCommand2 = ImageCommand.builder()
+                .id("image_2473")
+                .file(imageFile)
+                .kind(ImageKind.ARTICLE)
+                .build();
+        ImageCommand newCommand3 = ImageCommand.builder()
+                .id("image_4675")
+                .file(imageFile)
+                .kind(ImageKind.ARTICLE)
+                .build();
+
+        List<ImageMetaData> savedMetaDataList = localFileAndDBImageStorageService.saveImageList(List.of(
+                oldCommand1,
+                oldCommand2
+        )).get();
+        List<ImageMetaData> updatedMetaDataList = localFileAndDBImageStorageService.updateImageList(List.of(
+                newCommand1,
+                newCommand2,
+                newCommand3
+        )).get();
+
+        assertThat(savedMetaDataList.size()).isEqualTo(2);
+        assertThat(updatedMetaDataList.size()).isEqualTo(3);
+
+        updatedMetaDataList.stream().filter(m ->
+                        savedMetaDataList.stream().anyMatch(s -> s.getId().equals(m.getId())))
+                .forEach(m -> assertThat(m.getOriginalName()).isEqualTo("test2"));
+    }
 }
