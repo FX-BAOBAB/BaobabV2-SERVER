@@ -1,4 +1,4 @@
-package user.domain.command;
+package user.adapter.output.persistence.repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.dto.ProfileImage;
@@ -14,31 +16,19 @@ import user.domain.dto.ProfileImage;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReaderCommand {
+@Document(collection = "user")
+public class UserDocument {
 
-    private String userId;
-
-    private String email;
-
-    private String password;
+    @Id
+    private String id;
 
     private String nickName;
-
-    private String name;
 
     private String phone;
 
     private String department;
 
     private LocalDate birth;
-
-    private String address;
-
-    private String detailAddress;
-
-    private String basicAddress;
-
-    private String post;
 
     private ProfileImage profileImage;
 
@@ -51,5 +41,9 @@ public class UserReaderCommand {
     private LocalDateTime unregisteredAt;
 
     private LocalDateTime lastLoginAt;
+
+    private Account account;
+
+    private Address address;
 
 }

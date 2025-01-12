@@ -1,15 +1,11 @@
-package user.adapter.output.persistence.repository;
+package user.domain.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 
@@ -17,14 +13,11 @@ import user.adapter.output.persistence.enums.UserStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
-
-    @Id
-    private String id;
+public class UserRegisterForm {
 
     private String email;
 
-    private String password;
+    private String encodingPassword;
 
     private String nickName;
 
@@ -44,16 +37,12 @@ public class User {
 
     private String post;
 
-    private String imageId;
+    private ProfileImage profileImage;
 
     private UserRole role;
 
     private UserStatus status;
 
     private LocalDateTime registeredAt;
-
-    private LocalDateTime unregisteredAt;
-
-    private LocalDateTime lastLoginAt;
 
 }

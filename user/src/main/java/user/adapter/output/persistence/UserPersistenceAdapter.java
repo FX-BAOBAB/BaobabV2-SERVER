@@ -1,19 +1,19 @@
 package user.adapter.output.persistence;
 
+import global.annotation.output.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import user.adapter.output.persistence.enums.UserStatus;
-import user.adapter.output.persistence.repository.User;
+import user.adapter.output.persistence.repository.UserDocument;
 import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.converter.UserConverter;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
-import user.domain.command.UserRegisterCommand;
-import user.domain.command.UserUpdateCommand;
+import user.domain.dto.UserRegisterForm;
+import user.domain.dto.UserUpdateForm;
 
-@Component // TODO @OutputAdapter
+@PersistenceAdapter
 @RequiredArgsConstructor
 public class UserPersistenceAdapter implements UserPersistencePort {
 
@@ -22,7 +22,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public boolean checkEmailDuplicate(String email) {
-        return userMongoRepository.existsByEmail(email);
+        return userMongoRepository.existsByAccount_Email(email);
     }
 
     @Override
@@ -31,34 +31,46 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     }
 
     @Override
-    public boolean saveUser(UserRegisterCommand userRegisterCommand) {
-        User user = userConverter.toUser(userRegisterCommand);
-        User savedUser = userMongoRepository.save(user);
+    public boolean saveUser(UserRegisterForm userRegisterForm) {
+        UserDocument user = userConverter.toUserDocument(userRegisterForm);
+        UserDocument savedUser = userMongoRepository.save(user);
         return savedUser.getId() != null;
     }
 
     @Override
-    public boolean updateUser(UserUpdateCommand userUpdateCommand) {
-        return false;
+    public boolean updateUser(UserUpdateForm userUpdateForm) {
+        UserDocument userDocument = getUserDocument(userUpdateForm.getUserId(),
+            UserStatus.REGISTERED);
+
+        UserDocument updatedDocument = userConverter.toUserDocument(userUpdateForm, userDocument);
+        UserDocument savedUser = userMongoRepository.save(updatedDocument);
+        return savedUser.getId() != null;
     }
 
+    /**
+     * 관리자 or Server 내에서 User 정보 참조할 때 사용
+     *
+     * @param userId
+     * @param status
+     * @return
+     */
     @Override
-    public UserReaderCommand getUserInfoBy(String userId, UserStatus status) {
-        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(userId, status)
+    public UserDocument getUserDocument(String userId, UserStatus status) {
+        return userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(userId, status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
-        return userConverter.toReaderCommand(user);
     }
 
     @Override
     public UserReaderCommand getUserInfo(String email, UserStatus status) {
-        User user = userMongoRepository.findFirstByEmailAndStatusOrderByIdDesc(email, status)
+        UserDocument user = userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(
+                email, status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
         return userConverter.toReaderCommand(user);
     }
 
     @Override
     public void setLastLoginAt(UserReaderCommand userReaderCommand) {
-        User user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(
+        UserDocument user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(
                 userReaderCommand.getUserId(), userReaderCommand.getStatus())
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
         user.setLastLoginAt(userReaderCommand.getLastLoginAt());

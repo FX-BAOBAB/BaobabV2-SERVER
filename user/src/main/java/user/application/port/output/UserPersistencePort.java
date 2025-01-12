@@ -1,9 +1,10 @@
 package user.application.port.output;
 
 import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserReaderCommand;
-import user.domain.command.UserRegisterCommand;
-import user.domain.command.UserUpdateCommand;
+import user.domain.dto.UserRegisterForm;
+import user.domain.dto.UserUpdateForm;
 
 public interface UserPersistencePort {
 
@@ -11,11 +12,11 @@ public interface UserPersistencePort {
 
     boolean checkNickNameDuplicate(String name);
 
-    boolean saveUser(UserRegisterCommand userRegisterCommand);
+    boolean saveUser(UserRegisterForm userRegisterForm);
 
-    boolean updateUser(UserUpdateCommand userUpdateCommand);
+    boolean updateUser(UserUpdateForm userUpdateForm);
 
-    UserReaderCommand getUserInfoBy(String userId, UserStatus status);
+    UserDocument getUserDocument(String userId, UserStatus status);
 
     UserReaderCommand getUserInfo(String email, UserStatus status);
 

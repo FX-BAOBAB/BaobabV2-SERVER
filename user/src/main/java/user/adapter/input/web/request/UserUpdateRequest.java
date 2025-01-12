@@ -12,19 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterRequest {
-
-    @Pattern(
-        regexp = "^[0-9a-zA-Z]{1,50}@[0-9a-zA-Z]{1,24}+(\\.[0-9a-zA-Z]+){1,24}$",
-        message = "올바른 이메일 형식을 입력하세요 (예: example@domain.com)"
-    )
-    private String email;
-
-    @Pattern(
-        regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])(?!.*[\\\\{}()<>$%^&*_=|`]).{8,100}$",
-        message = "대문자, 소문자, 특수문자를 포함하고 8자 이상이어야 합니다."
-    )
-    private String password;
+public class UserUpdateRequest {
 
     @Pattern(
         regexp = "^(?!.*[\\\\{}()<>$%^&*_=|`]).{2,50}$",
@@ -41,10 +29,10 @@ public class UserRegisterRequest {
     )
     private String phone;
 
+    private LocalDate birth;
+
     // TODO ENUM 처리 고려
     private String department;
-
-    private LocalDate birth;
 
     @NotBlank(message = "필수 입력 사항입니다.")
     @Size(max = 200, message = "최대 200자까지 입력 가능합니다.")
