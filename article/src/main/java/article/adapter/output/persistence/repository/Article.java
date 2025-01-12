@@ -2,7 +2,7 @@ package article.adapter.output.persistence.repository;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
-import file.domain.ImageMetaData;
+import article.domain.dto.ArticleImage;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -36,5 +36,5 @@ public class Article {
 
     private String userId;
 
-    private List<ImageMetaData> imageList;
+    private List<ArticleImage> imageList;
 }

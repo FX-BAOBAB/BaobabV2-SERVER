@@ -5,14 +5,13 @@ import article.adapter.output.persistence.repository.ArticleMongoRepository;
 import article.application.port.output.ArticlePersistencePort;
 import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleCommand;
+import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
-import article.domain.command.ArticleUpdateCommand;
+import global.annotation.output.PersistenceAdapter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.stereotype.Component;
-
-@Component
+@PersistenceAdapter
 @RequiredArgsConstructor
 public class ArticlePersistenceAdapter implements ArticlePersistencePort {
 
@@ -21,8 +20,8 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     private final ArticleMongoRepository articleMongoRepository;
 
     @Override
-    public boolean saveArticle(ArticleCommand articleCommand) {
-        Article article = articleConverter.toArticle(articleCommand);
+    public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
+        Article article = articleConverter.toArticle(articleSaveCommand);
         Article savedArticle =  articleMongoRepository.save(article);
         return savedArticle.getId() != null;
     }
