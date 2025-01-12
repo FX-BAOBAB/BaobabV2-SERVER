@@ -2,7 +2,7 @@ package article.domain.command;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
-import file.domain.ImageMetaData;
+import article.domain.dto.ArticleImage;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleCommand {
+public class ArticleSaveCommand {
 
     private String title;
 
@@ -30,6 +30,6 @@ public class ArticleCommand {
 
     private String userId;
 
-    private List<ImageMetaData> imageList;
+    private List<ArticleImage> imageList;
 
 }

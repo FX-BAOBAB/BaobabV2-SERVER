@@ -1,17 +1,17 @@
 package article.application.port.input;
 
-import article.domain.command.ArticleCommand;
+import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleSearchCommand;
 import java.util.List;
 
 public interface GetArticleUseCase {
 
-    ArticleCommand getArticleById(String articleId);
+    Article getArticleById(String articleId);
 
-    ArticleCommand getArticleByUserId(String userId);
+    Article getArticleByUserId(String userId);
 
-    List<ArticleCommand> getArticleList(ArticleSearchCommand articleSearchCommand);
+    List<Article> getArticleList(ArticleSearchCommand articleSearchCommand);
 
-    List<ArticleCommand> getAllArticleList();
+    List<Article> getAllArticleList();
 
 }
