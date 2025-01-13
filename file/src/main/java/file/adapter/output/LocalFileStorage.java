@@ -41,4 +41,24 @@ public class LocalFileStorage implements FileDirStorage {
         }
         log.info("Uploaded image to {}", filePath);
     }
+
+    @Override
+    public void delete(Path filePath) {
+        File imageFile = new File(filePath.toString());
+
+        if (!imageFile.exists()) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_NOT_FOUND, "Image File not exists at: " + filePath);
+        }
+
+        try {
+            if (!imageFile.delete()) {
+                throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, "Image delete failed in file storage: " + filePath);
+            }
+        } catch (Exception e) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, e);
+        }
+
+        log.info("Deleted image at: {}", filePath);
+    }
+    }
 }

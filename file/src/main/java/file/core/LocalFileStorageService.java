@@ -28,6 +28,10 @@ public class LocalFileStorageService {
         return filePath;
     }
 
+    public void deleteImage(Path filePath) {
+        filedirStorage.delete(filePath);
+    }
+
     private Path createFilePath(MultipartFile file) {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         String extension = FileUtils.getExtension(fileName);
