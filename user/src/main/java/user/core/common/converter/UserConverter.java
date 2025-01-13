@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
@@ -14,9 +15,11 @@ import user.adapter.output.persistence.repository.Address;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
+import user.domain.command.UserUnRegisterCommand;
 import user.domain.command.UserUpdateCommand;
 import user.domain.dto.ProfileImage;
 import user.domain.dto.UserRegisterForm;
+import user.domain.dto.UserUnRegisterForm;
 import user.domain.dto.UserUpdateForm;
 
 @Converter
@@ -91,7 +94,7 @@ public class UserConverter {
             .role(user.getRole())
             .status(user.getStatus())
             .registeredAt(user.getRegisteredAt())
-            .unregisteredAt(user.getUnregisteredAt())
+            .unregisteredAt(user.getUnRegisteredAt())
             .lastLoginAt(user.getLastLoginAt())
             .build();
     }
@@ -169,7 +172,7 @@ public class UserConverter {
             .role(userDocument.getRole())
             .status(UserStatus.REGISTERED)
             .registeredAt(userDocument.getRegisteredAt())
-            .unregisteredAt(userDocument.getUnregisteredAt())
+            .unRegisteredAt(userDocument.getUnRegisteredAt())
             .lastLoginAt(userDocument.getLastLoginAt())
             .account(
                 Account.builder()
@@ -186,6 +189,22 @@ public class UserConverter {
                     .post(userUpdateForm.getPost())
                     .build()
             )
+            .build();
+    }
+
+    public UserUnRegisterCommand toUnRegisterCommand(UserUnRegisterRequest userUnRegisterRequest,
+        String userId) {
+        return UserUnRegisterCommand.builder()
+            .userId(userId)
+            .password(userUnRegisterRequest.getPassword())
+            .build();
+    }
+
+    public UserUnRegisterForm toUnregisterForm(String userId) {
+        return UserUnRegisterForm.builder()
+            .userId(userId)
+            .status(UserStatus.UNREGISTERED)
+            .unRegisterAt(LocalDateTime.now())
             .build();
     }
 
