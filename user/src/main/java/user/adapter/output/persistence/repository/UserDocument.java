@@ -38,7 +38,7 @@ public class UserDocument {
 
     private LocalDateTime registeredAt;
 
-    private LocalDateTime unregisteredAt;
+    private LocalDateTime unRegisteredAt;
 
     private LocalDateTime lastLoginAt;
 

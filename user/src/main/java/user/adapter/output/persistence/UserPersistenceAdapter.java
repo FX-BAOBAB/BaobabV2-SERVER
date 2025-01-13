@@ -11,6 +11,7 @@ import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.UserRegisterForm;
+import user.domain.dto.UserUnRegisterForm;
 import user.domain.dto.UserUpdateForm;
 
 @PersistenceAdapter
@@ -75,6 +76,19 @@ public class UserPersistenceAdapter implements UserPersistencePort {
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
         user.setLastLoginAt(userReaderCommand.getLastLoginAt());
         userMongoRepository.save(user);
+    }
+
+    @Override
+    public boolean unRegisterUser(UserUnRegisterForm userUnRegisterForm) {
+        UserDocument userDocument = getUserDocument(userUnRegisterForm.getUserId(),
+            UserStatus.REGISTERED);
+
+        userDocument.setId(userUnRegisterForm.getUserId());
+        userDocument.setUnRegisteredAt(userUnRegisterForm.getUnRegisterAt());
+        userDocument.setStatus(userUnRegisterForm.getStatus());
+
+        UserDocument savedUser = userMongoRepository.save(userDocument);
+        return savedUser.getId() != null;
     }
 
 }

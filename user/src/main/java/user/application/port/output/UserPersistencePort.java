@@ -4,6 +4,7 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.UserRegisterForm;
+import user.domain.dto.UserUnRegisterForm;
 import user.domain.dto.UserUpdateForm;
 
 public interface UserPersistencePort {
@@ -21,5 +22,7 @@ public interface UserPersistencePort {
     UserReaderCommand getUserInfo(String email, UserStatus status);
 
     void setLastLoginAt(UserReaderCommand userReaderCommand);
+
+    boolean unRegisterUser(UserUnRegisterForm userUnRegisterForm);
 
 }
