@@ -27,20 +27,10 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     }
 
     @Override
-    public ArticleCommand getArticle(ArticleSearchCommand articleSearchCommand) {
-        return null;
-    }
-
-    @Override
     public List<ArticleCommand> getArticleList(ArticleSearchCommand articleSearchCommand) {
         return List.of();
     }
-
-    @Override
-    public List<ArticleCommand> getAllArticleList() {
-        return List.of();
-    }
-
+    
     @Override
     public boolean updateArticle(Article article) {
         return false;
