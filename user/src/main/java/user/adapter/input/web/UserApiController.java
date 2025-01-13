@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import user.adapter.input.web.request.UserUpdateRequest;
 import user.application.port.input.UserUpdateUseCase;
+import user.core.common.annotation.DupleCheck;
 import user.core.common.converter.UserConverter;
 import user.domain.command.UserUpdateCommand;
 
@@ -33,6 +34,7 @@ public class UserApiController {
     private final ImageConverter imageConverter;
 
     @PostMapping("/update")
+    @DupleCheck
     public Api<Boolean> update(UserUpdateRequest userUpdateRequest, String userId) {
         try {
             ImageCommand imageCommand = imageConverter.toImageCommand(
