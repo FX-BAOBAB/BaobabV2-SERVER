@@ -14,4 +14,5 @@ public interface ImageStorageUseCase {
     CompletableFuture<ImageMetaData> updateImage(ImageCommand imageCommand);
     CompletableFuture<List<ImageMetaData>> updateImageList(List<ImageCommand> imageCommandList);
     void deleteImage(String imageId);
+    void deleteImageList(List<String> imageId);
 }
