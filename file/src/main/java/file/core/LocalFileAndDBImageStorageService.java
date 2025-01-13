@@ -80,6 +80,12 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
         fileStorageService.deleteImage(Path.of(URI.create(imageUrl).getPath()));
     }
 
+    @Override
+    public void deleteImageList(List<String> encodeImageIdList) {
+        encodeImageIdList.forEach(encodeImageId ->
+                CompletableFuture.runAsync(() -> getBeanImageStorageUseCase().deleteImage(encodeImageId)));
+    }
+
     private ImageStorageUseCase getBeanImageStorageUseCase() {
         return context.getBean(ImageStorageUseCase.class);
     }
