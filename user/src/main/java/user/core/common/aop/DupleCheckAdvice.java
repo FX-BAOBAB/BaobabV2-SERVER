@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.input.web.request.UserUpdateRequest;
+import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.user.EmailExistsException;
@@ -36,43 +39,105 @@ public class DupleCheckAdvice {
         var args = joinPoint.getArgs();
 
         for (Object arg : args) {
-            if(arg instanceof Api) {
+            if (arg instanceof Api) {
                 Api<?> apiRequest = (Api<?>) arg;
                 Object requestBody = apiRequest.getBody();
 
-                if (requestBody instanceof UserRegisterRequest) {
-                    UserRegisterRequest userRegisterRequest = (UserRegisterRequest) requestBody;
+                // Api<?> 인 경우
+                checkEmailRequest(requestBody);
+                checkNickNameRequest(requestBody);
+            }
 
-                    // email & nickName 검증
-                    boolean isRegisteredEmail = userPersistencePort.checkEmailDuplicate(userRegisterRequest.getEmail());
-                    boolean isRegisteredNickName = userPersistencePort.checkNickNameDuplicate(userRegisterRequest.getNickName());
+            // Api<?> 가 아닌 경우
+            checkUpdateRequest(joinPoint, arg);
+            checkUserRegisterRequest(arg);
 
-                    if (isRegisteredEmail || isRegisteredNickName) {
-                        throw new UserExistsException(UserErrorCode.USER_EXISTS);
-                    }
+        }
+
+    }
+
+    private void checkUserRegisterRequest(Object arg) {
+        if (arg instanceof UserRegisterRequest) {
+            UserRegisterRequest userRegisterRequest = (UserRegisterRequest) arg;
+
+            // email & nickName 검증
+            boolean isRegisteredEmail = checkEmailDuplicate(userRegisterRequest.getEmail());
+            boolean isRegisteredNickName = checkNickNameDuplicate(
+                userRegisterRequest.getNickName());
+
+            if (isRegisteredEmail || isRegisteredNickName) {
+                throw new UserExistsException(UserErrorCode.USER_EXISTS);
+            }
+        }
+    }
+
+    private void checkUpdateRequest(JoinPoint joinPoint, Object arg) {
+        if (arg instanceof UserUpdateRequest) {
+            UserUpdateRequest userUpdateRequest = (UserUpdateRequest) arg;
+
+            // userId 추출
+            String userId = null;
+            Object[] methodArgs = joinPoint.getArgs();
+            for (Object methodArg : methodArgs) {
+                if (methodArg instanceof String) {
+                    userId = (String) methodArg;
+                    break;
                 }
+            }
 
-                if(requestBody instanceof DuplicationEmailRequest) {
-                    DuplicationEmailRequest duplicationEmailRequest = (DuplicationEmailRequest) requestBody;
+            String currentNickName = getUserDocument(userId,
+                UserStatus.REGISTERED).getNickName(); // 현재 닉네임
+            String requestedNickName = userUpdateRequest.getNickName(); // 요청된 닉네임
 
-                    boolean isRegisteredEmail = userPersistencePort.checkEmailDuplicate(duplicationEmailRequest.getEmail());
+            // 닉네임이 변경되었을 경우만 중복 체크
+            if (!currentNickName.equals(requestedNickName)) {
+                boolean isRegisteredNickName = checkNickNameDuplicate(requestedNickName);
 
-                    if (isRegisteredEmail) {
-                        throw new EmailExistsException(UserErrorCode.EMAIL_EXISTS);
-                    }
-                }
+                if (isRegisteredNickName) {
+                    throw new NickNameExistsException(UserErrorCode.NICKNAME_EXISTS);
 
-                if(requestBody instanceof DuplicationNickNameRequest) {
-                    DuplicationNickNameRequest duplicationNickNameRequest = (DuplicationNickNameRequest) requestBody;
-
-                    boolean isRegisteredNickName = userPersistencePort.checkNickNameDuplicate(duplicationNickNameRequest.getNickName());
-
-                    if (isRegisteredNickName) {
-                        throw new NickNameExistsException(UserErrorCode.NICKNAME_EXISTS);
-                    }
                 }
             }
         }
+    }
+
+    private void checkNickNameRequest(Object requestBody) {
+        if (requestBody instanceof DuplicationNickNameRequest) {
+            DuplicationNickNameRequest duplicationNickNameRequest = (DuplicationNickNameRequest) requestBody;
+
+            boolean isRegisteredNickName = checkNickNameDuplicate(
+                duplicationNickNameRequest.getNickName());
+
+            if (isRegisteredNickName) {
+                throw new NickNameExistsException(UserErrorCode.NICKNAME_EXISTS);
+            }
+        }
+    }
+
+    private void checkEmailRequest(Object requestBody) {
+        if (requestBody instanceof DuplicationEmailRequest) {
+            DuplicationEmailRequest duplicationEmailRequest = (DuplicationEmailRequest) requestBody;
+
+            boolean isRegisteredEmail = checkEmailDuplicate(
+                duplicationEmailRequest.getEmail());
+
+            if (isRegisteredEmail) {
+                throw new EmailExistsException(UserErrorCode.EMAIL_EXISTS);
+            }
+        }
+    }
+
+    private boolean checkEmailDuplicate(String email) {
+        return userPersistencePort.checkEmailDuplicate(email);
+    }
+
+    private boolean checkNickNameDuplicate(String nickName) {
+        return userPersistencePort.checkNickNameDuplicate(nickName);
+    }
+
+    private UserDocument getUserDocument(String userId, UserStatus status) {
+        return userPersistencePort.getUserDocument(userId,
+            status);
     }
 
 }
