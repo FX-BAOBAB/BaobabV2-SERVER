@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class ImageNotFoundException extends RuntimeException {
+public class ImageNotFoundException extends RuntimeException implements ImageException {
 
     private final ErrorCodeIfs errorCodeIfs;
     private final String description;
-
 
     public ImageNotFoundException(ErrorCodeIfs errorCodeIfs) {
         super(errorCodeIfs.getDescription());
