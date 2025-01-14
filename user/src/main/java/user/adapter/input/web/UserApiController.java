@@ -13,16 +13,20 @@ import global.utils.ImageIdUtils;
 import jakarta.validation.Valid;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
+import user.adapter.input.web.response.UserInfoResponse;
+import user.application.port.input.UserReaderUseCase;
 import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.input.UserUpdateUseCase;
 import user.core.common.annotation.DupleCheck;
 import user.core.common.annotation.PasswordCheck;
 import user.core.common.converter.UserConverter;
+import user.domain.command.UserReaderCommand;
 import user.domain.command.UserUnRegisterCommand;
 import user.domain.command.UserUpdateCommand;
 
@@ -34,6 +38,7 @@ public class UserApiController {
     private final UserUpdateUseCase userUpdateUseCase;
     private final UserUnRegisterUseCase userUnRegisterUseCase;
     private final ImageStorageUseCase imageStorageUseCase;
+    private final UserReaderUseCase userReaderUseCase;
     private final ImageIdUtils imageIdUtils;
 
     private final UserConverter userConverter;
@@ -72,6 +77,13 @@ public class UserApiController {
 
         boolean isUnRegistered = userUnRegisterUseCase.unRegister(unRegisterCommand);
         return Api.OK(isUnRegistered);
+    }
+
+    @GetMapping()
+    public Api<UserInfoResponse> getUserInfo(String userId) {
+        UserReaderCommand userInfo = userReaderUseCase.getUserInfoBy(userId);
+        UserInfoResponse userInfoResponse = userConverter.toResponse(userInfo);
+        return Api.OK(userInfoResponse);
     }
 
 }

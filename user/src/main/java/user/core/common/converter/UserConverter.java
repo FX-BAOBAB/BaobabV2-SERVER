@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
+import user.adapter.input.web.response.UserInfoResponse;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.Account;
@@ -80,7 +81,6 @@ public class UserConverter {
         return UserReaderCommand.builder()
             .userId(user.getId())
             .email(user.getAccount().getEmail())
-            .password(user.getAccount().getPassword())
             .nickName(user.getNickName())
             .name(user.getAccount().getName())
             .phone(user.getPhone())
@@ -94,7 +94,7 @@ public class UserConverter {
             .role(user.getRole())
             .status(user.getStatus())
             .registeredAt(user.getRegisteredAt())
-            .unregisteredAt(user.getUnRegisteredAt())
+            .unRegisteredAt(user.getUnRegisteredAt())
             .lastLoginAt(user.getLastLoginAt())
             .build();
     }
@@ -205,6 +205,28 @@ public class UserConverter {
             .userId(userId)
             .status(UserStatus.UNREGISTERED)
             .unRegisterAt(LocalDateTime.now())
+            .build();
+    }
+
+    public UserInfoResponse toResponse(UserReaderCommand userReaderCommand) {
+        return UserInfoResponse.builder()
+            .userId(userReaderCommand.getUserId())
+            .email(userReaderCommand.getEmail())
+            .nickName(userReaderCommand.getNickName())
+            .name(userReaderCommand.getName())
+            .phone(userReaderCommand.getPhone())
+            .department(userReaderCommand.getDepartment())
+            .birth(userReaderCommand.getBirth())
+            .address(userReaderCommand.getAddress())
+            .detailAddress(userReaderCommand.getDetailAddress())
+            .basicAddress(userReaderCommand.getBasicAddress())
+            .post(userReaderCommand.getPost())
+            .profileImage(userReaderCommand.getProfileImage())
+            .role(userReaderCommand.getRole())
+            .status(userReaderCommand.getStatus())
+            .registeredAt(userReaderCommand.getRegisteredAt())
+            .unRegisteredAt(userReaderCommand.getUnRegisteredAt())
+            .lastLoginAt(userReaderCommand.getLastLoginAt())
             .build();
     }
 

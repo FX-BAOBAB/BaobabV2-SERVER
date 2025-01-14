@@ -1,4 +1,4 @@
-package user.domain.command;
+package user.adapter.input.web.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,8 +14,7 @@ import user.domain.dto.ProfileImage;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReaderCommand {
-
+public class UserInfoResponse {
     private String userId;
 
     private String email;

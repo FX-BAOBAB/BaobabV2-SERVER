@@ -22,7 +22,7 @@ public interface UserPersistencePort {
 
     UserDocument getUserDocumentBy(String email, UserStatus status);
 
-    UserReaderCommand getUserInfo(String email, UserStatus status);
+    UserReaderCommand getUserInfo(String userId, UserStatus status);
 
     void setLastLoginAt(String userId, LocalDateTime lastLoginAt);
 
