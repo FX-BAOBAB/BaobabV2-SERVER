@@ -10,11 +10,18 @@ import java.util.List;
 public interface GetArticleUseCase {
 
     /**
+     * Get My Articles By User Id
+     * @param userId Login User Id
+     * @return Article List
+     */
+    List<Article> getMyArticles(Long userId);
+
+    /**
      * Get Article By Article Id
      * @param articleId Article PK
      * @return Article
      */
-    Article getArticleById(List<String> articleId);
+    Article getArticleByIdList(List<String> articleIdList);
 
     /**
      * Get Article List By Search Condition

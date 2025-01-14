@@ -15,6 +15,4 @@ public class ArticleSearchCommand {
 
     private String content;
 
-    private String userId;
-
 }
