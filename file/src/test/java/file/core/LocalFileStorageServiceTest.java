@@ -57,6 +57,16 @@ class LocalFileStorageServiceTest {
     }
 
     @Test
+    void 이미지_업로드_실패하면_ImageStorageException을_던진다() throws IOException {
+        when(imageFile.getOriginalFilename()).thenReturn("testImage2.jpg");
+        when(imageFile.getInputStream()).thenReturn(null);
+
+        ImageStorageException e = assertThrows(ImageStorageException.class, () ->
+                localFileStorageService.uploadImage(imageFile));
+        assertEquals(e.getErrorCodeIfs(), ImageErrorCode.IMAGE_STORAGE_ERROR);
+    }
+
+    @Test
     void 이미지_삭제_성공_테스트() throws IOException {
         when(imageFile.getOriginalFilename()).thenReturn("testImage3.jpg");
         InputStream inputStream = new ByteArrayInputStream("dummy image content".getBytes());
@@ -76,15 +86,5 @@ class LocalFileStorageServiceTest {
                 localFileStorageService.deleteImage(notExistPath));
 
         assertEquals(e.getErrorCodeIfs(), ImageErrorCode.IMAGE_NOT_FOUND);
-    }
-
-    @Test
-    void 이미지_업로드_실패하면_ImageStorageException을_던진다() throws IOException {
-        when(imageFile.getOriginalFilename()).thenReturn("testImage2.jpg");
-        when(imageFile.getInputStream()).thenReturn(null);
-
-        ImageStorageException e = assertThrows(ImageStorageException.class, () ->
-                localFileStorageService.uploadImage(imageFile));
-        assertEquals(e.getErrorCodeIfs(), ImageErrorCode.IMAGE_STORAGE_ERROR);
     }
 }
