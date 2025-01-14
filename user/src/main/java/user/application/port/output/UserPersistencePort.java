@@ -1,5 +1,6 @@
 package user.application.port.output;
 
+import java.time.LocalDateTime;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserReaderCommand;
@@ -19,9 +20,11 @@ public interface UserPersistencePort {
 
     UserDocument getUserDocument(String userId, UserStatus status);
 
+    UserDocument getUserDocumentBy(String email, UserStatus status);
+
     UserReaderCommand getUserInfo(String email, UserStatus status);
 
-    void setLastLoginAt(UserReaderCommand userReaderCommand);
+    void setLastLoginAt(String userId, LocalDateTime lastLoginAt);
 
     boolean unRegisterUser(UserUnRegisterForm userUnRegisterForm);
 
