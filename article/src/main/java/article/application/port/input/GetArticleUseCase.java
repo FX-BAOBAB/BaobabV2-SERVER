@@ -31,11 +31,4 @@ public interface GetArticleUseCase {
      */
     List<Article> getArticleList(ArticleSearchCommand articleSearchCommand);
 
-    // TODO 노출 Algorithm 적용 필요
-    /**
-     * get ALL Article List
-     * @return Article List
-     */
-    List<Article> getAllArticleList();
-
 }

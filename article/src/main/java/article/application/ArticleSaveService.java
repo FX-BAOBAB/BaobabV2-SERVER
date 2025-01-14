@@ -45,12 +45,7 @@ public class ArticleSaveService implements DefaultArticleUseCase {
 
     @Override
     public List<Article> getArticleList(ArticleSearchCommand articleSearchCommand) {
-        return null;
-    }
-
-    @Override
-    public List<Article> getAllArticleList() {
-        return null;
+        return articlePersistencePort.getArticleList(articleSearchCommand);
     }
 
     @Override

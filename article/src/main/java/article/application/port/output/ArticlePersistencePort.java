@@ -23,7 +23,7 @@ public interface ArticlePersistencePort {
      * @param articleSearchCommand Article Search Condition
      * @return Article
      */
-    List<ArticleCommand> getArticleList(ArticleSearchCommand articleSearchCommand);
+    List<Article> getArticleList(ArticleSearchCommand articleSearchCommand);
 
     /**
      * Get Article List By User Id List
@@ -31,6 +31,7 @@ public interface ArticlePersistencePort {
      * @return List<ArticleCommand>
      */
     List<Article> getArticleListBy(String userId);
+
 
     /**
      * Update Article Data

@@ -7,6 +7,7 @@ import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
 import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleSaveCommand;
+import article.domain.command.ArticleSearchCommand;
 import file.application.port.input.ImageStorageUseCase;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
@@ -83,6 +84,12 @@ public class ArticleApiController {
         return Api.OK(MyArticleListResponse.builder()
                 .articles(getArticleUseCase.getMyArticles(userId))
             .build());
+    }
+
+    @GetMapping
+    public Api<List<Article>> getAllArticles(ArticleSearchCommand articleSearchCommand) {
+        // TODO Article List Algorithm 적용 필요
+        return Api.OK(getArticleUseCase.getArticleList(articleSearchCommand));
     }
 
 }

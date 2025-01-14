@@ -4,7 +4,6 @@ import article.adapter.output.persistence.repository.Article;
 import article.adapter.output.persistence.repository.ArticleMongoRepository;
 import article.application.port.output.ArticlePersistencePort;
 import article.core.common.converter.ArticleConverter;
-import article.domain.command.ArticleCommand;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import global.annotation.output.PersistenceAdapter;
@@ -27,7 +26,8 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     }
 
     @Override
-    public List<ArticleCommand> getArticleList(ArticleSearchCommand articleSearchCommand) {
+    public List<Article> getArticleList(ArticleSearchCommand articleSearchCommand) {
+        // TODO Query DSL 적용 필요
         return List.of();
     }
 
