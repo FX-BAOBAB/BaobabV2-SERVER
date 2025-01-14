@@ -1,16 +1,15 @@
 package user.application;
 
-import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.output.UserPersistencePort;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
-import user.domain.command.UserReaderCommand;
 import user.security.jwt.service.TokenIssueService;
 
 @Service
@@ -23,15 +22,15 @@ public class UserLoginService implements UserLoginUseCase {
     @Override
     public TokenCommand login(UserLoginCommand userLoginCommand) {
 
-        UserReaderCommand userInfo = userPersistencePort.getUserInfo(userLoginCommand.getEmail(),
-            UserStatus.REGISTERED);
+        UserDocument userDocument = userPersistencePort.getUserDocumentBy(
+            userLoginCommand.getEmail(), UserStatus.REGISTERED);
 
-        if(BCrypt.checkpw(userLoginCommand.getPassword(), userInfo.getPassword())) {
-            userInfo.setLastLoginAt(LocalDateTime.now());
-            userPersistencePort.setLastLoginAt(userInfo);
+        if(BCrypt.checkpw(userLoginCommand.getPassword(), userDocument.getAccount().getPassword())) {
+            LocalDateTime lastLoginAt = LocalDateTime.now();
+            userPersistencePort.setLastLoginAt(userDocument.getId(), lastLoginAt);
         }
 
-        return tokenIssueService.issueToken(userInfo.getUserId());
+        return tokenIssueService.issueToken(userDocument.getId());
     }
 
 }

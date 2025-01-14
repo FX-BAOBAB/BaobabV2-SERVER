@@ -1,6 +1,7 @@
 package user.adapter.output.persistence;
 
 import global.annotation.output.PersistenceAdapter;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
@@ -61,6 +62,19 @@ public class UserPersistenceAdapter implements UserPersistencePort {
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
     }
 
+    /**
+     * 관리자 or Server 내에서 User 정보 참조할 때 사용
+     *
+     * @param email
+     * @param status
+     * @return
+     */
+    @Override
+    public UserDocument getUserDocumentBy(String email, UserStatus status) {
+        return userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(email, status)
+            .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+    }
+
     @Override
     public UserReaderCommand getUserInfo(String email, UserStatus status) {
         UserDocument user = userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(
@@ -70,11 +84,11 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     }
 
     @Override
-    public void setLastLoginAt(UserReaderCommand userReaderCommand) {
+    public void setLastLoginAt(String userId, LocalDateTime lastLoginAt) {
         UserDocument user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(
-                userReaderCommand.getUserId(), userReaderCommand.getStatus())
+                userId, UserStatus.REGISTERED)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
-        user.setLastLoginAt(userReaderCommand.getLastLoginAt());
+        user.setLastLoginAt(lastLoginAt);
         userMongoRepository.save(user);
     }
 
