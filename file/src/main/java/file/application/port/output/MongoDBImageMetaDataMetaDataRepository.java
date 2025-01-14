@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MongoDBImageMetaDataMetaDataRepository extends MongoRepository<ImageMetaData, ObjectId>, ImageMetaDataPersistencePort {
+public interface MongoDBImageMetaDataMetaDataRepository extends MongoRepository<ImageMetaData, String>, ImageMetaDataPersistencePort {
     ImageMetaData save(ImageMetaData metaData);
 }
