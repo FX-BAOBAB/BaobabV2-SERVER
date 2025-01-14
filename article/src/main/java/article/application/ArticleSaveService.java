@@ -18,6 +18,7 @@ public class ArticleSaveService implements SaveArticleUseCase {
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
 
         articleSaveCommand.setStatus(ArticleStatus.ON_SALE);
+
         articleSaveCommand.setRegisteredAt(LocalDateTime.now());
 
         return articlePersistencePort.saveArticle(articleSaveCommand);

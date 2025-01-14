@@ -38,6 +38,7 @@ public class ArticleApiController {
 
     @PostMapping()
     public Api<Boolean> save(@Valid ArticleSaveRequest articleSaveRequest) {
+
         try {
             List<ImageCommand> imageCommandList = articleSaveRequest.getImageList().stream()
                 .map(image -> {
@@ -53,9 +54,11 @@ public class ArticleApiController {
                 }).toList();
 
             List<ImageMetaData> imageMetaDataList = imageStorageUseCase.saveImageList(imageCommandList).get();
+
             // TODO 유저 아이디 처리
             ArticleSaveCommand articleSaveCommand = articleConverter.toSaveCommand(articleSaveRequest, imageMetaDataList, "userId");
             boolean isSaved = saveArticleUseCase.saveArticle(articleSaveCommand);
+
             return Api.OK(isSaved);
 
         } catch (InterruptedException | ExecutionException e) {
