@@ -1,6 +1,6 @@
 package file.core;
 
-import file.application.port.output.MongoDBImageMetaDataRepository;
+import file.application.port.output.MongoDBImageMetaDataMetaDataRepository;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
@@ -32,7 +32,7 @@ public class SaveImageTransactionTest {
     private MongoDBImageMetaDataService imageMetaDataService; // Mock 객체
 
     @Mock
-    private MongoDBImageMetaDataRepository mongoDBImageMetaDataRepository;
+    private MongoDBImageMetaDataMetaDataRepository mongoDBImageMetaDataRepository;
 
     @Test
     void saveImage_transactionalTest() throws Exception {
