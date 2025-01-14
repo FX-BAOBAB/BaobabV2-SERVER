@@ -1,5 +1,6 @@
 package article.adapter.input.web.request;
 
+import article.adapter.output.persistence.enums.ArticleCategory;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,9 +19,10 @@ public class ArticleSearchCondition {
 
     private List<Long> articleIdList;
 
+    private ArticleCategory category;
+
     private int page;
 
     private int size;
-
 
 }
