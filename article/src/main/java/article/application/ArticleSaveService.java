@@ -29,17 +29,17 @@ public class ArticleSaveService implements DefaultArticleUseCase {
     }
 
     @Override
+    public List<Article> getMyArticles(String userId) {
+        return articlePersistencePort.getArticleListBy(userId);
+    }
+
+    @Override
     public boolean deleteArticle(String articleId) {
         return false;
     }
 
     @Override
-    public List<Article> getMyArticles(Long userId) {
-        return null;
-    }
-
-    @Override
-    public Article getArticleByIdList(List<String> articleIdList) {
+    public List<Article> getArticlesBy(Long articleId) {
         return null;
     }
 

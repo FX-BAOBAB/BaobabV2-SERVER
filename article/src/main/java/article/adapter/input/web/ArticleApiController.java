@@ -1,6 +1,9 @@
 package article.adapter.input.web;
 
 import article.adapter.input.web.request.ArticleSaveRequest;
+import article.adapter.input.web.response.MyArticleListResponse;
+import article.adapter.output.persistence.repository.Article;
+import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
 import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleSaveCommand;
@@ -16,10 +19,14 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/article")
@@ -30,6 +37,8 @@ public class ArticleApiController {
     private final ArticleConverter articleConverter;
 
     private final SaveArticleUseCase saveArticleUseCase;
+
+    private final GetArticleUseCase getArticleUseCase;
 
     // TODO Module Code Environment DB 처리
     private final ImageStorageUseCase imageStorageUseCase;
@@ -62,8 +71,18 @@ public class ArticleApiController {
             return Api.OK(isSaved);
 
         } catch (InterruptedException | ExecutionException e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR); 
         }
+    }
+    
+    // TODO Login User 처리
+    @GetMapping
+    public Api<MyArticleListResponse> getMyArticles(@RequestParam String userId) {
+        log.info("userId : {}", userId);
+        return Api.OK(MyArticleListResponse.builder()
+                .articles(getArticleUseCase.getMyArticles(userId))
+            .build());
     }
 
 }

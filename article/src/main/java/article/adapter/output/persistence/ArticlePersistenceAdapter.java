@@ -30,7 +30,12 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     public List<ArticleCommand> getArticleList(ArticleSearchCommand articleSearchCommand) {
         return List.of();
     }
-    
+
+    @Override
+    public List<Article> getArticleListBy(String userId) {
+        return articleMongoRepository.findFirstByUserId(userId);
+    }
+
     @Override
     public boolean updateArticle(Article article) {
         return false;
