@@ -1,16 +1,20 @@
 package article.application;
 
 import article.adapter.output.persistence.enums.ArticleStatus;
-import article.application.port.input.SaveArticleUseCase;
+import article.adapter.output.persistence.repository.Article;
+import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
 import article.domain.command.ArticleSaveCommand;
+import article.domain.command.ArticleSearchCommand;
+import article.domain.command.ArticleUpdateCommand;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ArticleSaveService implements SaveArticleUseCase {
+public class ArticleSaveService implements DefaultArticleUseCase {
 
     private final ArticlePersistencePort articlePersistencePort;
 
@@ -22,5 +26,35 @@ public class ArticleSaveService implements SaveArticleUseCase {
         articleSaveCommand.setRegisteredAt(LocalDateTime.now());
 
         return articlePersistencePort.saveArticle(articleSaveCommand);
+    }
+
+    @Override
+    public boolean deleteArticle(String articleId) {
+        return false;
+    }
+
+    @Override
+    public List<Article> getMyArticles(Long userId) {
+        return null;
+    }
+
+    @Override
+    public Article getArticleByIdList(List<String> articleIdList) {
+        return null;
+    }
+
+    @Override
+    public List<Article> getArticleList(ArticleSearchCommand articleSearchCommand) {
+        return null;
+    }
+
+    @Override
+    public List<Article> getAllArticleList() {
+        return null;
+    }
+
+    @Override
+    public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
+        return false;
     }
 }
