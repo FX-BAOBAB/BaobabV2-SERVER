@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -22,6 +23,7 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     private final ApplicationContext context;
 
     @Async
+    @Transactional
     @Override
     public CompletableFuture<ImageMetaData> saveImage(ImageCommand imageCommand) {
 
