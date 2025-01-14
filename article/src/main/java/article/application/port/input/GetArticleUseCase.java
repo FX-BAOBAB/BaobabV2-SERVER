@@ -1,7 +1,10 @@
 package article.application.port.input;
 
+import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleSearchCommand;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 /**
@@ -10,18 +13,18 @@ import java.util.List;
 public interface GetArticleUseCase {
 
     /**
-     * Get My Articles By User Id
-     * @param articleId Login User Id
+     * Get My Articles By Article ID
+     * @param articleId Login Article ID
      * @return Article List
      */
     Article getArticlesBy(String articleId);
 
     /**
-     * Get Article List By user Id
-     * @param userId user Id
+     * Get Article List By Search command
+     * @param command search command
      * @return Article List
      */
-    List<Article> getMyArticles(String userId);
+    List<Article> getMyArticles(ArticleSearchCommand command);
 
     /**
      * Get Article List By Search Condition

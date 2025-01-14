@@ -10,6 +10,7 @@ import global.annotation.output.PersistenceAdapter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -33,8 +34,8 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     }
 
     @Override
-    public List<Article> getArticleListBy(String userId) {
-        return articleMongoRepository.findFirstByUserId(userId);
+    public List<Article> getMyArticles(String userId, Pageable pageable) {
+        return articleMongoRepository.findAllByUserId(userId,pageable);
     }
 
     @Override

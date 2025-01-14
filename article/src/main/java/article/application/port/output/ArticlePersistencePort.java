@@ -4,6 +4,8 @@ import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleCommand;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +29,11 @@ public interface ArticlePersistencePort {
     List<Article> getArticleList(ArticleSearchCommand articleSearchCommand);
 
     /**
-     * Get Article List By User Id List
+     * Get Article List By User Id
      * @param userId User Id List
      * @return List<ArticleCommand>
      */
-    List<Article> getArticleListBy(String userId);
+    List<Article> getMyArticles(String userId, Pageable pageable);
 
 
     /**

@@ -1,5 +1,6 @@
 package article.application;
 
+import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.output.persistence.enums.ArticleStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,8 +32,8 @@ public class ArticleSaveService implements DefaultArticleUseCase {
     }
 
     @Override
-    public List<Article> getMyArticles(String userId) {
-        return articlePersistencePort.getArticleListBy(userId);
+    public List<Article> getMyArticles(ArticleSearchCommand command) {
+        return articlePersistencePort.getMyArticles(command.getUserId(),command.getPageable());
     }
 
     @Override
