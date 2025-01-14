@@ -86,9 +86,9 @@ public class ArticleApiController {
             .build());
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public Api<List<Article>> getAllArticles(ArticleSearchCommand articleSearchCommand) {
-        // TODO Article List Algorithm 적용 필요
+        // TODO Article List Algorithm 적용 필요, Query DSL 적용 필요
         return Api.OK(getArticleUseCase.getArticleList(articleSearchCommand));
     }
 

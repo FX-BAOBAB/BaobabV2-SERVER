@@ -28,7 +28,7 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     @Override
     public List<Article> getArticleList(ArticleSearchCommand articleSearchCommand) {
         // TODO Query DSL 적용 필요
-        return List.of();
+        return articleMongoRepository.findAll();
     }
 
     @Override
