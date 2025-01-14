@@ -14,7 +14,7 @@ public interface GetArticleUseCase {
      * @param articleId Login User Id
      * @return Article List
      */
-    List<Article> getArticlesBy(Long articleId);
+    Article getArticlesBy(String articleId);
 
     /**
      * Get Article List By user Id

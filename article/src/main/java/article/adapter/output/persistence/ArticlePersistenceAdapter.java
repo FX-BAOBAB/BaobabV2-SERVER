@@ -8,6 +8,7 @@ import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import global.annotation.output.PersistenceAdapter;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @PersistenceAdapter
@@ -44,6 +45,11 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     @Override
     public boolean deleteArticle(String articleId) {
         return false;
+    }
+
+    @Override
+    public Optional<Article> findById(String articleId) {
+        return articleMongoRepository.findById(articleId);
     }
 
 }

@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,6 +91,11 @@ public class ArticleApiController {
     public Api<List<Article>> getAllArticles(ArticleSearchCommand articleSearchCommand) {
         // TODO Article List Algorithm 적용 필요, Query DSL 적용 필요
         return Api.OK(getArticleUseCase.getArticleList(articleSearchCommand));
+    }
+
+    @GetMapping("/{articleId}")
+    public Api<Article> getArticleById(@PathVariable String articleId) {
+        return Api.OK(getArticleUseCase.getArticlesBy(articleId));
     }
 
 }

@@ -5,6 +5,7 @@ import article.domain.command.ArticleCommand;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Article Persistence OUTPUT Port
@@ -47,4 +48,5 @@ public interface ArticlePersistencePort {
      */
     boolean deleteArticle(String articleId);
 
+    Optional<Article> findById(String articleId);
 }

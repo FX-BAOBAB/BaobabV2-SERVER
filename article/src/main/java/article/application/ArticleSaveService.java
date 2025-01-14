@@ -9,6 +9,7 @@ import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,9 @@ public class ArticleSaveService implements DefaultArticleUseCase {
     }
 
     @Override
-    public List<Article> getArticlesBy(Long articleId) {
-        return null;
+    public Article getArticlesBy(String articleId) {
+        // TODO Exception 처리 필요
+        return articlePersistencePort.findById(articleId).orElseThrow(() -> new RuntimeException("Article not found"));
     }
 
     @Override
