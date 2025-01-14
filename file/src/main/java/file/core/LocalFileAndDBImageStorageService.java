@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -27,6 +28,7 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     private final ImageIdUtils imageIdUtils;
 
     @Async
+    @Transactional
     @Override
     public CompletableFuture<ImageMetaData> saveImage(ImageCommand imageCommand) {
 
