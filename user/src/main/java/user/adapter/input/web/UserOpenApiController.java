@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
@@ -51,17 +53,20 @@ public class UserOpenApiController {
 
     @PostMapping()
     @DupleCheck
-    public Api<Boolean> register(@Valid UserRegisterRequest userRegisterRequest) {
+    public Api<Boolean> register(
+        @RequestPart("userRegisterRequest") @Valid Api<UserRegisterRequest> userRegisterRequest,
+        @RequestPart("profileImage") MultipartFile profileImage
+    ) {
 
         try {
             ImageCommand imageCommand = imageConverter.toImageCommand(
                 imageIdUtils.generateImageId("user", "userId"),
-                userRegisterRequest.getProfileImage(), ImageKind.USER);
+                profileImage, ImageKind.USER);
 
             ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
 
             UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
-                userRegisterRequest, imageMetaData);
+                userRegisterRequest.getBody(), imageMetaData);
             boolean isRegistered = userRegisterUseCase.register(registerCommand);
             return Api.OK(isRegistered);
 

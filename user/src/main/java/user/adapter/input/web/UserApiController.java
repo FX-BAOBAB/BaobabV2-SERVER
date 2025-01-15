@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
 import user.application.port.input.UserUnRegisterUseCase;
@@ -41,17 +43,21 @@ public class UserApiController {
 
     @PostMapping("/update")
     @DupleCheck
-    public Api<Boolean> update(UserUpdateRequest userUpdateRequest, String userId) {
+    public Api<Boolean> update(
+        @RequestPart("userUpdateRequest") @Valid Api<UserUpdateRequest> userUpdateRequest,
+        @RequestPart("profileImage") MultipartFile profileImage,
+        String userId
+    ) {
         try {
             ImageCommand imageCommand = imageConverter.toImageCommand(
                 imageIdUtils.generateImageId("user", "userId"),
-                userUpdateRequest.getProfileImage(), ImageKind.USER
+                profileImage, ImageKind.USER
             );
 
             ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
 
             UserUpdateCommand updateCommand = userConverter.toUpdateCommand(
-                userUpdateRequest, imageMetaData, userId);
+                userUpdateRequest.getBody(), imageMetaData, userId);
 
             boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);
             return Api.OK(isUpdated);

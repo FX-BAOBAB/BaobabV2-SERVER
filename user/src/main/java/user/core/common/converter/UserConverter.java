@@ -149,6 +149,7 @@ public class UserConverter {
     public UserUpdateForm toUpdateForm(UserUpdateCommand userUpdateCommand) {
         return UserUpdateForm.builder()
             .userId(userUpdateCommand.getUserId())
+            .nickName(userUpdateCommand.getNickName())
             .name(userUpdateCommand.getName())
             .phone(userUpdateCommand.getPhone())
             .birth(userUpdateCommand.getBirth())
