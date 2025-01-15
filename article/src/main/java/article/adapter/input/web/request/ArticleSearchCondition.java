@@ -1,0 +1,23 @@
+package article.adapter.input.web.request;
+
+import article.adapter.output.persistence.enums.ArticleCategory;
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class ArticleSearchCondition {
+
+    // TODO Login User 대체 필요
+    private String userId;
+
+    private String title;
+
+    private String content;
+
+    private ArticleCategory category;
+
+    private int page;
+
+    private int size;
+
+}

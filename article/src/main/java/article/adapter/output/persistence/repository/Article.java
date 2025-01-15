@@ -5,6 +5,8 @@ import article.adapter.output.persistence.enums.ArticleStatus;
 import article.domain.dto.ArticleImage;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
+@QueryEntity
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "article")

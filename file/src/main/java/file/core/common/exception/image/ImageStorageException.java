@@ -4,7 +4,7 @@ import global.errorcode.ErrorCodeIfs;
 import lombok.Getter;
 
 @Getter
-public class ImageStorageException extends RuntimeException {
+public class ImageStorageException extends RuntimeException implements ImageException{
 
     private final ErrorCodeIfs errorCodeIfs;
     private final String description;

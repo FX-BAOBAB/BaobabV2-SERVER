@@ -1,7 +1,10 @@
 package article.application.port.input;
 
+import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleSearchCommand;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 /**
@@ -10,11 +13,18 @@ import java.util.List;
 public interface GetArticleUseCase {
 
     /**
-     * Get Article By Article Id
-     * @param articleId Article PK
-     * @return Article
+     * Get My Articles By Article ID
+     * @param articleId Login Article ID
+     * @return Article List
      */
-    Article getArticleById(List<String> articleId);
+    Article getArticlesBy(String articleId);
+
+    /**
+     * Get Article List By Search command
+     * @param command search command
+     * @return Article List
+     */
+    List<Article> getMyArticles(ArticleSearchCommand command);
 
     /**
      * Get Article List By Search Condition
@@ -23,12 +33,5 @@ public interface GetArticleUseCase {
      * @return Article List
      */
     List<Article> getArticleList(ArticleSearchCommand articleSearchCommand);
-
-    // TODO 노출 Algorithm 적용 필요
-    /**
-     * get ALL Article List
-     * @return Article List
-     */
-    List<Article> getAllArticleList();
 
 }

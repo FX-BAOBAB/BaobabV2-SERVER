@@ -2,6 +2,8 @@ package file.core;
 
 import file.application.port.output.ImageMetaDataPersistencePort;
 import file.application.port.output.utils.FileUtils;
+import file.core.common.exception.image.ImageNotFoundException;
+import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
 import file.domain.ImageMetaData;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,20 @@ public class MongoDBImageMetaDataService {
 
     public ImageMetaData saveImage(ImageCommand imageCommand, Path filePath) {
         return imageMetaDataPersistencePort.save(createImageMetaData(imageCommand, filePath));
+    }
+
+
+    public String deleteImage(String imageId) {
+        if (!imageMetaDataPersistencePort.existsById(imageId)) {
+            throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND, "Image not exist By Id: " + imageId);
+        }
+
+        ImageMetaData deletedMetaData = imageMetaDataPersistencePort.deleteById(imageId);
+        if (deletedMetaData == null) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, "Image delete by id Failed in DB: " + imageId);
+        }
+
+        return deletedMetaData.getUrl();
     }
 
     private ImageMetaData createImageMetaData(ImageCommand imageCommand, Path filePath) {

@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -63,7 +62,5 @@ public class UserRegisterRequest {
         message = "우편번호는 5자리 숫자여야 합니다."
     )
     private String post;
-
-    private MultipartFile profileImage;
 
 }
