@@ -76,9 +76,8 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     }
 
     @Override
-    public UserReaderCommand getUserInfo(String email, UserStatus status) {
-        UserDocument user = userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(
-                email, status)
+    public UserReaderCommand getUserInfo(String userId, UserStatus status) {
+        UserDocument user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(userId, status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
         return userConverter.toReaderCommand(user);
     }
