@@ -6,10 +6,13 @@ import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
 import lombok.RequiredArgsConstructor;
+import org.apache.hc.core5.net.URIBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -22,6 +25,8 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     private final LocalFileStorageService fileStorageService;
     private final MongoDBImageMetaDataService imageMetaDataService;
     private final ApplicationContext context;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Async
     @Transactional
@@ -72,7 +77,8 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
 
         String imageUrl = imageMetaDataService.deleteImage(imageId);
         Path path = Path.of(URI.create(imageUrl).getPath());
-        fileStorageService.deleteImage(path);
+        Path filePath = Path.of(uploadDir, path.getFileName().toString());
+        fileStorageService.deleteImage(filePath);
     }
 
     @Override
