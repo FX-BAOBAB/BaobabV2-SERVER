@@ -5,6 +5,7 @@ import file.application.port.output.utils.FileUtils;
 import file.domain.ImageCommand;
 import file.domain.ImageMetaData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,6 +17,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MongoDBImageMetaDataService {
     private final ImageMetaDataPersistencePort imageMetaDataPersistencePort;
+    @Value("${file.dir}")
+    private String dir;
 
     public ImageMetaData saveImage(ImageCommand imageCommand, Path filePath) {
         return imageMetaDataPersistencePort.save(createImageMetaData(imageCommand, filePath));
@@ -37,8 +40,8 @@ public class MongoDBImageMetaDataService {
 
     private String createImageUrl(Path filePath) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .scheme("https")
-                .path(filePath.toString())
+                .scheme("http")
+                .path(dir + filePath.getFileName())
                 .toUriString();
     }
 }
