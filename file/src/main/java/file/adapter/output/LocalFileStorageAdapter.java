@@ -86,6 +86,6 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
     @Override
     public boolean isExist(Path filePath) {
-        return true;
+        return Files.exists(filePath);
     }
 }

@@ -1,6 +1,8 @@
 package file.core;
 
 import file.application.port.output.FileDirStoragePort;
+import file.core.common.error.ImageErrorCode;
+import file.core.common.exception.image.ImageNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,5 +21,11 @@ public class LocalFileStorageService {
 
     public void deleteImage(Path filePath) {
         filedirStoragePort.delete(filePath);
+    }
+
+    public void checkIfExistImage(Path filePath) {
+        if (!filedirStoragePort.isExist(filePath)) {
+            throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND);
+        }
     }
 }

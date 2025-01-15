@@ -64,4 +64,10 @@ public class MongoDBImageMetaDataService {
                 .path(dir + "/" + filePath.getFileName())
                 .toUriString();
     }
+
+    public String findImageUrl(String imageId) {
+        return imageMetaDataPersistencePort.findById(imageId)
+                .orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND))
+                .getUrl();
+    }
 }
