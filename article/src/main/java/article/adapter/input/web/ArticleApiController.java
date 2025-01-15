@@ -2,13 +2,17 @@ package article.adapter.input.web;
 
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.input.web.request.ArticleSearchCondition;
-import article.adapter.input.web.response.MyArticleListResponse;
+import article.adapter.input.web.request.ArticleUpdateRequest;
+import article.adapter.input.web.response.ArticleListResponse;
 import article.adapter.output.persistence.repository.Article;
+import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
+import article.application.port.input.UpdateArticleUseCase;
 import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
+import article.domain.command.ArticleUpdateCommand;
 import file.application.port.input.ImageStorageUseCase;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
@@ -39,6 +43,10 @@ public class ArticleApiController {
 
     private final GetArticleUseCase getArticleUseCase;
 
+    private final UpdateArticleUseCase updateArticleUseCase;
+
+    private final DeleteArticleUseCase deleteArticleUseCase;
+
     // TODO Module Code Environment DB 처리
     private final ImageStorageUseCase imageStorageUseCase;
 
@@ -65,9 +73,8 @@ public class ArticleApiController {
 
             // TODO 유저 아이디 처리
             ArticleSaveCommand articleSaveCommand = articleConverter.toSaveCommand(articleSaveRequest, imageMetaDataList, "Test");
-            boolean isSaved = saveArticleUseCase.saveArticle(articleSaveCommand);
 
-            return Api.OK(isSaved);
+            return Api.OK(saveArticleUseCase.saveArticle(articleSaveCommand));
 
         } catch (InterruptedException | ExecutionException e) {
             // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
@@ -77,8 +84,8 @@ public class ArticleApiController {
 
     // TODO Login User 처리
     @GetMapping
-    public Api<MyArticleListResponse> getMyArticles(@ModelAttribute ArticleSearchCondition condition, Pageable pageable) {
-        return Api.OK(MyArticleListResponse.builder()
+    public Api<ArticleListResponse> getMyArticles(@ModelAttribute ArticleSearchCondition condition, Pageable pageable) {
+        return Api.OK(ArticleListResponse.builder()
                 .articles(getArticleUseCase.getMyArticles(
                         ArticleSearchCommand.builder()
                                 .userId(condition.getUserId())
@@ -101,6 +108,13 @@ public class ArticleApiController {
     @GetMapping("/{articleId}")
     public Api<Article> getArticleById(@PathVariable String articleId) {
         return Api.OK(getArticleUseCase.getArticlesBy(articleId));
+    }
+
+    // TODO Login User 처리
+    @PutMapping()
+    public Api<Boolean> updateArticle(@Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest) {
+        ArticleUpdateCommand articleUpdateCommand = articleConverter.toUpdateCommand(articleUpdateRequest);
+        return Api.OK(updateArticleUseCase.updateArticle(articleUpdateCommand));
     }
 
 }

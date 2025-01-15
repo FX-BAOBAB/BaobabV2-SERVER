@@ -1,8 +1,10 @@
 package article.core.common.converter;
 
 import article.adapter.input.web.request.ArticleSaveRequest;
+import article.adapter.input.web.request.ArticleUpdateRequest;
 import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleSaveCommand;
+import article.domain.command.ArticleUpdateCommand;
 import article.domain.dto.ArticleImage;
 import file.domain.ImageMetaData;
 import global.annotation.Converter;
@@ -32,6 +34,20 @@ public class ArticleConverter {
             .build();
     }
 
+    public ArticleUpdateCommand toUpdateCommand(ArticleUpdateRequest articleUpdateRequest) {
+        return ArticleUpdateCommand.builder()
+            .id(articleUpdateRequest.getId())
+            .title(articleUpdateRequest.getTitle())
+            .content(articleUpdateRequest.getContent())
+            .category(articleUpdateRequest.getCategory())
+            .status(articleUpdateRequest.getStatus())
+            .price(articleUpdateRequest.getPrice())
+            .imageList(articleUpdateRequest.getImageList())
+            .updateImages(articleUpdateRequest.getUpdateImages())
+            .deleteImageIdList(articleUpdateRequest.getDeleteImageIdList())
+            .build();
+    }
+
     public Article toArticle(ArticleSaveCommand articleSaveCommand) {
         return Article.builder()
             .title(articleSaveCommand.getTitle())
@@ -42,6 +58,20 @@ public class ArticleConverter {
             .status(articleSaveCommand.getStatus())
             .userId(articleSaveCommand.getUserId())
             .imageList(articleSaveCommand.getImageList())
+            .build();
+    }
+
+    public Article toArticle(ArticleUpdateCommand articleUpdateCommand) {
+        return Article.builder()
+            .id(articleUpdateCommand.getId())
+            .title(articleUpdateCommand.getTitle())
+            .content(articleUpdateCommand.getContent())
+            .category(articleUpdateCommand.getCategory())
+            .price(articleUpdateCommand.getPrice())
+            .registeredAt(articleUpdateCommand.getRegisteredAt())
+            .status(articleUpdateCommand.getStatus())
+            .userId(articleUpdateCommand.getUserId())
+            .imageList(articleUpdateCommand.getImageList())
             .build();
     }
 }

@@ -1,7 +1,11 @@
 package article.adapter.input.web.request;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
-import jakarta.validation.constraints.*;
+import article.adapter.output.persistence.enums.ArticleStatus;
+import article.domain.dto.ArticleImage;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleSaveRequest {
+public class ArticleUpdateRequest {
+
+    private String id;
 
     @NotBlank(message = "제목을 입력하세요")
     @Size(max = 200, message = "제목은 200자 이내로 작성하세요")
@@ -27,7 +33,13 @@ public class ArticleSaveRequest {
     @NotNull(message = "가격을 입력하세요")
     private Integer price;
 
-    @NotEmpty(message = "물품에 대한 사진을 첨부하세요")
-    private List<MultipartFile> imageList;
+    @NotNull(message = "상태를 확인하세요")
+    private ArticleStatus status;
+
+    private List<MultipartFile> updateImages;
+
+    private List<ArticleImage> imageList;
+
+    private List<String> deleteImageIdList;
 
 }

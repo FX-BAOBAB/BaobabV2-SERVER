@@ -4,6 +4,7 @@ import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleCommand;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
+import article.domain.command.ArticleUpdateCommand;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -38,10 +39,10 @@ public interface ArticlePersistencePort {
 
     /**
      * Update Article Data
-     * @param article Updated Article Data
+     * @param articleUpdateCommand Updated Article Data
      * @return is Article Updated?
      */
-    boolean updateArticle(Article article);
+    boolean updateArticle(ArticleUpdateCommand articleUpdateCommand);
 
     /**
      * Delete Article Data
