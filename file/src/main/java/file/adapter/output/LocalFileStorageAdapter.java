@@ -83,4 +83,9 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
         log.info("Deleted image at: {}", filePath);
     }
+
+    @Override
+    public boolean isExist(Path filePath) {
+        return true;
+    }
 }
