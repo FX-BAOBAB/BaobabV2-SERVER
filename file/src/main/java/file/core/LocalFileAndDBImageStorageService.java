@@ -87,6 +87,16 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
                 CompletableFuture.runAsync(() -> getBeanImageStorageUseCase().deleteImage(id)));
     }
 
+    @Override
+    public CompletableFuture<String> findImageUrl(String imageId) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<List<String>> findImageUrlList(List<String> imageId) {
+        return null;
+    }
+
     private ImageStorageUseCase getBeanImageStorageUseCase() {
         return context.getBean(ImageStorageUseCase.class);
     }
