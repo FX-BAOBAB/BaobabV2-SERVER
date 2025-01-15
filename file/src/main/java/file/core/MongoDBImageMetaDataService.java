@@ -1,7 +1,7 @@
 package file.core;
 
 import file.application.port.output.ImageMetaDataPersistencePort;
-import file.application.port.output.utils.FileUtils;
+import file.core.common.utils.FileUtils;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageNotFoundException;
 import file.core.common.exception.image.ImageStorageException;
@@ -29,14 +29,16 @@ public class MongoDBImageMetaDataService {
     }
 
     public String deleteImage(String imageId) {
-        if (!imageMetaDataPersistencePort.existsById(imageId)) {
-            throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND, "Image not exist By Id: " + imageId);
+        Optional<ImageMetaData> imageMetaData = imageMetaDataPersistencePort.findById(imageId);
+
+        if (imageMetaData.isEmpty()) {
+            throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND);
         }
 
-        Optional<ImageMetaData> imageMetaData = imageMetaDataPersistencePort.findById(imageId);
         imageMetaDataPersistencePort.deleteById(imageId);
+
         if (imageMetaDataPersistencePort.existsById(imageId)) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, "Image delete by id Failed in DB: " + imageId);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
         return imageMetaData.get().getUrl();

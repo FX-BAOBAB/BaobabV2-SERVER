@@ -5,10 +5,8 @@ import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
-import global.utils.ImageIdUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +18,10 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-@Import(ImageIdUtils.class)
 public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     private final LocalFileStorageService fileStorageService;
     private final MongoDBImageMetaDataService imageMetaDataService;
     private final ApplicationContext context;
-    private final ImageIdUtils imageIdUtils;
 
     @Async
     @Transactional
@@ -45,10 +41,7 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     @Override
     public CompletableFuture<List<ImageMetaData>> saveImageList(List<ImageCommand> imageCommandList) {
         List<CompletableFuture<ImageMetaData>> futures = imageCommandList.stream()
-                .map(imageCommand -> {
-                    ImageStorageUseCase imageStorageUseCase = context.getBean(ImageStorageUseCase.class);
-                    return imageStorageUseCase.saveImage(imageCommand);
-                })
+                .map(imageCommand -> getBeanImageStorageUseCase().saveImage(imageCommand))
                 .toList();
 
         CompletableFuture<Void> allDone = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
@@ -72,20 +65,20 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
 
     @Async
     @Override
-    public void deleteImage(String encodeImageId) {
-        String imageId = imageIdUtils.decodeImageId(encodeImageId);
+    public void deleteImage(String imageId) {
 
-        if (imageId.isEmpty())
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, "Image id is empty");
+        if (imageId == null || imageId.isEmpty())
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
 
         String imageUrl = imageMetaDataService.deleteImage(imageId);
-        fileStorageService.deleteImage(Path.of(URI.create(imageUrl).getPath()));
+        Path path = Path.of(URI.create(imageUrl).getPath());
+        fileStorageService.deleteImage(path);
     }
 
     @Override
-    public void deleteImageList(List<String> encodeImageIdList) {
-        encodeImageIdList.forEach(encodeImageId ->
-                CompletableFuture.runAsync(() -> getBeanImageStorageUseCase().deleteImage(encodeImageId)));
+    public void deleteImageList(List<String> imageId) {
+        imageId.forEach(id ->
+                CompletableFuture.runAsync(() -> getBeanImageStorageUseCase().deleteImage(id)));
     }
 
     private ImageStorageUseCase getBeanImageStorageUseCase() {
