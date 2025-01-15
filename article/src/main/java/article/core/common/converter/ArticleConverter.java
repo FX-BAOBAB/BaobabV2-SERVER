@@ -2,7 +2,6 @@ package article.core.common.converter;
 
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.output.persistence.repository.Article;
-import article.domain.command.ArticleCommand;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.dto.ArticleImage;
 import file.domain.ImageMetaData;

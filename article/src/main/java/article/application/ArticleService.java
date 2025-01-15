@@ -1,23 +1,22 @@
 package article.application;
 
-import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.output.persistence.enums.ArticleStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
+import article.core.common.error.ArticleErrorCode;
+import article.core.common.exception.article.ArticleNotFoundException;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ArticleSaveService implements DefaultArticleUseCase {
+public class ArticleService implements DefaultArticleUseCase {
 
     private final ArticlePersistencePort articlePersistencePort;
 
@@ -33,7 +32,7 @@ public class ArticleSaveService implements DefaultArticleUseCase {
 
     @Override
     public List<Article> getMyArticles(ArticleSearchCommand command) {
-        return articlePersistencePort.getMyArticles(command.getUserId(),command.getPageable());
+        return articlePersistencePort.getMyArticles(command.getUserId(), command.getPageable());
     }
 
     @Override
@@ -43,8 +42,8 @@ public class ArticleSaveService implements DefaultArticleUseCase {
 
     @Override
     public Article getArticlesBy(String articleId) {
-        // TODO Exception 처리 필요
-        return articlePersistencePort.findById(articleId).orElseThrow(() -> new RuntimeException("Article not found"));
+        return articlePersistencePort.findById(articleId).orElseThrow(() ->
+            new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
     }
 
     @Override

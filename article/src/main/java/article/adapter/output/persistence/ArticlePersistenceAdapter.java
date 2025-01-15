@@ -2,6 +2,7 @@ package article.adapter.output.persistence;
 
 import article.adapter.output.persistence.repository.Article;
 import article.adapter.output.persistence.repository.ArticleMongoRepository;
+import article.adapter.output.persistence.repository.ArticleQueryRepository;
 import article.application.port.output.ArticlePersistencePort;
 import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleSaveCommand;
@@ -20,6 +21,8 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
 
     private final ArticleMongoRepository articleMongoRepository;
 
+    private final ArticleQueryRepository articleQueryRepository;
+
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
         Article article = articleConverter.toArticle(articleSaveCommand);
@@ -29,13 +32,12 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
 
     @Override
     public List<Article> getArticleList(ArticleSearchCommand articleSearchCommand) {
-        // TODO Query DSL 적용 필요
-        return articleMongoRepository.findAll();
+        return articleQueryRepository.getArticlesBy(articleSearchCommand);
     }
 
     @Override
     public List<Article> getMyArticles(String userId, Pageable pageable) {
-        return articleMongoRepository.findAllByUserId(userId,pageable);
+        return articleMongoRepository.findAllByUserId(userId, pageable);
     }
 
     @Override

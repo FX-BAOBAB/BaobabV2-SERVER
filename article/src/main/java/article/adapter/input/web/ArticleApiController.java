@@ -18,13 +18,10 @@ import file.domain.ImageMetaData;
 import global.api.Api;
 import global.utils.ImageIdUtils;
 import jakarta.validation.Valid;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,12 +89,12 @@ public class ArticleApiController {
 
     @GetMapping("/list")
     public Api<List<Article>> getAllArticles(@ModelAttribute ArticleSearchCondition condition) {
-        // TODO Article List Algorithm 적용 필요, Query DSL 적용 필요
+        // TODO Article List Algorithm 적용 필요
         return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.builder()
                 .userId(condition.getUserId())
                 .title(condition.getTitle())
                 .content(condition.getContent())
-                .articleIdList(condition.getArticleIdList())
+                .category(condition.getCategory())
                 .build()));
     }
 

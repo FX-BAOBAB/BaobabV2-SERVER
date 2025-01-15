@@ -1,7 +1,6 @@
 package article.adapter.output.persistence.repository;
 
 import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

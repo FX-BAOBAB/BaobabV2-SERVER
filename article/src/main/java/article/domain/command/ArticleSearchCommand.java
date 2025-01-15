@@ -1,5 +1,6 @@
 package article.domain.command;
 
+import article.adapter.output.persistence.enums.ArticleCategory;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class ArticleSearchCommand {
 
     private String content;
 
-    private List<Long> articleIdList;
+    private ArticleCategory category;
 
     private Pageable pageable;
 }
