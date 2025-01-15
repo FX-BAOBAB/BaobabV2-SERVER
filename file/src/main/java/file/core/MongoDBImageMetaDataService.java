@@ -2,6 +2,7 @@ package file.core;
 
 import file.application.port.output.ImageMetaDataPersistencePort;
 import file.application.port.output.utils.FileUtils;
+import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageNotFoundException;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,18 +28,18 @@ public class MongoDBImageMetaDataService {
         return imageMetaDataPersistencePort.save(createImageMetaData(imageCommand, filePath));
     }
 
-
     public String deleteImage(String imageId) {
         if (!imageMetaDataPersistencePort.existsById(imageId)) {
             throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND, "Image not exist By Id: " + imageId);
         }
 
-        ImageMetaData deletedMetaData = imageMetaDataPersistencePort.deleteById(imageId);
-        if (deletedMetaData == null) {
+        Optional<ImageMetaData> imageMetaData = imageMetaDataPersistencePort.findById(imageId);
+        imageMetaDataPersistencePort.deleteById(imageId);
+        if (imageMetaDataPersistencePort.existsById(imageId)) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, "Image delete by id Failed in DB: " + imageId);
         }
 
-        return deletedMetaData.getUrl();
+        return imageMetaData.get().getUrl();
     }
 
     private ImageMetaData createImageMetaData(ImageCommand imageCommand, Path filePath) {
