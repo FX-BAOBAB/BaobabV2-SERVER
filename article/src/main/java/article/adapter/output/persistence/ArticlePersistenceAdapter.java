@@ -55,7 +55,9 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
 
     @Override
     public boolean deleteArticle(String articleId) {
-        return false;
+        articleMongoRepository.deleteById(articleId);
+        Optional<Article> article = articleMongoRepository.findById(articleId);
+        return article.isEmpty();
     }
 
 }

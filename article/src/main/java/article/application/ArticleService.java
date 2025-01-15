@@ -115,7 +115,18 @@ public class ArticleService implements DefaultArticleUseCase {
 
     @Override
     public boolean deleteArticle(String articleId) {
-        return false;
+
+        Article article = articlePersistencePort.findById(articleId)
+            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+
+        // TODO User 처리 후 본인 게시물인지 확인
+      /*if (!"userId".equals(article.getUserId())) {
+          throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
+      }*/
+
+        article.getImageList().forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
+
+        return articlePersistencePort.deleteArticle(articleId);
     }
 
 }
