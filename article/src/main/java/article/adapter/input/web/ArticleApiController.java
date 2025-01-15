@@ -117,6 +117,9 @@ public class ArticleApiController {
         return Api.OK(updateArticleUseCase.updateArticle(articleUpdateCommand));
     }
 
+    @DeleteMapping("/{articleId}")
+    public Api<Boolean> deleteArticle(@PathVariable String articleId) {
+        return Api.OK(deleteArticleUseCase.deleteArticle(articleId));
+    }
+
 }
-
-

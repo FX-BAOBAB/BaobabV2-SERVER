@@ -2,7 +2,6 @@ package article.adapter.input.web.request;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import lombok.Data;
-import java.util.List;
 
 @Data
 public class ArticleSearchCondition {
