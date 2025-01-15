@@ -60,5 +60,4 @@ public class LocalFileStorage implements FileDirStorage {
 
         log.info("Deleted image at: {}", filePath);
     }
-    }
 }
