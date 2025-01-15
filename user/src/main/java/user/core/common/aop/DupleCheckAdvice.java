@@ -46,19 +46,20 @@ public class DupleCheckAdvice {
                 // Api<?> 인 경우
                 checkEmailRequest(requestBody);
                 checkNickNameRequest(requestBody);
+                checkUserRegisterRequest(requestBody);
+                checkUpdateRequest(joinPoint, requestBody);
+
             }
 
             // Api<?> 가 아닌 경우
-            checkUpdateRequest(joinPoint, arg);
-            checkUserRegisterRequest(arg);
 
         }
 
     }
 
-    private void checkUserRegisterRequest(Object arg) {
-        if (arg instanceof UserRegisterRequest) {
-            UserRegisterRequest userRegisterRequest = (UserRegisterRequest) arg;
+    private void checkUserRegisterRequest(Object requestBody) {
+        if (requestBody instanceof UserRegisterRequest) {
+            UserRegisterRequest userRegisterRequest = (UserRegisterRequest) requestBody;
 
             // email & nickName 검증
             boolean isRegisteredEmail = checkEmailDuplicate(userRegisterRequest.getEmail());
@@ -71,9 +72,9 @@ public class DupleCheckAdvice {
         }
     }
 
-    private void checkUpdateRequest(JoinPoint joinPoint, Object arg) {
-        if (arg instanceof UserUpdateRequest) {
-            UserUpdateRequest userUpdateRequest = (UserUpdateRequest) arg;
+    private void checkUpdateRequest(JoinPoint joinPoint, Object requestBody) {
+        if (requestBody instanceof UserUpdateRequest) {
+            UserUpdateRequest userUpdateRequest = (UserUpdateRequest) requestBody;
 
             // userId 추출
             String userId = null;
@@ -95,7 +96,6 @@ public class DupleCheckAdvice {
 
                 if (isRegisteredNickName) {
                     throw new NickNameExistsException(UserErrorCode.NICKNAME_EXISTS);
-
                 }
             }
         }
