@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyArticleListResponse {
+public class ArticleListResponse {
 
     private List<Article> articles;
 
