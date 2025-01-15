@@ -7,6 +7,7 @@ import article.domain.dto.ArticleImage;
 import file.domain.ImageMetaData;
 import global.annotation.Converter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Converter
 public class ArticleConverter {
