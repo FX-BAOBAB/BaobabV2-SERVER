@@ -6,4 +6,5 @@ import java.nio.file.Path;
 
 public interface FileDirStorage {
     void store(Path filePath,MultipartFile imageFile);
+    void delete(Path filePath);
 }

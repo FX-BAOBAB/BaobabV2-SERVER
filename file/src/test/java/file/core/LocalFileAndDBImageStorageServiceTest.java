@@ -6,7 +6,6 @@ import file.domain.ImageKind;
 import file.domain.ImageMetaData;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -19,14 +18,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -121,5 +120,20 @@ class LocalFileAndDBImageStorageServiceTest {
         updatedMetaDataList.stream().filter(m ->
                         savedMetaDataList.stream().anyMatch(s -> s.getId().equals(m.getId())))
                 .forEach(m -> assertThat(m.getOriginalName()).isEqualTo("test2"));
+    }
+
+    @Test
+    void 이미지_삭제_성공하면_삭제_이후_조회_시_이미지_파일이_존재하지_않는다() throws ExecutionException, InterruptedException, IOException {
+        ImageCommand imageCommand = ImageCommand.builder()
+                .id("image_578")
+                .file(imageFile)
+                .kind(ImageKind.USER)
+                .build();
+        ImageMetaData imageMetaData = localFileAndDBImageStorageService.saveImage(imageCommand).get();
+
+        localFileAndDBImageStorageService.deleteImage(imageMetaData.getId());
+
+        boolean isExists = Files.exists(Path.of(URI.create(imageMetaData.getUrl()).getPath()));
+        assertThat(isExists).isFalse();
     }
 }
