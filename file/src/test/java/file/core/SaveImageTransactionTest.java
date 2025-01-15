@@ -1,6 +1,6 @@
 package file.core;
 
-import file.application.port.output.MongoDBImageMetaDataRepository;
+import file.adapter.output.repository.MongoDBImageMetaDataRepository;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;

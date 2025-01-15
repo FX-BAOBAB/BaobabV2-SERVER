@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 
-public interface FileDirStorage {
-    void store(Path filePath,MultipartFile imageFile);
+public interface FileDirStoragePort {
+    Path store(MultipartFile imageFile);
     void delete(Path filePath);
 }

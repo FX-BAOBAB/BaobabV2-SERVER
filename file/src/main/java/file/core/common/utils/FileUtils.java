@@ -1,4 +1,4 @@
-package file.application.port.output.utils;
+package file.core.common.utils;
 
 public class FileUtils {
     public static String getExtension(String fileName) {
