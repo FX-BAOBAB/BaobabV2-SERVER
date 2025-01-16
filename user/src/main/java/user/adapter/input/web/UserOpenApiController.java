@@ -1,24 +1,14 @@
 package user.adapter.input.web;
 
-import file.application.port.input.ImageStorageUseCase;
-import file.core.common.converter.ImageConverter;
-import file.core.common.error.ImageErrorCode;
-import file.core.common.exception.image.ImageStorageException;
-import file.domain.ImageCommand;
-import file.domain.ImageKind;
-import file.domain.ImageMetaData;
 import global.annotation.input.RestAdapter;
 import global.api.Api;
-import global.utils.ImageIdUtils;
 import jakarta.validation.Valid;
-import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
@@ -43,13 +33,9 @@ public class UserOpenApiController {
     private final UserRegisterUseCase userRegisterUseCase;
     private final UserLoginUseCase userLoginUseCase;
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
-    private final ImageStorageUseCase imageStorageUseCase;
-
-    private final ImageIdUtils imageIdUtils;
 
     private final UserConverter userConverter;
     private final TokenConverter tokenConverter;
-    private final ImageConverter imageConverter;
 
     @PostMapping()
     @DupleCheck
