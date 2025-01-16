@@ -40,7 +40,7 @@ public class UserOpenApiController {
     @PostMapping()
     @DupleCheck
     public Api<String> register(
-        @RequestPart("userRegisterRequest") @Valid Api<UserRegisterRequest> userRegisterRequest
+        @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
         UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
             userRegisterRequest.getBody());
