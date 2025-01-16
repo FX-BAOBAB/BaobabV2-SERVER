@@ -6,13 +6,11 @@ import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
 import lombok.RequiredArgsConstructor;
-import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -85,6 +83,31 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     public void deleteImageList(List<String> imageId) {
         imageId.forEach(id ->
                 CompletableFuture.runAsync(() -> getBeanImageStorageUseCase().deleteImage(id)));
+    }
+
+    @Async
+    @Override
+    public CompletableFuture<String> findImageUrl(String imageId) {
+
+        if (imageId == null || imageId.isEmpty()) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+        }
+
+        String imageUrl = imageMetaDataService.findImageUrl(imageId);
+
+        Path contextPath = Path.of(URI.create(imageUrl).getPath());
+        Path filePath = Path.of(uploadDir, contextPath.getFileName().toString());
+
+        fileStorageService.checkIfExistImage(filePath);
+
+        return CompletableFuture.completedFuture(imageUrl);
+    }
+
+    @Override
+    public List<CompletableFuture<String>> findImageUrlList(List<String> imageId) {
+        return imageId.stream()
+                .map(id -> getBeanImageStorageUseCase().findImageUrl(id))
+                .toList();
     }
 
     private ImageStorageUseCase getBeanImageStorageUseCase() {
