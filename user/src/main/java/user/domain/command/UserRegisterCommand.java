@@ -38,8 +38,6 @@ public class UserRegisterCommand {
 
     private String post;
 
-    private ProfileImage profileImage;
-
     private UserRole role;
 
     private UserStatus status;

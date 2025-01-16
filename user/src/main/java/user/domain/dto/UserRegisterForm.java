@@ -37,8 +37,6 @@ public class UserRegisterForm {
 
     private String post;
 
-    private ProfileImage profileImage;
-
     private UserRole role;
 
     private UserStatus status;

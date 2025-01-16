@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserReaderCommand;
+import user.domain.dto.ProfileImage;
 import user.domain.dto.UserRegisterForm;
 import user.domain.dto.UserUnRegisterForm;
 import user.domain.dto.UserUpdateForm;
@@ -14,7 +15,9 @@ public interface UserPersistencePort {
 
     boolean checkNickNameDuplicate(String name);
 
-    boolean saveUser(UserRegisterForm userRegisterForm);
+    String saveUser(UserRegisterForm userRegisterForm);
+
+    Boolean saveProfileImage(String userId, ProfileImage profileImage);
 
     boolean updateUser(UserUpdateForm userUpdateForm);
 

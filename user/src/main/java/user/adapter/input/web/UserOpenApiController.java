@@ -1,24 +1,14 @@
 package user.adapter.input.web;
 
-import file.application.port.input.ImageStorageUseCase;
-import file.core.common.converter.ImageConverter;
-import file.core.common.error.ImageErrorCode;
-import file.core.common.exception.image.ImageStorageException;
-import file.domain.ImageCommand;
-import file.domain.ImageKind;
-import file.domain.ImageMetaData;
 import global.annotation.input.RestAdapter;
 import global.api.Api;
-import global.utils.ImageIdUtils;
 import jakarta.validation.Valid;
-import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
@@ -43,37 +33,20 @@ public class UserOpenApiController {
     private final UserRegisterUseCase userRegisterUseCase;
     private final UserLoginUseCase userLoginUseCase;
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
-    private final ImageStorageUseCase imageStorageUseCase;
-
-    private final ImageIdUtils imageIdUtils;
 
     private final UserConverter userConverter;
     private final TokenConverter tokenConverter;
-    private final ImageConverter imageConverter;
 
     @PostMapping()
     @DupleCheck
-    public Api<Boolean> register(
-        @RequestPart("userRegisterRequest") @Valid Api<UserRegisterRequest> userRegisterRequest,
-        @RequestPart("profileImage") MultipartFile profileImage
+    public Api<String> register(
+        @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
+        UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
+            userRegisterRequest.getBody());
 
-        try {
-            ImageCommand imageCommand = imageConverter.toImageCommand(
-                imageIdUtils.generateImageId("user", "userId"),
-                profileImage, ImageKind.USER);
-
-            ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
-
-            UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
-                userRegisterRequest.getBody(), imageMetaData);
-            boolean isRegistered = userRegisterUseCase.register(registerCommand);
-            return Api.OK(isRegistered);
-
-        } catch (ExecutionException | InterruptedException e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
-        }
-
+        String userId = userRegisterUseCase.register(registerCommand);
+        return Api.OK(userId);
     }
 
     @PostMapping("/login")

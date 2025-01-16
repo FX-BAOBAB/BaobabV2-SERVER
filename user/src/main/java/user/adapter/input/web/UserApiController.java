@@ -23,6 +23,7 @@ import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.input.web.response.UserInfoResponse;
 import user.application.port.input.UserReaderUseCase;
+import user.application.port.input.UserRegisterUseCase;
 import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.input.UserUpdateUseCase;
 import user.core.common.annotation.DupleCheck;
@@ -31,6 +32,7 @@ import user.core.common.converter.UserConverter;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserUnRegisterCommand;
 import user.domain.command.UserUpdateCommand;
+import user.domain.dto.ProfileImage;
 
 @RestAdapter
 @RequiredArgsConstructor
@@ -41,6 +43,7 @@ public class UserApiController {
     private final UserUnRegisterUseCase userUnRegisterUseCase;
     private final ImageStorageUseCase imageStorageUseCase;
     private final UserReaderUseCase userReaderUseCase;
+    private final UserRegisterUseCase userRegisterUseCase;
     private final ImageIdUtils imageIdUtils;
 
     private final UserConverter userConverter;
@@ -90,6 +93,32 @@ public class UserApiController {
         UserReaderCommand userInfo = userReaderUseCase.getUserInfoBy(userId);
         UserInfoResponse userInfoResponse = userConverter.toResponse(userInfo);
         return Api.OK(userInfoResponse);
+    }
+
+    @PostMapping("/image")
+    public Api<Boolean> registerProfileImage(
+        @RequestPart("profileImage") MultipartFile profileImage,
+        String userId
+    ) {
+        try {
+            ImageCommand imageCommand = imageConverter.toImageCommand(
+                imageIdUtils.generateImageId("user", userId),
+                profileImage, ImageKind.USER);
+
+            ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
+
+            ProfileImage imageInfo = ProfileImage.builder()
+                .ImageId(imageMetaData.getId())
+                .ImageUrl(imageMetaData.getUrl())
+                .build();
+
+            Boolean isRegisteredImage = userRegisterUseCase.registerProfileImage(userId, imageInfo);
+            return Api.OK(isRegisteredImage);
+
+        } catch (ExecutionException | InterruptedException e) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+        }
+
     }
 
 }
