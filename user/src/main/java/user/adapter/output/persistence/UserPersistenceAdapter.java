@@ -11,6 +11,7 @@ import user.core.common.converter.UserConverter;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
+import user.domain.dto.ProfileImage;
 import user.domain.dto.UserRegisterForm;
 import user.domain.dto.UserUnRegisterForm;
 import user.domain.dto.UserUpdateForm;
@@ -33,9 +34,17 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     }
 
     @Override
-    public boolean saveUser(UserRegisterForm userRegisterForm) {
+    public String saveUser(UserRegisterForm userRegisterForm) {
         UserDocument user = userConverter.toUserDocument(userRegisterForm);
         UserDocument savedUser = userMongoRepository.save(user);
+        return savedUser.getId();
+    }
+
+    @Override
+    public Boolean saveProfileImage(String userId, ProfileImage profileImage) {
+        UserDocument userDocument = getUserDocument(userId, UserStatus.REGISTERED);
+        userDocument.setProfileImage(profileImage);
+        UserDocument savedUser = userMongoRepository.save(userDocument);
         return savedUser.getId() != null;
     }
 

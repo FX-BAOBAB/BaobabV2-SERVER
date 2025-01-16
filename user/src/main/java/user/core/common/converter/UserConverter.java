@@ -29,14 +29,7 @@ public class UserConverter {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserRegisterCommand toRegisterCommand(UserRegisterRequest userRegisterRequest,
-        ImageMetaData imageMetaData) {
-
-        ProfileImage imageInfo = ProfileImage.builder()
-            .ImageId(imageMetaData.getId())
-            .ImageUrl(imageMetaData.getUrl())
-            .build();
-
+    public UserRegisterCommand toRegisterCommand(UserRegisterRequest userRegisterRequest) {
         return UserRegisterCommand.builder()
             .email(userRegisterRequest.getEmail())
             .password(userRegisterRequest.getPassword())
@@ -49,7 +42,6 @@ public class UserConverter {
             .detailAddress(userRegisterRequest.getDetailAddress())
             .basicAddress(userRegisterRequest.getBasicAddress())
             .post(userRegisterRequest.getPost())
-            .profileImage(imageInfo)
             .build();
     }
 
@@ -59,7 +51,6 @@ public class UserConverter {
             .phone(userRegisterForm.getPhone())
             .department(userRegisterForm.getDepartment())
             .birth(userRegisterForm.getBirth())
-            .profileImage(userRegisterForm.getProfileImage())
             .role(userRegisterForm.getRole())
             .status(userRegisterForm.getStatus())
             .registeredAt(userRegisterForm.getRegisteredAt())
@@ -139,7 +130,6 @@ public class UserConverter {
             .detailAddress(userRegisterCommand.getDetailAddress())
             .basicAddress(userRegisterCommand.getBasicAddress())
             .post(userRegisterCommand.getPost())
-            .profileImage(userRegisterCommand.getProfileImage())
             .role(UserRole.BASIC_USER)
             .status(UserStatus.REGISTERED)
             .registeredAt(LocalDateTime.now())

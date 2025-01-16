@@ -53,27 +53,14 @@ public class UserOpenApiController {
 
     @PostMapping()
     @DupleCheck
-    public Api<Boolean> register(
-        @RequestPart("userRegisterRequest") @Valid Api<UserRegisterRequest> userRegisterRequest,
-        @RequestPart("profileImage") MultipartFile profileImage
+    public Api<String> register(
+        @RequestPart("userRegisterRequest") @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
+        UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
+            userRegisterRequest.getBody());
 
-        try {
-            ImageCommand imageCommand = imageConverter.toImageCommand(
-                imageIdUtils.generateImageId("user", "userId"),
-                profileImage, ImageKind.USER);
-
-            ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
-
-            UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
-                userRegisterRequest.getBody(), imageMetaData);
-            boolean isRegistered = userRegisterUseCase.register(registerCommand);
-            return Api.OK(isRegistered);
-
-        } catch (ExecutionException | InterruptedException e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
-        }
-
+        String userId = userRegisterUseCase.register(registerCommand);
+        return Api.OK(userId);
     }
 
     @PostMapping("/login")
