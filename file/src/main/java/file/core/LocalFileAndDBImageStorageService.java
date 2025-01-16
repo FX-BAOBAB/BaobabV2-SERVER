@@ -2,7 +2,6 @@ package file.core;
 
 import file.application.port.input.ImageStorageUseCase;
 import file.core.common.error.ImageErrorCode;
-import file.core.common.exception.image.ImageNotFoundException;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
@@ -105,8 +104,10 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
     }
 
     @Override
-    public CompletableFuture<List<String>> findImageUrlList(List<String> imageId) {
-        return null;
+    public List<CompletableFuture<String>> findImageUrlList(List<String> imageId) {
+        return imageId.stream()
+                .map(id -> getBeanImageStorageUseCase().findImageUrl(id))
+                .toList();
     }
 
     private ImageStorageUseCase getBeanImageStorageUseCase() {

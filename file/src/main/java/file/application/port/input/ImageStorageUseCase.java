@@ -16,5 +16,5 @@ public interface ImageStorageUseCase {
     void deleteImage(String imageId);
     void deleteImageList(List<String> imageId);
     CompletableFuture<String> findImageUrl(String imageId);
-    CompletableFuture<List<String>> findImageUrlList(List<String> imageId);
+    List<CompletableFuture<String>> findImageUrlList(List<String> imageId);
 }
