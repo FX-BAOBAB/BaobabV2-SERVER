@@ -8,8 +8,6 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 spring:
-  main:
-   web-application-type: reactive
   application:
     name: apigateway-service
   cloud:
