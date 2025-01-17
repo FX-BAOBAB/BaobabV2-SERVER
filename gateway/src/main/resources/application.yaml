@@ -16,15 +16,21 @@ spring:
         - id : baobab-article
           uri : lb://BAOBAB-ARTICLE
           predicates:
-            - Path=/articles/**
-        - id: baobab-files
-          uri: lb://BAOBAB-FILES
-          predicates:
-            - Path=/files/**
-        - id: baobab-users
+            - Path=/api/article/**
+          filters:
+#            - ServiceApiPrivateFilter
+
+        - id: baobab-users(private)
           uri: lb://BAOBAB-USERS
           predicates:
-            - Path=/users/**
+            - Path=/api/user/**
+          filters:
+#            - ServiceApiPrivateFilter
+
+        - id: baobab-users(public)
+          uri: lb://BAOBAB-USERS
+          predicates:
+            - Path=/open-api/user/**
 
 # logging
 logging:
