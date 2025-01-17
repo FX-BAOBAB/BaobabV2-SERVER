@@ -1,5 +1,5 @@
 file:
-  upload-dir: images
+  upload-dir: src/test/resources/images
 
 spring:
   data:

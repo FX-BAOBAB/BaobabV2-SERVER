@@ -27,7 +27,7 @@ public class ExceptionLoggingAspect {
     @Pointcut("execution(* file.core.LocalFileStorageService.deleteImage(..))")
     private void deleteInLocalFileStorageService() {}
 
-    @Pointcut("execution(* file.core.MongoDBImageMetaDataService.deleteImage(..))")
+    @Pointcut("execution(* file.core.MongoDBImageMetaDataService.deleteImageMetaData(..))")
     private void deleteInMongoDBImageMetaDataService() {}
 
     @Pointcut("execution(* file.adapter.output.LocalFileStorageAdapter.delete(..))")

@@ -8,5 +8,5 @@ public interface ImageMetaDataPersistencePort {
     ImageMetaData save(ImageMetaData metaData);
     boolean existsById(String imageId);
     Optional<ImageMetaData> findById(String imageId);
-    ImageMetaData deleteById(String imageId);
+    void deleteById(String imageId);
 }

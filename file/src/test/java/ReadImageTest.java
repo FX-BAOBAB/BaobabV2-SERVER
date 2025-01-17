@@ -37,7 +37,7 @@ public class ReadImageTest {
         // 이미지 저장 수행
         ImageMetaData imageMetaData = this.saveImage("fileName.jpg", "content");
 
-        when(imageMetaDataService.findImageUrl(imageMetaData.getId())).thenReturn(imageMetaData.getUrl());
+        when(imageMetaDataService.findImageMetaData(imageMetaData.getId())).thenReturn(imageMetaData);
         Path mockPath = FileTestUtils.makeMockPath(imageMetaData.getServerName() + imageMetaData.getExtension());
 
         // 이미지 조회
@@ -57,14 +57,14 @@ public class ReadImageTest {
         // Mock 파일 업로드 동작
         when(fileStorageService.uploadImage(any(MockMultipartFile.class))).thenReturn(mockPath);
         // Mock 메타데이터 저장 동작
-        when(imageMetaDataService.saveImage(any(ImageCommand.class), any(Path.class))).thenReturn(mockMetaData);
+        when(imageMetaDataService.saveImageMetaData(any(ImageCommand.class), any(Path.class))).thenReturn(mockMetaData);
 
         // 이미지 저장 수행
         ImageMetaData imageMetaData = localFileAndDBImageStorageService.saveImage(mockImageCommand).get();
 
         // Mock 객체의 동작 검증
         Mockito.verify(fileStorageService, Mockito.times(1)).uploadImage(mockFile);
-        Mockito.verify(imageMetaDataService, Mockito.times(1)).saveImage(mockImageCommand, mockPath);
+        Mockito.verify(imageMetaDataService, Mockito.times(1)).saveImageMetaData(mockImageCommand, mockPath);
 
         return imageMetaData;
     }

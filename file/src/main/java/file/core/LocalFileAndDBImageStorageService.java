@@ -35,7 +35,7 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
 
         Path filePath = fileStorageService.uploadImage(imageCommand.getFile());
-        ImageMetaData metaData = imageMetaDataService.saveImage(imageCommand, filePath);
+        ImageMetaData metaData = imageMetaDataService.saveImageMetaData(imageCommand, filePath);
 
         return CompletableFuture.completedFuture(metaData);
     }
@@ -73,8 +73,8 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
         if (imageId == null || imageId.isEmpty())
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
 
-        String imageUrl = imageMetaDataService.deleteImage(imageId);
-        Path path = Path.of(URI.create(imageUrl).getPath());
+        ImageMetaData deleteMetaData = imageMetaDataService.deleteImageMetaData(imageId);
+        Path path = Path.of(URI.create(deleteMetaData.getUrl()).getPath());
         Path filePath = Path.of(uploadDir, path.getFileName().toString());
         fileStorageService.deleteImage(filePath);
     }
@@ -93,14 +93,15 @@ public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
-        String imageUrl = imageMetaDataService.findImageUrl(imageId);
+        ImageMetaData imageMetaData = imageMetaDataService.findImageMetaData(imageId);
 
-        Path contextPath = Path.of(URI.create(imageUrl).getPath());
+        URI uri = URI.create(imageMetaData.getUrl());
+        Path contextPath = Path.of(uri.getPath());
         Path filePath = Path.of(uploadDir, contextPath.getFileName().toString());
 
         fileStorageService.checkIfExistImage(filePath);
 
-        return CompletableFuture.completedFuture(imageUrl);
+        return CompletableFuture.completedFuture(uri.toString());
     }
 
     @Override
