@@ -11,6 +11,7 @@ import java.util.Optional;
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class ImageMetaDataPersistenceAdapter implements ImageMetaDataPersistencePort {
+
     private final MongoDBImageMetaDataRepository mongoDBImageMetaDataRepository;
 
     @Override
@@ -29,9 +30,7 @@ public class ImageMetaDataPersistenceAdapter implements ImageMetaDataPersistence
     }
 
     @Override
-    public ImageMetaData deleteById(String imageId) {
-        ImageMetaData imageMetaData = findById(imageId).orElse(null);
+    public void deleteById(String imageId) {
         mongoDBImageMetaDataRepository.deleteById(imageId);
-        return imageMetaData;
     }
 }

@@ -15,33 +15,34 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MongoDBImageMetaDataService {
-    private final ImageMetaDataPersistencePort imageMetaDataPersistencePort;
-    @Value("${file.dir}")
-    private String dir;
 
-    public ImageMetaData saveImage(ImageCommand imageCommand, Path filePath) {
-        return imageMetaDataPersistencePort.save(createImageMetaData(imageCommand, filePath));
+    @Value("${file.context-path}")
+    private String contextPath;
+    private final ImageMetaDataPersistencePort imageMetaDataPersistencePort;
+
+    public ImageMetaData saveImageMetaData(ImageCommand imageCommand, Path filePath) {
+        ImageMetaData imageMetaData = createImageMetaData(imageCommand, filePath);
+        return imageMetaDataPersistencePort.save(imageMetaData);
     }
 
-    public String deleteImage(String imageId) {
-        Optional<ImageMetaData> imageMetaData = imageMetaDataPersistencePort.findById(imageId);
-
-        if (imageMetaData.isEmpty()) {
-            throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND);
-        }
-
+    public ImageMetaData deleteImageMetaData(String imageId) {
+        ImageMetaData imageMetaData = findImageMetaData(imageId);
         imageMetaDataPersistencePort.deleteById(imageId);
 
-        if (imageMetaDataPersistencePort.existsById(imageId)) {
+        if(imageMetaDataPersistencePort.existsById(imageId)) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
-        return imageMetaData.get().getUrl();
+        return imageMetaData;
+    }
+
+    public ImageMetaData findImageMetaData(String imageId) {
+        return imageMetaDataPersistencePort.findById(imageId)
+                .orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND));
     }
 
     private ImageMetaData createImageMetaData(ImageCommand imageCommand, Path filePath) {
@@ -61,13 +62,7 @@ public class MongoDBImageMetaDataService {
     private String createImageUrl(Path filePath) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .scheme("http")
-                .path(dir + "/" + filePath.getFileName())
+                .path(contextPath + "/" + filePath.getFileName())
                 .toUriString();
-    }
-
-    public String findImageUrl(String imageId) {
-        return imageMetaDataPersistencePort.findById(imageId)
-                .orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND))
-                .getUrl();
     }
 }

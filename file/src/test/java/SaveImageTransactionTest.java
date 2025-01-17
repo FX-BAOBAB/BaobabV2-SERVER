@@ -63,7 +63,7 @@ public class SaveImageTransactionTest {
                 .originalName("testOriginalName")
                 .kind(ImageKind.USER)
                 .build();
-        Mockito.when(imageMetaDataService.saveImage(imageCommand, mockPath)).thenReturn(mockMetaData);
+        Mockito.when(imageMetaDataService.saveImageMetaData(imageCommand, mockPath)).thenReturn(mockMetaData);
 
         // When
         CompletableFuture<ImageMetaData> futureMetaData = imageService.saveImage(imageCommand);
@@ -72,7 +72,7 @@ public class SaveImageTransactionTest {
         // Then
         // Mock 객체의 동작 검증
         Mockito.verify(fileStorageService, Mockito.times(1)).uploadImage(mockFile);
-        Mockito.verify(imageMetaDataService, Mockito.times(1)).saveImage(imageCommand, mockPath);
+        Mockito.verify(imageMetaDataService, Mockito.times(1)).saveImageMetaData(imageCommand, mockPath);
 
         // 반환된 메타데이터 검증
         assertNotNull(savedMetaData);

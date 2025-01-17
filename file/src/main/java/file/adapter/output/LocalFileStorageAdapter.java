@@ -24,11 +24,11 @@ import java.util.UUID;
 public class LocalFileStorageAdapter implements FileDirStoragePort {
 
     @Value("${file.upload-dir}")
-    private String dirPath;
+    private String uploadDir;
 
     @Override
     public Path store(MultipartFile imageFile) {
-        createDirectory(dirPath);
+        createDirectory(uploadDir);
         Path filePath = createFilePath(imageFile);
 
         try {
@@ -38,22 +38,24 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
         } catch (Exception e) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, e);
         } finally {
-            if (Files.exists(filePath)) {
-                log.info("Uploaded image to {}", filePath);
-            } else {
-                log.error("Image upload failed, file not found at: {}", filePath);
-            }
+            logImageUploadStatus(filePath);
         }
 
         return filePath;
     }
 
+    private void logImageUploadStatus(Path filePath) {
+        if (Files.exists(filePath)) {
+            log.info("Image uploaded successfully to {}", filePath);
+        } else {
+            log.error("Failed to upload image to {}", filePath);
+        }
+    }
+
     private void createDirectory(String dirPath) {
         File directory = new File(dirPath);
-        if (!directory.exists()) {
-            if (!directory.mkdirs()) {
-                throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_PATH_ERROR);
-            }
+        if (!directory.exists() && !directory.mkdirs()) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_PATH_ERROR);
         }
     }
 
@@ -62,7 +64,7 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
         String extension = FileUtils.getExtension(fileName);
         String serverName = UUID.randomUUID().toString();
 
-        return Paths.get(dirPath, serverName + extension);
+        return Paths.get(uploadDir, serverName + extension);
     }
 
     @Override
@@ -73,15 +75,11 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
             throw new ImageStorageException(ImageErrorCode.IMAGE_NOT_FOUND);
         }
 
-        try {
-            if (!imageFile.delete()) {
-                throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
-            }
-        } catch (Exception e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, e);
+        if (!imageFile.delete()) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
-        log.info("Deleted image at: {}", filePath);
+        log.info("Image deleted successfully at {}", filePath);
     }
 
     @Override

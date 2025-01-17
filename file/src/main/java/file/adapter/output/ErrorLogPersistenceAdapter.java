@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class ErrorLogPersistenceAdapter implements ErrorLogPersistencePort {
+
     private final MongoDBErrorLogRepository mongoDBErrorLogRepository;
 
     @Override
