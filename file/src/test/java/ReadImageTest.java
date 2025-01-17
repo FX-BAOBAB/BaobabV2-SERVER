@@ -3,14 +3,17 @@ import file.core.LocalFileStorageService;
 import file.core.MongoDBImageMetaDataService;
 import file.domain.ImageCommand;
 import file.domain.ImageMetaData;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import utils.FileTestUtils;
 
 import java.nio.file.Path;
@@ -32,25 +35,38 @@ public class ReadImageTest {
     @Mock
     private MongoDBImageMetaDataService imageMetaDataService;
 
+    private static MockedStatic<TransactionSynchronizationManager> transactionManagerMock;
+
+    @BeforeEach
+    void setup() {
+        transactionManagerMock = Mockito.mockStatic(TransactionSynchronizationManager.class);
+        transactionManagerMock.when(TransactionSynchronizationManager::isSynchronizationActive).thenReturn(true);
+    }
+
+    @AfterEach
+    void cleanup() {
+        transactionManagerMock.close(); // Mock 해제
+    }
+
     @Test
-    void 이미지_조회_성공하면_url을_반환한다() throws ExecutionException, InterruptedException {
+    void 이미지_조회_성공하면_url을_반환한다() {
         // 이미지 저장 수행
-        ImageMetaData imageMetaData = this.saveImage("fileName.jpg", "content");
+        ImageMetaData imageMetaData = saveImage("fileName.jpg", "content");
 
         when(imageMetaDataService.findImageMetaData(imageMetaData.getId())).thenReturn(imageMetaData);
         Path mockPath = FileTestUtils.makeMockPath(imageMetaData.getServerName() + imageMetaData.getExtension());
 
         // 이미지 조회
         ReflectionTestUtils.setField(localFileAndDBImageStorageService, "uploadDir", "src/test/resources/images");
-        String imageUrl = localFileAndDBImageStorageService.findImageUrl(imageMetaData.getId()).get();
+        String imageUrl = localFileAndDBImageStorageService.findImageUrl(imageMetaData.getId());
 
         assertNotNull(imageUrl);
         assertThat(imageUrl).isEqualTo(imageMetaData.getUrl());
     }
 
-    private ImageMetaData saveImage(String fileName, String content) throws ExecutionException, InterruptedException {
+    private ImageMetaData saveImage(String fileName, String content) {
         MockMultipartFile mockFile = FileTestUtils.makeMockMultipartFile(fileName, content);
-        ImageCommand mockImageCommand = FileTestUtils.makeMockImageCommand(mockFile);
+        ImageCommand mockImageCommand = FileTestUtils.makeMockImageCommand("image0", mockFile);
         Path mockPath = FileTestUtils.makeMockPath(mockFile.getOriginalFilename());
         ImageMetaData mockMetaData = FileTestUtils.makeMockImageMetaData(mockImageCommand, mockFile);
 
@@ -60,7 +76,7 @@ public class ReadImageTest {
         when(imageMetaDataService.saveImageMetaData(any(ImageCommand.class), any(Path.class))).thenReturn(mockMetaData);
 
         // 이미지 저장 수행
-        ImageMetaData imageMetaData = localFileAndDBImageStorageService.saveImage(mockImageCommand).get();
+        ImageMetaData imageMetaData = localFileAndDBImageStorageService.saveImage(mockImageCommand);
 
         // Mock 객체의 동작 검증
         Mockito.verify(fileStorageService, Mockito.times(1)).uploadImage(mockFile);

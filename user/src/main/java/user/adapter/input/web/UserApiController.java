@@ -71,7 +71,7 @@ public class UserApiController {
             return Api.OK(isUpdated);
 
         } catch (ExecutionException | InterruptedException e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
         }
     }
 
@@ -116,7 +116,7 @@ public class UserApiController {
             return Api.OK(isRegisteredImage);
 
         } catch (ExecutionException | InterruptedException e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
         }
 
     }

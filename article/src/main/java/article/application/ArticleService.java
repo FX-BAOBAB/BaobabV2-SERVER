@@ -6,7 +6,6 @@ import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
 import article.core.common.error.ArticleErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
-import article.core.common.exception.article.NotPermittedException;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
@@ -103,7 +102,7 @@ public class ArticleService implements DefaultArticleUseCase {
 
         } catch (InterruptedException | ExecutionException e) {
             // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
         }
 
         articleUpdateCommand.setRegisteredAt(article.getRegisteredAt());

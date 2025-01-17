@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,10 +32,8 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
         try {
             Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         } catch (Exception e) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR, e);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR, e);
         } finally {
             logImageUploadStatus(filePath);
         }
@@ -55,7 +52,7 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
     private void createDirectory(String dirPath) {
         File directory = new File(dirPath);
         if (!directory.exists() && !directory.mkdirs()) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_PATH_ERROR);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DIRECTORY_ERROR);
         }
     }
 
@@ -76,7 +73,7 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
         }
 
         if (!imageFile.delete()) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
         }
 
         log.info("Image deleted successfully at {}", filePath);

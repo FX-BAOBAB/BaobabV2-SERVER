@@ -3,11 +3,11 @@ package file.core;
 import file.application.port.output.ImageMetaDataPersistencePort;
 import file.core.common.utils.FileUtils;
 import file.core.common.error.ImageErrorCode;
-import file.core.common.exception.image.ImageNotFoundException;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
 import file.domain.ImageMetaData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -15,9 +15,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MongoDBImageMetaDataService {
 
     @Value("${file.context-path}")
@@ -30,19 +32,26 @@ public class MongoDBImageMetaDataService {
     }
 
     public ImageMetaData deleteImageMetaData(String imageId) {
-        ImageMetaData imageMetaData = findImageMetaData(imageId);
+        Optional<ImageMetaData> imageMetaData = imageMetaDataPersistencePort.findById(imageId);
+        if (imageMetaData.isEmpty()) {
+            log.warn("Image metadata not found for id: {}", imageId);
+            return null;
+        }
+
         imageMetaDataPersistencePort.deleteById(imageId);
 
         if(imageMetaDataPersistencePort.existsById(imageId)) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
         }
 
-        return imageMetaData;
+        log.info("Image MetaData deleted successfully {}", imageMetaData.get());
+
+        return imageMetaData.get();
     }
 
     public ImageMetaData findImageMetaData(String imageId) {
         return imageMetaDataPersistencePort.findById(imageId)
-                .orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND));
+                .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_NOT_FOUND));
     }
 
     private ImageMetaData createImageMetaData(ImageCommand imageCommand, Path filePath) {

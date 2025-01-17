@@ -2,7 +2,6 @@ package file.application.port.input;
 
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
-import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,5 +21,5 @@ public interface ImageStorageUseCase {
 
     CompletableFuture<String> findImageUrl(String imageId);
 
-    List<CompletableFuture<String>> findImageUrlList(List<String> imageId);
+    CompletableFuture<List<String>> findImageUrlList(List<String> imageId);
 }
