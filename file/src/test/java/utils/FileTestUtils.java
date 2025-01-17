@@ -12,12 +12,17 @@ import java.nio.file.Paths;
 public class FileTestUtils {
 
     public static MockMultipartFile makeMockMultipartFile(String filename, String content) {
-        return new MockMultipartFile(filename, content.getBytes());
+        return new MockMultipartFile(
+                "file",
+                filename,
+                "image/jpeg",
+                content.getBytes()
+        );
     }
 
-    public static ImageCommand makeMockImageCommand(MockMultipartFile mockFile) {
+    public static ImageCommand makeMockImageCommand(String imageId, MockMultipartFile mockFile) {
         return ImageCommand.builder()
-                .id("image0")
+                .id(imageId)
                 .file(mockFile)
                 .kind(ImageKind.USER)
                 .build();
