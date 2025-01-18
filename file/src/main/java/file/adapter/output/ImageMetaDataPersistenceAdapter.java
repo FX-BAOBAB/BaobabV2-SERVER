@@ -5,17 +5,22 @@ import file.adapter.output.repository.MongoDBImageMetaDataRepository;
 import file.domain.ImageMetaData;
 import global.annotation.output.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
+@Slf4j
 public class ImageMetaDataPersistenceAdapter implements ImageMetaDataPersistencePort {
+
     private final MongoDBImageMetaDataRepository mongoDBImageMetaDataRepository;
 
     @Override
     public ImageMetaData save(ImageMetaData metaData) {
-        return mongoDBImageMetaDataRepository.save(metaData);
+        ImageMetaData imageMetaData = mongoDBImageMetaDataRepository.save(metaData);
+        log.info("Image MetaData saved successfully {}", imageMetaData);
+        return imageMetaData;
     }
 
     @Override
@@ -29,9 +34,7 @@ public class ImageMetaDataPersistenceAdapter implements ImageMetaDataPersistence
     }
 
     @Override
-    public ImageMetaData deleteById(String imageId) {
-        ImageMetaData imageMetaData = findById(imageId).orElse(null);
+    public void deleteById(String imageId) {
         mongoDBImageMetaDataRepository.deleteById(imageId);
-        return imageMetaData;
     }
 }

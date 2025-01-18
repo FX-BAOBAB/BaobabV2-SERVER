@@ -1,116 +1,136 @@
 package file.core;
 
-import file.application.port.input.ImageStorageUseCase;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
+import file.core.common.utils.RetryUtils;
 import file.domain.ImageMetaData;
 import file.domain.ImageCommand;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
+import static java.lang.Thread.*;
+import static java.lang.Thread.sleep;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class LocalFileAndDBImageStorageService implements ImageStorageUseCase {
+public class LocalFileAndDBImageStorageService {
+
     private final LocalFileStorageService fileStorageService;
     private final MongoDBImageMetaDataService imageMetaDataService;
-    private final ApplicationContext context;
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    @Async
     @Transactional
-    @Override
-    public CompletableFuture<ImageMetaData> saveImage(ImageCommand imageCommand) {
+    public ImageMetaData saveImage(ImageCommand imageCommand) {
 
         if (imageCommand.getFile().isEmpty())
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            throw new ImageStorageException(ImageErrorCode.NULL_POINT);
 
         Path filePath = fileStorageService.uploadImage(imageCommand.getFile());
-        ImageMetaData metaData = imageMetaDataService.saveImage(imageCommand, filePath);
 
-        return CompletableFuture.completedFuture(metaData);
+        // 트랜잭션이 롤백될 경우 파일 삭제
+        registerRollbackFileCleanup(filePath);
+
+        return imageMetaDataService.saveImageMetaData(imageCommand, filePath);
     }
 
-    @Async
-    @Override
-    public CompletableFuture<List<ImageMetaData>> saveImageList(List<ImageCommand> imageCommandList) {
-        List<CompletableFuture<ImageMetaData>> futures = imageCommandList.stream()
-                .map(imageCommand -> getBeanImageStorageUseCase().saveImage(imageCommand))
+    private void registerRollbackFileCleanup(Path filePath) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
+                    try {
+                        fileStorageService.deleteImage(filePath);
+                    } catch (Exception e) {
+                        log.error("Failed to delete file during transaction rollback {}", filePath, e);
+                    }
+                }
+            }
+        });
+    }
+
+    @Transactional
+    public List<ImageMetaData> saveImageList(List<ImageCommand> imageCommandList) {
+        return imageCommandList.stream()
+                .map(this::saveImage)
                 .toList();
-
-        CompletableFuture<Void> allDone = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-
-        return allDone.thenApply(v ->
-                futures.stream()
-                        .map(CompletableFuture::join)
-                        .toList()
-        );
     }
 
-    @Override
-    public CompletableFuture<ImageMetaData> updateImage(ImageCommand imageCommand) {
-        return getBeanImageStorageUseCase().saveImage(imageCommand);
+    @Transactional
+    public ImageMetaData updateImage(ImageCommand imageCommand) {
+        return saveImage(imageCommand);
     }
 
-    @Override
-    public CompletableFuture<List<ImageMetaData>> updateImageList(List<ImageCommand> imageCommandList) {
-        return getBeanImageStorageUseCase().saveImageList(imageCommandList);
+    @Transactional
+    public List<ImageMetaData> updateImageList(List<ImageCommand> imageCommandList) {
+        return saveImageList(imageCommandList);
     }
 
-    @Async
-    @Override
     public void deleteImage(String imageId) {
 
-        if (imageId == null || imageId.isEmpty())
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
-
-        String imageUrl = imageMetaDataService.deleteImage(imageId);
-        Path path = Path.of(URI.create(imageUrl).getPath());
-        Path filePath = Path.of(uploadDir, path.getFileName().toString());
-        fileStorageService.deleteImage(filePath);
-    }
-
-    @Override
-    public void deleteImageList(List<String> imageId) {
-        imageId.forEach(id ->
-                CompletableFuture.runAsync(() -> getBeanImageStorageUseCase().deleteImage(id)));
-    }
-
-    @Async
-    @Override
-    public CompletableFuture<String> findImageUrl(String imageId) {
-
         if (imageId == null || imageId.isEmpty()) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            log.warn("Image id is null or empty");
+            return;
         }
 
-        String imageUrl = imageMetaDataService.findImageUrl(imageId);
+        // 이미지 메타데이터 삭제 실패 시 지수 백오프 수행
+        ImageMetaData deleteMetaData = RetryUtils.performRetryableTask(() ->
+                        imageMetaDataService.deleteImageMetaData(imageId), "delete imageMetaData", imageId);
 
-        Path contextPath = Path.of(URI.create(imageUrl).getPath());
+//        ImageMetaData deleteMetaData = imageMetaDataService.deleteImageMetaData(imageId);
+
+        // 이미지 메타데이터가 존재하지 않으면 무시
+        if (deleteMetaData == null) {
+            return;
+        }
+
+        Path path = Path.of(URI.create(deleteMetaData.getUrl()).getPath());
+        Path filePath = Path.of(uploadDir, path.getFileName().toString());
+
+        // 이미지 메타데이터 삭제 실패 시 지수 백오프 수행
+        RetryUtils.performRetryableTask(() -> {
+                fileStorageService.deleteImage(filePath);
+                return null;
+                }, "delete file", imageId);
+
+//        fileStorageService.deleteImage(filePath);
+    }
+
+    public void deleteImageList(List<String> imageId) {
+        imageId.forEach(this::deleteImage);
+    }
+
+    public String findImageUrl(String imageId) {
+
+        if (imageId == null || imageId.isEmpty()) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
+        }
+
+        ImageMetaData imageMetaData = imageMetaDataService.findImageMetaData(imageId);
+
+        URI uri = URI.create(imageMetaData.getUrl());
+        Path contextPath = Path.of(uri.getPath());
         Path filePath = Path.of(uploadDir, contextPath.getFileName().toString());
 
         fileStorageService.checkIfExistImage(filePath);
 
-        return CompletableFuture.completedFuture(imageUrl);
+        return uri.toString();
     }
 
-    @Override
-    public List<CompletableFuture<String>> findImageUrlList(List<String> imageId) {
+    public List<String> findImageUrlList(List<String> imageId) {
         return imageId.stream()
-                .map(id -> getBeanImageStorageUseCase().findImageUrl(id))
+                .map(this::findImageUrl)
                 .toList();
     }
 
-    private ImageStorageUseCase getBeanImageStorageUseCase() {
-        return context.getBean(ImageStorageUseCase.class);
-    }
 }

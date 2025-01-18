@@ -63,7 +63,8 @@ class LocalFileStorageServiceTest {
 
         ImageStorageException e = assertThrows(ImageStorageException.class, () ->
                 localFileStorageService.uploadImage(imageFile));
-        assertEquals(e.getErrorCodeIfs(), ImageErrorCode.IMAGE_STORAGE_ERROR);
+        assertEquals(e.getErrorCodeIfs(), ImageErrorCode.IMAGE_UPLOAD_ERROR);
+
     }
 
     @Test

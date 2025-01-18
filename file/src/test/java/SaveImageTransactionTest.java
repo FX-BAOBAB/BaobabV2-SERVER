@@ -7,13 +7,15 @@ import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
 import file.domain.ImageKind;
 import file.domain.ImageMetaData;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -34,6 +36,20 @@ public class SaveImageTransactionTest {
 
     @Mock
     private MongoDBImageMetaDataRepository mongoDBImageMetaDataRepository;
+
+    private static MockedStatic<TransactionSynchronizationManager> transactionManagerMock;
+
+    @BeforeEach
+    void setup() {
+        transactionManagerMock = Mockito.mockStatic(TransactionSynchronizationManager.class);
+        transactionManagerMock.when(TransactionSynchronizationManager::isSynchronizationActive).thenReturn(true);
+    }
+
+    @AfterEach
+    void cleanup() {
+        transactionManagerMock.close(); // Mock 해제
+    }
+
 
     @Test
     void saveImage_transactionalTest() throws Exception {
@@ -63,16 +79,16 @@ public class SaveImageTransactionTest {
                 .originalName("testOriginalName")
                 .kind(ImageKind.USER)
                 .build();
-        Mockito.when(imageMetaDataService.saveImage(imageCommand, mockPath)).thenReturn(mockMetaData);
+        Mockito.when(imageMetaDataService.saveImageMetaData(imageCommand, mockPath)).thenReturn(mockMetaData);
 
         // When
-        CompletableFuture<ImageMetaData> futureMetaData = imageService.saveImage(imageCommand);
-        ImageMetaData savedMetaData = futureMetaData.get(); // CompletableFuture 완료 대기
+        ImageMetaData savedMetaData = imageService.saveImage(imageCommand);
+
 
         // Then
         // Mock 객체의 동작 검증
         Mockito.verify(fileStorageService, Mockito.times(1)).uploadImage(mockFile);
-        Mockito.verify(imageMetaDataService, Mockito.times(1)).saveImage(imageCommand, mockPath);
+        Mockito.verify(imageMetaDataService, Mockito.times(1)).saveImageMetaData(imageCommand, mockPath);
 
         // 반환된 메타데이터 검증
         assertNotNull(savedMetaData);
@@ -98,12 +114,10 @@ public class SaveImageTransactionTest {
 
         // Mock 파일 업로드 실패를 유도
         Mockito.when(fileStorageService.uploadImage(mockFile))
-                .thenThrow(new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
+                .thenThrow(new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR));
 
         // When
-        assertThrows(ImageStorageException.class, () -> {
-            imageService.saveImage(imageCommand).join();
-        });
+        assertThrows(ImageStorageException.class, () -> imageService.saveImage(imageCommand));
 
         // Then
         // 데이터베이스에 ImageMetaData가 저장되지 않았는지 확인

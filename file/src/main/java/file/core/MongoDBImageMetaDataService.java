@@ -3,11 +3,11 @@ package file.core;
 import file.application.port.output.ImageMetaDataPersistencePort;
 import file.core.common.utils.FileUtils;
 import file.core.common.error.ImageErrorCode;
-import file.core.common.exception.image.ImageNotFoundException;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
 import file.domain.ImageMetaData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,29 +19,39 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MongoDBImageMetaDataService {
-    private final ImageMetaDataPersistencePort imageMetaDataPersistencePort;
-    @Value("${file.dir}")
-    private String dir;
 
-    public ImageMetaData saveImage(ImageCommand imageCommand, Path filePath) {
-        return imageMetaDataPersistencePort.save(createImageMetaData(imageCommand, filePath));
+    @Value("${file.context-path}")
+    private String contextPath;
+    private final ImageMetaDataPersistencePort imageMetaDataPersistencePort;
+
+    public ImageMetaData saveImageMetaData(ImageCommand imageCommand, Path filePath) {
+        ImageMetaData imageMetaData = createImageMetaData(imageCommand, filePath);
+        return imageMetaDataPersistencePort.save(imageMetaData);
     }
 
-    public String deleteImage(String imageId) {
+    public ImageMetaData deleteImageMetaData(String imageId) {
         Optional<ImageMetaData> imageMetaData = imageMetaDataPersistencePort.findById(imageId);
-
         if (imageMetaData.isEmpty()) {
-            throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND);
+            log.warn("Image metadata not found for id: {}", imageId);
+            return null;
         }
 
         imageMetaDataPersistencePort.deleteById(imageId);
 
-        if (imageMetaDataPersistencePort.existsById(imageId)) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+        if(imageMetaDataPersistencePort.existsById(imageId)) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
         }
 
-        return imageMetaData.get().getUrl();
+        log.info("Image MetaData deleted successfully {}", imageMetaData.get());
+
+        return imageMetaData.get();
+    }
+
+    public ImageMetaData findImageMetaData(String imageId) {
+        return imageMetaDataPersistencePort.findById(imageId)
+                .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_NOT_FOUND));
     }
 
     private ImageMetaData createImageMetaData(ImageCommand imageCommand, Path filePath) {
@@ -61,13 +71,7 @@ public class MongoDBImageMetaDataService {
     private String createImageUrl(Path filePath) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .scheme("http")
-                .path(dir + "/" + filePath.getFileName())
+                .path(contextPath + "/" + filePath.getFileName())
                 .toUriString();
-    }
-
-    public String findImageUrl(String imageId) {
-        return imageMetaDataPersistencePort.findById(imageId)
-                .orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND))
-                .getUrl();
     }
 }

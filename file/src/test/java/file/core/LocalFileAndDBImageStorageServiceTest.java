@@ -1,51 +1,45 @@
 package file.core;
 
-import file.application.port.input.ImageStorageUseCase;
 import file.domain.ImageCommand;
-import file.domain.ImageKind;
 import file.domain.ImageMetaData;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.io.ByteArrayInputStream;
+import utils.FileTestUtils;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class LocalFileAndDBImageStorageServiceTest {
     @Autowired
-    private ImageStorageUseCase localFileAndDBImageStorageService;
-    @Mock
-    private MultipartFile imageFile;
+    private LocalFileAndDBImageStorageService localFileAndDBImageStorageService;
+
     @Value("${file.upload-dir}")
     private String dirPath;
 
-    @BeforeEach
-    void setUp() throws IOException {
-        when(imageFile.getOriginalFilename()).thenReturn("test1.jpg");
-        InputStream inputStream = new ByteArrayInputStream("dummy image content".getBytes());
-        when(imageFile.getInputStream()).thenReturn(inputStream);
-    }
+    private static MockedStatic<TransactionSynchronizationManager> transactionManagerMock;
+
 
     @AfterEach
-    void tearDown() throws IOException {
+    void cleanup() throws IOException {
         Path directoryPath = Paths.get(dirPath);
         if (Files.exists(directoryPath)) {
             Files.walk(directoryPath)
@@ -54,86 +48,67 @@ class LocalFileAndDBImageStorageServiceTest {
         }
     }
 
-    @Test
-    void 이미지_수정_성공하면_수정된_ImageMetaData를_반환한다() throws ExecutionException, InterruptedException {
-        ImageCommand oldCommand = ImageCommand.builder()
-                .id("image_4")
-                .file(imageFile)
-                .kind(ImageKind.USER)
-                .build();
-        ImageCommand newCommand = ImageCommand.builder()
-                .id("image_5")
-                .file(imageFile)
-                .kind(ImageKind.USER)
-                .build();
+    private ImageMetaData save(ImageCommand imageCommand) {
+        transactionManagerMock = Mockito.mockStatic(TransactionSynchronizationManager.class);
+        transactionManagerMock.when(TransactionSynchronizationManager::isSynchronizationActive).thenReturn(true);
 
-        ImageMetaData savedImageMetaData = localFileAndDBImageStorageService.saveImage(oldCommand).get();
-        ImageMetaData updatedImageMetaData = localFileAndDBImageStorageService.updateImage(newCommand).get();
+        ImageMetaData savedImageMetaData = localFileAndDBImageStorageService.saveImage(imageCommand);
 
-        assertThat(savedImageMetaData.getId()).isNotEqualTo(updatedImageMetaData.getId());
-        assertThat(savedImageMetaData.getId()).isEqualTo("image_4");
-        assertThat(updatedImageMetaData.getId()).isEqualTo("image_5");
+        return savedImageMetaData;
     }
 
     @Test
-    void 이미지_리스트_수정_성공하면_수정된_ImageMetaData리스트를_반환한다() throws ExecutionException, InterruptedException {
-        ImageCommand oldCommand1 = ImageCommand.builder()
-                .id("image_567")
-                .file(imageFile)
-                .kind(ImageKind.USER)
-                .build();
-        ImageCommand oldCommand2 = ImageCommand.builder()
-                .id("image_2473")
-                .file(imageFile)
-                .kind(ImageKind.USER)
-                .build();
-        when(imageFile.getOriginalFilename()).thenReturn("test2.jpg");
-        ImageCommand newCommand1 = ImageCommand.builder()
-                .id("image_567")
-                .file(imageFile)
-                .kind(ImageKind.ARTICLE)
-                .build();
-        ImageCommand newCommand2 = ImageCommand.builder()
-                .id("image_2473")
-                .file(imageFile)
-                .kind(ImageKind.ARTICLE)
-                .build();
-        ImageCommand newCommand3 = ImageCommand.builder()
-                .id("image_4675")
-                .file(imageFile)
-                .kind(ImageKind.ARTICLE)
-                .build();
+    void 이미지_저장_성공() {
+        MockMultipartFile oldFile = FileTestUtils.makeMockMultipartFile("test.jpg", "test");
+        ImageCommand imageCommand = FileTestUtils.makeMockImageCommand("image0", oldFile);
 
-        List<ImageMetaData> savedMetaDataList = localFileAndDBImageStorageService.saveImageList(List.of(
-                oldCommand1,
-                oldCommand2
-        )).get();
-        List<ImageMetaData> updatedMetaDataList = localFileAndDBImageStorageService.updateImageList(List.of(
-                newCommand1,
-                newCommand2,
-                newCommand3
-        )).get();
+        ImageMetaData imageMetaData = save(imageCommand);
+        transactionManagerMock.close(); // Mock 해제
 
-        assertThat(savedMetaDataList.size()).isEqualTo(2);
-        assertThat(updatedMetaDataList.size()).isEqualTo(3);
+        assertThat(imageMetaData.getId()).isEqualTo("image0");
+    }
 
-        updatedMetaDataList.stream().filter(m ->
-                        savedMetaDataList.stream().anyMatch(s -> s.getId().equals(m.getId())))
-                .forEach(m -> assertThat(m.getOriginalName()).isEqualTo("test2"));
+
+
+    @Test
+    void 이미지_수정_성공하면_수정된_ImageMetaData를_반환한다() {
+        MockMultipartFile oldFile = FileTestUtils.makeMockMultipartFile("oldTest.jpg", "old test");
+        ImageCommand oldImageCommand = FileTestUtils.makeMockImageCommand("image1", oldFile);
+
+        ImageMetaData savedImageMetaData = save(oldImageCommand);
+
+        MockMultipartFile newFile = FileTestUtils.makeMockMultipartFile("newTest.jpg", "new test");
+        ImageCommand newImageCommand = FileTestUtils.makeMockImageCommand("image1", newFile);
+        ImageMetaData updatedImageMetaData = localFileAndDBImageStorageService.updateImage(newImageCommand);
+        transactionManagerMock.close(); // Mock 해제
+
+        assertThat(savedImageMetaData.getId()).isEqualTo(updatedImageMetaData.getId());
+        assertThat(updatedImageMetaData.getOriginalName()).isEqualTo("newTest");
     }
 
     @Test
-    void 이미지_삭제_성공하면_삭제_이후_조회_시_이미지_파일이_존재하지_않는다() throws ExecutionException, InterruptedException, IOException {
-        ImageCommand imageCommand = ImageCommand.builder()
-                .id("image_578")
-                .file(imageFile)
-                .kind(ImageKind.USER)
-                .build();
-        ImageMetaData imageMetaData = localFileAndDBImageStorageService.saveImage(imageCommand).get();
+    void 이미지_삭제_성공하면_삭제_이후_조회_시_이미지_파일이_존재하지_않는다() {
+        MockMultipartFile file = FileTestUtils.makeMockMultipartFile("test.jpg", "test");
+        ImageCommand imageCommand = FileTestUtils.makeMockImageCommand("image2", file);
+        ImageMetaData imageMetaData = save(imageCommand);
+        transactionManagerMock.close(); // Mock 해제
 
         localFileAndDBImageStorageService.deleteImage(imageMetaData.getId());
 
         boolean isExists = Files.exists(Path.of(URI.create(imageMetaData.getUrl()).getPath()));
         assertThat(isExists).isFalse();
+    }
+
+    @Test
+    void 조회() {
+        MockMultipartFile file = FileTestUtils.makeMockMultipartFile("test.jpg", "test");
+        ImageCommand imageCommand = FileTestUtils.makeMockImageCommand("image3", file);
+        ImageMetaData imageMetaData = save(imageCommand);
+        transactionManagerMock.close(); // Mock 해제
+
+        String imageUrl = localFileAndDBImageStorageService.findImageUrl(imageMetaData.getId());
+
+        assertThat(imageUrl).isNotNull();
+        assertThat(imageUrl).isEqualTo(imageMetaData.getUrl());
     }
 }

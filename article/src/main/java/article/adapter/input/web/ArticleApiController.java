@@ -78,7 +78,7 @@ public class ArticleApiController {
 
         } catch (InterruptedException | ExecutionException e) {
             // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
         }
     }
 
