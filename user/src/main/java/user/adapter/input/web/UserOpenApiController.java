@@ -8,22 +8,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.response.TokenResponse;
+import user.adapter.input.web.response.ValidationResponse;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.input.UserRegisterUseCase;
 import user.core.common.annotation.DupleCheck;
 import user.core.common.converter.TokenConverter;
 import user.core.common.converter.UserConverter;
+import user.core.common.error.TokenErrorCode;
+import user.core.common.exception.token.TokenSignatureException;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
 import user.domain.command.UserRegisterCommand;
 import user.security.jwt.model.TokenDto;
+import user.security.jwt.service.TokenHelperService;
 
 @RestAdapter
 @RequiredArgsConstructor
@@ -33,6 +36,9 @@ public class UserOpenApiController {
     private final UserRegisterUseCase userRegisterUseCase;
     private final UserLoginUseCase userLoginUseCase;
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
+
+    // TODO 임시 검증 로직
+    private final TokenHelperService tokenHelperService;
 
     private final UserConverter userConverter;
     private final TokenConverter tokenConverter;
@@ -77,6 +83,17 @@ public class UserOpenApiController {
         @RequestBody @Valid Api<DuplicationNickNameRequest> duplicationNickNameRequest
     ) {
         return Api.OK(true);
+    }
+
+    // TODO 임시
+    @PostMapping("/validation")
+    public Api<ValidationResponse> validateToken(@RequestHeader("Authorization") String accessToken) {
+        String userId = null;
+        if(accessToken != null && accessToken.startsWith("Bearer ")) {
+            String token = accessToken.substring(7);
+            userId = tokenHelperService.validationToken(token);
+        }
+        return Api.OK(ValidationResponse.builder().userId(userId).build());
     }
 
 }
