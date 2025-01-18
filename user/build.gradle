@@ -45,6 +45,9 @@ dependencies {
     //Netflix eureka client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0'
 
+    // TEST 를 위해 implement
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5'
+
     implementation project(":global")
     implementation project(":file")
 
