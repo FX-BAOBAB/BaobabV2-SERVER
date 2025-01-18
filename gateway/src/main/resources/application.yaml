@@ -11,28 +11,23 @@ spring:
   main:
     web-application-type: reactive
   application:
-    name: apigateway-service
+    name: gateway
   cloud:
     gateway:
       routes:
         - id : baobab-article
           uri : lb://BAOBAB-ARTICLE
           predicates:
-            - Path=/api/article/**
+            - Path=/article-service/**
           filters:
-#            - ServiceApiPrivateFilter
+            - RewritePath=/article-service/(?<segment>.*), /$\{segment}
 
-        - id: baobab-users(private)
+        - id: baobab-users
           uri: lb://BAOBAB-USERS
           predicates:
-            - Path=/api/user/**
+            - Path=/user-service/**
           filters:
-#            - ServiceApiPrivateFilter
-
-        - id: baobab-users(public)
-          uri: lb://BAOBAB-USERS
-          predicates:
-            - Path=/open-api/user/**
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
 # logging
 logging:
@@ -44,3 +39,7 @@ logging:
 log:
   config:
     path: logs
+
+token:
+  validation:
+    url: http://localhost:8000/user-service/user/validation
