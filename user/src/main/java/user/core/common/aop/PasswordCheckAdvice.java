@@ -7,7 +7,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.output.persistence.enums.UserStatus;
@@ -23,7 +23,6 @@ import user.core.common.exception.user.PasswordMismatchException;
 public class PasswordCheckAdvice {
 
     private final UserPersistencePort userPersistencePort;
-    private final PasswordEncoder passwordEncoder;
 
     @Pointcut("@annotation(user.core.common.annotation.PasswordCheck)")
     public void passwordCheckPointcut() {
@@ -59,7 +58,7 @@ public class PasswordCheckAdvice {
                 userId, UserStatus.REGISTERED);
 
             // Password 검증
-            if (!passwordEncoder.matches(userUnRegisterRequest.getPassword(),
+            if (!BCrypt.checkpw(userUnRegisterRequest.getPassword(),
                 userDocument.getAccount().getPassword())) {
                 throw new PasswordMismatchException(UserErrorCode.PASSWORD_MISMATCH);
             }

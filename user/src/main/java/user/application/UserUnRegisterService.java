@@ -17,7 +17,6 @@ public class UserUnRegisterService implements UserUnRegisterUseCase {
 
     private final UserPersistencePort userPersistencePort;
     private final UserConverter userConverter;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public boolean unRegister(UserUnRegisterCommand userUnRegisterCommand) {
