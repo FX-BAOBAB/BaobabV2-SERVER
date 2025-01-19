@@ -8,23 +8,26 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 spring:
+  main:
+    web-application-type: reactive
   application:
-    name: apigateway-service
+    name: gateway
   cloud:
     gateway:
       routes:
         - id : baobab-article
           uri : lb://BAOBAB-ARTICLE
           predicates:
-            - Path=/articles/**
-        - id: baobab-files
-          uri: lb://BAOBAB-FILES
-          predicates:
-            - Path=/files/**
+            - Path=/article-service/**
+          filters:
+            - RewritePath=/article-service/(?<segment>.*), /$\{segment}
+
         - id: baobab-users
           uri: lb://BAOBAB-USERS
           predicates:
-            - Path=/users/**
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
 # logging
 logging:
@@ -36,3 +39,7 @@ logging:
 log:
   config:
     path: logs
+
+token:
+  validation:
+    url: http://localhost:8000/user-service/user/validation
