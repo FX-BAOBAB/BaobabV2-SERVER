@@ -8,6 +8,8 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.output.UserPersistencePort;
+import user.core.common.error.UserErrorCode;
+import user.core.common.exception.user.PasswordMismatchException;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
 import user.security.jwt.service.TokenIssueService;
@@ -25,10 +27,12 @@ public class UserLoginService implements UserLoginUseCase {
         UserDocument userDocument = userPersistencePort.getUserDocumentBy(
             userLoginCommand.getEmail(), UserStatus.REGISTERED);
 
-        if(BCrypt.checkpw(userLoginCommand.getPassword(), userDocument.getAccount().getPassword())) {
-            LocalDateTime lastLoginAt = LocalDateTime.now();
-            userPersistencePort.setLastLoginAt(userDocument.getId(), lastLoginAt);
+        if(!BCrypt.checkpw(userLoginCommand.getPassword(), userDocument.getAccount().getPassword())) {
+            throw new PasswordMismatchException(UserErrorCode.PASSWORD_MISMATCH);
         }
+
+        LocalDateTime lastLoginAt = LocalDateTime.now();
+        userPersistencePort.setLastLoginAt(userDocument.getId(), lastLoginAt);
 
         return tokenIssueService.issueToken(userDocument.getId());
     }
