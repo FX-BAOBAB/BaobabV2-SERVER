@@ -4,4 +4,5 @@ file:
 spring:
   data:
     mongodb:
-      uri: mongodb://test:test@localhost:27017/testDB
+      uri: mongodb://admin:admin@localhost:27017/test?authSource=admin
+      authentication-database: admin
