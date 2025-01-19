@@ -16,9 +16,11 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
+import user.core.common.exception.token.UserNotFoundException;
 import user.core.common.exception.user.EmailExistsException;
 import user.core.common.exception.user.NickNameExistsException;
 import user.core.common.exception.user.UserExistsException;
+import user.core.common.resolver.AuthUser;
 
 @Slf4j
 @Aspect
@@ -47,12 +49,9 @@ public class DupleCheckAdvice {
                 checkEmailRequest(requestBody);
                 checkNickNameRequest(requestBody);
                 checkUserRegisterRequest(requestBody);
-                checkUpdateRequest(joinPoint, requestBody);
-
+                checkUpdateRequest(requestBody, joinPoint);
             }
-
             // Api<?> 가 아닌 경우
-
         }
 
     }
@@ -72,22 +71,13 @@ public class DupleCheckAdvice {
         }
     }
 
-    private void checkUpdateRequest(JoinPoint joinPoint, Object requestBody) {
+    private void checkUpdateRequest(Object requestBody, JoinPoint joinPoint) {
         if (requestBody instanceof UserUpdateRequest) {
             UserUpdateRequest userUpdateRequest = (UserUpdateRequest) requestBody;
 
             // userId 추출
-            String userId = null;
-            Object[] methodArgs = joinPoint.getArgs();
-            for (Object methodArg : methodArgs) {
-                if (methodArg instanceof String) {
-                    userId = (String) methodArg;
-                    break;
-                }
-            }
-
-            String currentNickName = getUserDocument(userId,
-                UserStatus.REGISTERED).getNickName(); // 현재 닉네임
+            String userId = getUserIdBy(joinPoint);
+            String currentNickName = getUserDocument(userId, UserStatus.REGISTERED).getNickName(); // 현재 닉네임
             String requestedNickName = userUpdateRequest.getNickName(); // 요청된 닉네임
 
             // 닉네임이 변경되었을 경우만 중복 체크
@@ -112,6 +102,16 @@ public class DupleCheckAdvice {
                 throw new NickNameExistsException(UserErrorCode.NICKNAME_EXISTS);
             }
         }
+    }
+
+    private String getUserIdBy(JoinPoint joinPoint) {
+        // joinPoint 에서 AuthUser 추출
+        for (Object methodArg : joinPoint.getArgs()) {
+            if (methodArg instanceof AuthUser) {
+                return ((AuthUser) methodArg).getUserId();
+            }
+        }
+        throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
     }
 
     private void checkEmailRequest(Object requestBody) {

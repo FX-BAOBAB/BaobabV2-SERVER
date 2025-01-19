@@ -2,7 +2,6 @@ package user.core.common.aop;
 
 import global.api.Api;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -14,9 +13,10 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
+import user.core.common.exception.token.UserNotFoundException;
 import user.core.common.exception.user.PasswordMismatchException;
+import user.core.common.resolver.AuthUser;
 
-@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -32,12 +32,18 @@ public class PasswordCheckAdvice {
     @Before("passwordCheckPointcut()")
     public void checkPassword(JoinPoint joinPoint) {
 
-        var args = joinPoint.getArgs();
+
 
         String userId = null;
         UserUnRegisterRequest userUnRegisterRequest = null;
 
-        for (Object arg : args) {
+        for (Object arg : joinPoint.getArgs()) {
+
+            // userId 추출
+            if (arg instanceof AuthUser) {
+                AuthUser authUser = (AuthUser) arg;
+                userId = authUser.getUserId();
+            }
 
             // UserUnRegisterRequest 추출
             if (arg instanceof Api) {
@@ -48,21 +54,21 @@ public class PasswordCheckAdvice {
                     userUnRegisterRequest = (UserUnRegisterRequest) requestBody;
                 }
             }
-
-            // userId 추출
-            if (arg instanceof String) {
-                userId = (String) arg;
-            }
-
-            UserDocument userDocument = userPersistencePort.getUserDocument(
-                userId, UserStatus.REGISTERED);
-
-            // Password 검증
-            if (!BCrypt.checkpw(userUnRegisterRequest.getPassword(),
-                userDocument.getAccount().getPassword())) {
-                throw new PasswordMismatchException(UserErrorCode.PASSWORD_MISMATCH);
-            }
-
         }
+
+        if (userId == null) {
+            throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
+        }
+
+
+        UserDocument userDocument = userPersistencePort.getUserDocument(
+            userId, UserStatus.REGISTERED);
+
+        // Password 검증
+        if (!BCrypt.checkpw(userUnRegisterRequest.getPassword(),
+            userDocument.getAccount().getPassword())) {
+            throw new PasswordMismatchException(UserErrorCode.PASSWORD_MISMATCH);
+        }
+
     }
 }

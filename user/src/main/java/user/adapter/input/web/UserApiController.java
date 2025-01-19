@@ -17,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.UserUnRegisterRequest;
@@ -52,7 +50,7 @@ public class UserApiController {
     private final ImageConverter imageConverter;
 
     @PostMapping("/update")
-//    @DupleCheck // TODO AOP 수정
+    @DupleCheck
     public Api<Boolean> update(
         @RequestPart("userUpdateRequest") @Valid Api<UserUpdateRequest> userUpdateRequest,
         @RequestPart("profileImage") MultipartFile profileImage,
@@ -78,7 +76,7 @@ public class UserApiController {
     }
 
     @PostMapping("/unregister")
-//    @PasswordCheck // TODO AOP 수정
+    @PasswordCheck
     public Api<Boolean> unRegister(
         @RequestBody @Valid Api<UserUnRegisterRequest> userUnRegisterRequest,
         @AuthenticatedUser AuthUser authUser
