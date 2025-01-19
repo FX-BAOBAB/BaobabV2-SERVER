@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
@@ -28,7 +27,6 @@ import user.security.jwt.model.TokenDto;
 
 @RestAdapter
 @RequiredArgsConstructor
-@RequestMapping("/open-api/user")
 public class UserOpenApiController {
 
     private final UserRegisterUseCase userRegisterUseCase;
@@ -39,7 +37,7 @@ public class UserOpenApiController {
     private final UserConverter userConverter;
     private final TokenConverter tokenConverter;
 
-    @PostMapping()
+    @PostMapping("/register")
     @DupleCheck
     public Api<String> register(
         @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest

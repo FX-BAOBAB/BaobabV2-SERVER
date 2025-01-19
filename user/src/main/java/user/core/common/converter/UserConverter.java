@@ -4,7 +4,7 @@ import file.domain.ImageMetaData;
 import global.annotation.Converter;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.mindrot.jbcrypt.BCrypt;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
@@ -26,8 +26,6 @@ import user.domain.dto.UserUpdateForm;
 @Converter
 @RequiredArgsConstructor
 public class UserConverter {
-
-    private final PasswordEncoder passwordEncoder;
 
     public UserRegisterCommand toRegisterCommand(UserRegisterRequest userRegisterRequest) {
         return UserRegisterCommand.builder()
@@ -119,7 +117,7 @@ public class UserConverter {
         return UserRegisterForm.builder()
             .email(userRegisterCommand.getEmail())
             .encodingPassword(
-                passwordEncoder.encode(userRegisterCommand.getPassword())
+                BCrypt.hashpw(userRegisterCommand.getPassword(), BCrypt.gensalt())
             )
             .nickName(userRegisterCommand.getNickName())
             .name(userRegisterCommand.getName())
