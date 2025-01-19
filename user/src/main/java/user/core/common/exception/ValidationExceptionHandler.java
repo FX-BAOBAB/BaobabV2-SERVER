@@ -29,7 +29,7 @@ public class ValidationExceptionHandler {
             builder.append(fieldError.getRejectedValue());
             builder.append("]");
         }
-        log.info("", e);
+        log.warn("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(ErrorCode.INVALID_INPUT_DATA, builder.toString()));
     }
