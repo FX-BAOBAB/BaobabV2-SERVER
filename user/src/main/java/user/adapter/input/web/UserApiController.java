@@ -7,6 +7,7 @@ import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
 import file.domain.ImageKind;
 import file.domain.ImageMetaData;
+import global.annotation.AuthenticatedUser;
 import global.annotation.input.RestAdapter;
 import global.api.Api;
 import global.utils.ImageIdUtils;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +31,7 @@ import user.application.port.input.UserUpdateUseCase;
 import user.core.common.annotation.DupleCheck;
 import user.core.common.annotation.PasswordCheck;
 import user.core.common.converter.UserConverter;
+import user.core.common.resolver.AuthUser;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserUnRegisterCommand;
 import user.domain.command.UserUpdateCommand;
@@ -36,7 +39,6 @@ import user.domain.dto.ProfileImage;
 
 @RestAdapter
 @RequiredArgsConstructor
-@RequestMapping("/open-api/user") // TODO 인증/인가 구현 후 /api/user 로 수정
 public class UserApiController {
 
     private final UserUpdateUseCase userUpdateUseCase;
@@ -50,22 +52,22 @@ public class UserApiController {
     private final ImageConverter imageConverter;
 
     @PostMapping("/update")
-    @DupleCheck
+//    @DupleCheck // TODO AOP 수정
     public Api<Boolean> update(
         @RequestPart("userUpdateRequest") @Valid Api<UserUpdateRequest> userUpdateRequest,
         @RequestPart("profileImage") MultipartFile profileImage,
-        String userId
+        @AuthenticatedUser AuthUser authUser
     ) {
         try {
             ImageCommand imageCommand = imageConverter.toImageCommand(
-                imageIdUtils.generateImageId("user", "userId"),
+                imageIdUtils.generateImageId("user", authUser.getUserId()),
                 profileImage, ImageKind.USER
             );
 
             ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
 
             UserUpdateCommand updateCommand = userConverter.toUpdateCommand(
-                userUpdateRequest.getBody(), imageMetaData, userId);
+                userUpdateRequest.getBody(), imageMetaData, authUser.getUserId());
 
             boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);
             return Api.OK(isUpdated);
@@ -76,21 +78,23 @@ public class UserApiController {
     }
 
     @PostMapping("/unregister")
-    @PasswordCheck
+//    @PasswordCheck // TODO AOP 수정
     public Api<Boolean> unRegister(
         @RequestBody @Valid Api<UserUnRegisterRequest> userUnRegisterRequest,
-        String userId
+        @AuthenticatedUser AuthUser authUser
     ) {
         UserUnRegisterCommand unRegisterCommand = userConverter.toUnRegisterCommand(
-            userUnRegisterRequest.getBody(), userId);
+            userUnRegisterRequest.getBody(), authUser.getUserId());
 
         boolean isUnRegistered = userUnRegisterUseCase.unRegister(unRegisterCommand);
         return Api.OK(isUnRegistered);
     }
 
-    @GetMapping()
-    public Api<UserInfoResponse> getUserInfo(String userId) {
-        UserReaderCommand userInfo = userReaderUseCase.getUserInfoBy(userId);
+    @GetMapping("/info")
+    public Api<UserInfoResponse> getUserInfo(
+        @AuthenticatedUser AuthUser authUser
+    ) {
+        UserReaderCommand userInfo = userReaderUseCase.getUserInfoBy(authUser.getUserId());
         UserInfoResponse userInfoResponse = userConverter.toResponse(userInfo);
         return Api.OK(userInfoResponse);
     }
@@ -98,11 +102,11 @@ public class UserApiController {
     @PostMapping("/image")
     public Api<Boolean> registerProfileImage(
         @RequestPart("profileImage") MultipartFile profileImage,
-        String userId
+        @AuthenticatedUser AuthUser authUser
     ) {
         try {
             ImageCommand imageCommand = imageConverter.toImageCommand(
-                imageIdUtils.generateImageId("user", userId),
+                imageIdUtils.generateImageId("user", authUser.getUserId()),
                 profileImage, ImageKind.USER);
 
             ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
@@ -112,7 +116,8 @@ public class UserApiController {
                 .ImageUrl(imageMetaData.getUrl())
                 .build();
 
-            Boolean isRegisteredImage = userRegisterUseCase.registerProfileImage(userId, imageInfo);
+            Boolean isRegisteredImage = userRegisterUseCase.registerProfileImage(
+                authUser.getUserId(), imageInfo);
             return Api.OK(isRegisteredImage);
 
         } catch (ExecutionException | InterruptedException e) {
