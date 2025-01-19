@@ -38,25 +38,7 @@ public class LocalFileAndDBImageStorageService {
 
         Path filePath = fileStorageService.uploadImage(imageCommand.getFile());
 
-        // 트랜잭션이 롤백될 경우 파일 삭제
-        registerRollbackFileCleanup(filePath);
-
         return imageMetaDataService.saveImageMetaData(imageCommand, filePath);
-    }
-
-    private void registerRollbackFileCleanup(Path filePath) {
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCompletion(int status) {
-                if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
-                    try {
-                        fileStorageService.deleteImage(filePath);
-                    } catch (Exception e) {
-                        log.error("Failed to delete file during transaction rollback {}", filePath, e);
-                    }
-                }
-            }
-        });
     }
 
     @Transactional
