@@ -12,6 +12,7 @@ import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.response.TokenResponse;
+import user.adapter.input.web.response.UserRegisterResponse;
 import user.adapter.input.web.response.ValidationResponse;
 import user.application.TokenValidationService;
 import user.application.port.input.ReIssueAccessTokenUseCase;
@@ -39,14 +40,15 @@ public class UserOpenApiController {
 
     @PostMapping("/register")
     @DupleCheck
-    public Api<String> register(
+    public Api<UserRegisterResponse> register(
         @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
         UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
             userRegisterRequest.getBody());
 
         String userId = userRegisterUseCase.register(registerCommand);
-        return Api.OK(userId);
+        UserRegisterResponse response = UserRegisterResponse.builder().userId(userId).build();
+        return Api.OK(response);
     }
 
     @PostMapping("/login")
