@@ -17,21 +17,21 @@ public class TokenExceptionHandler {
 
     @ExceptionHandler(value = TokenException.class)
     public ResponseEntity<Api<Object>> tokenException(TokenException e) {
-        log.info("", e);
+        log.warn("", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Api.ERROR(TokenErrorCode.TOKEN_EXCEPTION));
     }
 
     @ExceptionHandler(value = TokenSignatureException.class)
     public ResponseEntity<Api<Object>> tokenSignatureException(TokenSignatureException e) {
-        log.info("", e);
+        log.warn("", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Api.ERROR(TokenErrorCode.INVALID_TOKEN));
     }
 
     @ExceptionHandler(value = TokenExpiredException.class)
     public ResponseEntity<Api<Object>> tokenExpiredException(TokenExpiredException e) {
-        log.info("", e);
+        log.warn("", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Api.ERROR(TokenErrorCode.EXPIRED_TOKEN));
     }
