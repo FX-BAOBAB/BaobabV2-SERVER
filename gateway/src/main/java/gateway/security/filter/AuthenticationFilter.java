@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
@@ -19,12 +20,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@Component
 @Slf4j
-public class AuthenticationFilter implements GlobalFilter {
+@Component
+public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     private static final String PUBLIC_API_PREFIX = "/open-api";
-    private static final String PRIVATE_API_PREFIX = "/api";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final int AUTH_HEADER_BEGIN_INDEX = BEARER_PREFIX.length();
 
@@ -41,34 +41,21 @@ public class AuthenticationFilter implements GlobalFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
 
-        if (path.startsWith(PUBLIC_API_PREFIX)) {
-            return filterPublicApi(exchange, chain, path);
+        if (path.contains(PUBLIC_API_PREFIX)) {
+            return chain.filter(exchange);
         }
 
-        return filterPrivateApi(exchange, chain, path);
+        return filterPrivateApi(exchange, chain);
     }
 
-    private Mono<Void> filterPublicApi(ServerWebExchange exchange, GatewayFilterChain chain, String path) {
-        ServerWebExchange newExchange = createNewExchange(exchange, path, PUBLIC_API_PREFIX);
-        return chain.filter(newExchange);
-    }
-
-    private Mono<Void> filterPrivateApi(ServerWebExchange exchange, GatewayFilterChain chain, String path) {
-        ServerWebExchange newExchange = createNewExchange(exchange, path, PRIVATE_API_PREFIX);
-
-        String authHeader = getAuthHeader(newExchange);
+    private Mono<Void> filterPrivateApi(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String authHeader = getAuthHeader(exchange);
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
             throw new NotPermittedException(TokenErrorCode.NOT_PERMITTED);
         }
 
         String accessToken = authHeader.substring(AUTH_HEADER_BEGIN_INDEX);
-        return validateToken(newExchange, chain, accessToken);
-    }
-
-    private ServerWebExchange createNewExchange(ServerWebExchange exchange, String path, String prefix) {
-        String servicePath = path.substring(prefix.length());
-        ServerHttpRequest request = exchange.getRequest().mutate().path(servicePath).build();
-        return exchange.mutate().request(request).build();
+        return validateToken(exchange, chain, accessToken);
     }
 
     private String getAuthHeader(ServerWebExchange exchange) {
@@ -102,5 +89,10 @@ public class AuthenticationFilter implements GlobalFilter {
 
                 return chain.filter(exchange.mutate().request(request).build());
             });
+    }
+
+    @Override
+    public int getOrder() {
+        return -1;
     }
 }

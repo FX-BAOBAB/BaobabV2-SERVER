@@ -20,14 +20,14 @@ spring:
           predicates:
             - Path=/article-service/**
           filters:
-            - RewritePath=/article-service/(?<segment>.*), /$\{segment}
+            - RewritePath=/article-service/(open-api|api)/(?<segment>.*), /$\{segment}
 
         - id: baobab-users
           uri: lb://BAOBAB-USERS
           predicates:
             - Path=/user-service/**
           filters:
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - RewritePath=/user-service/(open-api|api)/(?<segment>.*), /$\{segment}
 
 # logging
 logging:
@@ -42,4 +42,4 @@ log:
 
 token:
   validation:
-    url: http://localhost:8000/user-service/user/validation
+    url: http://localhost:8000/user-service/open-api/validation
