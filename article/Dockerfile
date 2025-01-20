@@ -1,3 +1,3 @@
-FROM openjdk:17-jdk-slim
-ADD build/libs/*.jar article.jar
+FROM openjdk:21-jdk-slim
+ADD /article/build/libs/*.jar article.jar
 ENTRYPOINT ["java", "-jar", "/article.jar"]
