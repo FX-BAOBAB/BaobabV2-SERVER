@@ -1,4 +1,4 @@
-package article.domain.command;
+package article.domain.dto;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
@@ -8,13 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleSaveCommand {
+public class ArticleSaveForm {
 
     private String title;
 
@@ -30,6 +29,6 @@ public class ArticleSaveCommand {
 
     private String userId;
 
-    private List<MultipartFile> imageList;
+    private List<ArticleImage> imageList;
 
 }

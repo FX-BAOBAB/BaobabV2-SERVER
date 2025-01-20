@@ -32,18 +32,13 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
     }
 
     private boolean isSearchCommandEmpty(ArticleSearchCommand command) {
-        return command.getUserId() == null &&
-            command.getTitle() == null &&
+        return command.getTitle() == null &&
             command.getContent() == null &&
             command.getCategory() == null;
     }
 
     private BooleanBuilder buildQueryConditions(ArticleSearchCommand command) {
         BooleanBuilder builder = new BooleanBuilder();
-
-        if (!isUserIdEmpty(command.getUserId())) {
-            builder.and(article.userId.eq(command.getUserId()));
-        }
 
         if (!isTitleEmpty(command.getTitle())) {
             builder.and(article.title.like("%" + command.getTitle() + "%"));
@@ -59,8 +54,6 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
 
         return builder;
     }
-
-    private boolean isUserIdEmpty(String userId) { return userId == null; }
 
     private boolean isTitleEmpty(String title) { return title == null; }
 

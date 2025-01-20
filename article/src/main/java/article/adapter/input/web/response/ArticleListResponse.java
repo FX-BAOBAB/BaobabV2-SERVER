@@ -1,6 +1,6 @@
 package article.adapter.input.web.response;
 
-import article.adapter.output.persistence.repository.Article;
+import article.domain.dto.ArticleInfo;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticleListResponse {
 
-    private List<Article> articles;
+    private List<ArticleInfo> articles;
 
 }

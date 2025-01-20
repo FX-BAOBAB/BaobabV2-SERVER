@@ -10,20 +10,14 @@ import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
 import article.application.port.input.UpdateArticleUseCase;
 import article.core.common.converter.ArticleConverter;
+import article.core.common.resolver.AuthUser;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
-import file.application.port.input.ImageStorageUseCase;
-import file.core.common.error.ImageErrorCode;
-import file.core.common.exception.image.ImageStorageException;
-import file.domain.ImageCommand;
-import file.domain.ImageKind;
-import file.domain.ImageMetaData;
+import global.annotation.AuthenticatedUser;
 import global.api.Api;
-import global.utils.ImageIdUtils;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -32,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/article")
 public class ArticleApiController {
-
-    private final ImageIdUtils imageIdUtils;
 
     private final ArticleConverter articleConverter;
 
@@ -47,79 +38,53 @@ public class ArticleApiController {
 
     private final DeleteArticleUseCase deleteArticleUseCase;
 
-    // TODO Module Code Environment DB 처리
-    private final ImageStorageUseCase imageStorageUseCase;
+    @PostMapping("/save")
+    public Api<Boolean> save(@Valid ArticleSaveRequest articleSaveRequest,
+        @AuthenticatedUser AuthUser authUser) {
 
-    private static final String IMAGE_MODULE_CODE = "ART";
+        ArticleSaveCommand articleSaveCommand = articleConverter.toSaveCommand(
+            articleSaveRequest, authUser.getUserId());
 
-    @PostMapping()
-    public Api<Boolean> save(@Valid ArticleSaveRequest articleSaveRequest) {
-
-        try {
-            List<ImageCommand> imageCommandList = articleSaveRequest.getImageList().stream()
-                    .map(image -> {
-                        // TODO 유저 아이디 처리
-                        // TODO Module Code Environment DB 처리
-                        String imageId = imageIdUtils.generateImageId(IMAGE_MODULE_CODE, "Test");
-
-                        return ImageCommand.builder()
-                                .id(imageId)
-                                .file(image)
-                                .kind(ImageKind.ARTICLE)
-                                .build();
-                    }).toList();
-
-            List<ImageMetaData> imageMetaDataList = imageStorageUseCase.saveImageList(imageCommandList).get();
-
-            // TODO 유저 아이디 처리
-            ArticleSaveCommand articleSaveCommand = articleConverter.toSaveCommand(articleSaveRequest, imageMetaDataList, "Test");
-
-            return Api.OK(saveArticleUseCase.saveArticle(articleSaveCommand));
-
-        } catch (InterruptedException | ExecutionException e) {
-            // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
-            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
-        }
+        return Api.OK(saveArticleUseCase.saveArticle(articleSaveCommand));
     }
 
-    // TODO Login User 처리
-    @GetMapping
-    public Api<ArticleListResponse> getMyArticles(@ModelAttribute ArticleSearchCondition condition, Pageable pageable) {
-        return Api.OK(ArticleListResponse.builder()
-                .articles(getArticleUseCase.getMyArticles(
-                        ArticleSearchCommand.builder()
-                                .userId(condition.getUserId())
-                                .pageable(pageable)
-                                .build()))
-                .build());
+    @GetMapping("/my-articles")
+    public Api<ArticleListResponse> getMyArticles(@AuthenticatedUser AuthUser authUser,
+        Pageable pageable) {
+
+        List<Article> articleList = getArticleUseCase.getMyArticles(
+            authUser.getUserId(), pageable);
+
+        return Api.OK(articleConverter.toResponse(articleList));
     }
 
+    // TODO Article List Algorithm 적용 필요
     @GetMapping("/list")
     public Api<List<Article>> getAllArticles(@ModelAttribute ArticleSearchCondition condition) {
-        // TODO Article List Algorithm 적용 필요
-        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.builder()
-                .userId(condition.getUserId())
-                .title(condition.getTitle())
-                .content(condition.getContent())
-                .category(condition.getCategory())
-                .build()));
+
+        ArticleSearchCommand articleSearchCommand = articleConverter.toSearchCommand(condition);
+
+        return Api.OK(getArticleUseCase.getArticleList(articleSearchCommand));
     }
 
-    @GetMapping("/{articleId}")
+    @GetMapping("/article/{articleId}")
     public Api<Article> getArticleById(@PathVariable String articleId) {
-        return Api.OK(getArticleUseCase.getArticlesBy(articleId));
+        return Api.OK(getArticleUseCase.getArticleBy(articleId));
     }
 
-    // TODO Login User 처리
-    @PutMapping()
-    public Api<Boolean> updateArticle(@Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest) {
-        ArticleUpdateCommand articleUpdateCommand = articleConverter.toUpdateCommand(articleUpdateRequest);
+    @PutMapping("/article")
+    public Api<Boolean> updateArticle(
+        @Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest,
+        @AuthenticatedUser AuthUser authUser) {
+        ArticleUpdateCommand articleUpdateCommand = articleConverter.toUpdateCommand(
+            articleUpdateRequest, authUser.getUserId());
         return Api.OK(updateArticleUseCase.updateArticle(articleUpdateCommand));
     }
 
-    @DeleteMapping("/{articleId}")
-    public Api<Boolean> deleteArticle(@PathVariable String articleId) {
-        return Api.OK(deleteArticleUseCase.deleteArticle(articleId));
+    @DeleteMapping("/article/{articleId}")
+    public Api<Boolean> deleteArticle(@PathVariable String articleId,
+        @AuthenticatedUser AuthUser authUser) {
+        return Api.OK(deleteArticleUseCase.deleteArticle(articleId, authUser.getUserId()));
     }
 
 }

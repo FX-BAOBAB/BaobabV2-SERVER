@@ -4,23 +4,28 @@ import article.adapter.output.persistence.enums.ArticleStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
-import article.core.common.error.ArticleErrorCode;
+import article.core.common.converter.ArticleConverter;
+import article.core.common.error.article.ArticleErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
+import article.core.common.exception.article.NotPermittedException;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
 import article.domain.dto.ArticleImage;
+import article.domain.dto.ArticleSaveForm;
 import file.application.port.input.ImageStorageUseCase;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
 import file.domain.ImageCommand;
 import file.domain.ImageKind;
+import file.domain.ImageMetaData;
 import global.utils.ImageIdUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,9 +34,14 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final ImageIdUtils imageIdUtils;
 
+    private final ArticleConverter articleConverter;
+
     private final ImageStorageUseCase imageStorageUseCase;
 
     private final ArticlePersistencePort articlePersistencePort;
+
+    // TODO Module Code Environment DB 처리
+    private static final String IMAGE_MODULE_CODE = "ART";
 
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
@@ -40,17 +50,41 @@ public class ArticleService implements DefaultArticleUseCase {
 
         articleSaveCommand.setRegisteredAt(LocalDateTime.now());
 
-        return articlePersistencePort.saveArticle(articleSaveCommand);
+        try {
+            List<ImageCommand> imageCommandList = articleSaveCommand.getImageList().stream()
+                .map(image -> {
+                    String imageId = imageIdUtils.generateImageId(IMAGE_MODULE_CODE,
+                        articleSaveCommand.getUserId());
+
+                    return ImageCommand.builder()
+                        .id(imageId)
+                        .file(image)
+                        .kind(ImageKind.ARTICLE)
+                        .build();
+                }).toList();
+
+            List<ImageMetaData> imageMetaDataList =
+                imageStorageUseCase.saveImageList(imageCommandList).get();
+
+            ArticleSaveForm articleSaveForm = articleConverter.toArticleSaveForm(articleSaveCommand,
+                imageMetaDataList);
+
+            return articlePersistencePort.saveArticle(articleSaveForm);
+
+        } catch (InterruptedException | ExecutionException e) {
+            // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
+            throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR);
+        }
     }
 
     @Override
-    public List<Article> getMyArticles(ArticleSearchCommand command) {
-        return articlePersistencePort.getMyArticles(command.getUserId(), command.getPageable());
+    public List<Article> getMyArticles(String userId, Pageable pageable) {
+        return articlePersistencePort.getMyArticles(userId, pageable);
     }
 
     @Override
-    public Article getArticlesBy(String articleId) {
-        return articlePersistencePort.findById(articleId).orElseThrow(() ->
+    public Article getArticleBy(String articleId) {
+        return articlePersistencePort.getArticleById(articleId).orElseThrow(() ->
             new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
     }
 
@@ -62,49 +96,48 @@ public class ArticleService implements DefaultArticleUseCase {
     @Override
     public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
 
-        Article article = articlePersistencePort.findById(articleUpdateCommand.getId())
+        Article article = articlePersistencePort.getArticleById(articleUpdateCommand.getId())
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
-          // TODO User 처리 후 본인 게시물인지 확인
-          /*if (!"userId".equals(article.getUserId())) {
+        String userId = articleUpdateCommand.getUserId();
+
+          if (!userId.equals(article.getUserId())) {
               throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
-          }*/
+          }
 
         Optional.ofNullable(articleUpdateCommand.getDeleteImageIdList())
             .filter(list -> !list.isEmpty())
             .ifPresent(imageStorageUseCase::deleteImageList);
 
-        try {
-            List<ImageCommand> imageCommandList = articleUpdateCommand.getUpdateImages().stream()
-                .map(image -> {
-                    // TODO 유저 아이디 처리
-                    // TODO Module Code Environment DB 처리
-                    String imageId = imageIdUtils.generateImageId("ART", "Test");
+        if (articleUpdateCommand.getUpdateImages() != null) {
+            try {
+                List<ImageCommand> imageCommandList = articleUpdateCommand.getUpdateImages().stream()
+                    .map(image -> {
+                        String imageId = imageIdUtils.generateImageId(IMAGE_MODULE_CODE, userId);
 
-                    return ImageCommand.builder()
-                        .id(imageId)
-                        .file(image)
-                        .kind(ImageKind.ARTICLE)
-                        .build();
-                }).toList();
+                        return ImageCommand.builder()
+                            .id(imageId)
+                            .file(image)
+                            .kind(ImageKind.ARTICLE)
+                            .build();
+                    }).toList();
 
-            List<ArticleImage> updateImageList = imageStorageUseCase.saveImageList(imageCommandList)
-                .get().stream().map(imageMetaData -> ArticleImage.builder()
-                    .imageId(imageMetaData.getId())
-                    .imageUrl(imageMetaData.getUrl())
-                    .build()).toList();
+                List<ArticleImage> updateImageList = imageStorageUseCase.saveImageList(imageCommandList)
+                    .get().stream().map(imageMetaData -> ArticleImage.builder()
+                        .imageId(imageMetaData.getId())
+                        .imageUrl(imageMetaData.getUrl())
+                        .build()).toList();
 
-            Optional.ofNullable(articleUpdateCommand.getImageList())
-                .ifPresentOrElse(
-                    imageList -> imageList.addAll(updateImageList),
-                    () -> articleUpdateCommand.setImageList(updateImageList)
-                );
+                Optional.ofNullable(articleUpdateCommand.getImageList())
+                    .ifPresentOrElse(
+                        imageList -> imageList.addAll(updateImageList),
+                        () -> articleUpdateCommand.setImageList(updateImageList)
+                    );
 
-        } catch (InterruptedException | ExecutionException e) {
-            // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
-            throw new ImageStorageException(ImageErrorCode.IMAGE_DELETE_ERROR);
+            } catch (InterruptedException | ExecutionException e) {
+                throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR);
+            }
         }
-
         articleUpdateCommand.setRegisteredAt(article.getRegisteredAt());
 
         articleUpdateCommand.setUserId(article.getUserId());
@@ -113,15 +146,14 @@ public class ArticleService implements DefaultArticleUseCase {
     }
 
     @Override
-    public boolean deleteArticle(String articleId) {
+    public boolean deleteArticle(String articleId, String userId) {
 
-        Article article = articlePersistencePort.findById(articleId)
+        Article article = articlePersistencePort.getArticleById(articleId)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
-        // TODO User 처리 후 본인 게시물인지 확인
-      /*if (!"userId".equals(article.getUserId())) {
-          throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
-      }*/
+        if (!userId.equals(article.getUserId())) {
+            throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
+        }
 
         article.getImageList().forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
 
