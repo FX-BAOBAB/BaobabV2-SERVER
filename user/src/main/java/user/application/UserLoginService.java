@@ -8,10 +8,12 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.output.UserPersistencePort;
+import user.core.common.converter.TokenConverter;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.user.PasswordMismatchException;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
+import user.security.jwt.model.JwtInfoDto;
 import user.security.jwt.service.TokenIssueService;
 
 @Service
@@ -20,6 +22,8 @@ public class UserLoginService implements UserLoginUseCase {
 
     private final TokenIssueService tokenIssueService;
     private final UserPersistencePort userPersistencePort;
+
+    private final TokenConverter tokenConverter;
 
     @Override
     public TokenCommand login(UserLoginCommand userLoginCommand) {
@@ -34,7 +38,9 @@ public class UserLoginService implements UserLoginUseCase {
         LocalDateTime lastLoginAt = LocalDateTime.now();
         userPersistencePort.setLastLoginAt(userDocument.getId(), lastLoginAt);
 
-        return tokenIssueService.issueToken(userDocument.getId());
+        JwtInfoDto jwtInfoDto = tokenConverter.toTokenInfo(userDocument);
+
+        return tokenIssueService.issueToken(jwtInfoDto);
     }
 
 }

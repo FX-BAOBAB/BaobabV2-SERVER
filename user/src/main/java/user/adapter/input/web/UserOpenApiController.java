@@ -13,7 +13,7 @@ import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.response.TokenResponse;
 import user.adapter.input.web.response.UserRegisterResponse;
-import user.adapter.input.web.response.ValidationResponse;
+import user.adapter.input.web.response.JwtInfoResponse;
 import user.application.TokenValidationService;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
@@ -24,6 +24,7 @@ import user.core.common.converter.UserConverter;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
 import user.domain.command.UserRegisterCommand;
+import user.security.jwt.model.JwtInfoDto;
 import user.security.jwt.model.TokenDto;
 
 @RestAdapter
@@ -82,9 +83,10 @@ public class UserOpenApiController {
     }
 
     @PostMapping("/validation")
-    public Api<ValidationResponse> validateToken(@RequestHeader("Authorization") String accessToken) {
-        String userId = tokenValidationService.validateToken(accessToken);
-        return Api.OK(ValidationResponse.builder().userId(userId).build());
+    public Api<JwtInfoResponse> validateToken(@RequestHeader("Authorization") String accessToken) {
+        JwtInfoDto jwtInfoDto = tokenValidationService.validateToken(accessToken);
+        JwtInfoResponse response = tokenConverter.toJwtInfoResponse(jwtInfoDto);
+        return Api.OK(response);
     }
 
 }

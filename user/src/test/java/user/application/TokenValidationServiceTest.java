@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.domain.command.TokenCommand;
+import user.security.jwt.model.JwtInfoDto;
 import user.utils.UserLoginUtils;
 import user.utils.UserRegisterUtils;
 
@@ -40,9 +41,9 @@ class TokenValidationServiceTest {
 
         // When
         String bearerToken = "Bearer " + tokenCommand.getAccessToken();
-        String userId = tokenValidationService.validateToken(bearerToken);
+        JwtInfoDto jwtInfoDto = tokenValidationService.validateToken(bearerToken);
 
         // Then
-        assertNotNull(userId);
+        assertNotNull(jwtInfoDto);
     }
 }
