@@ -7,9 +7,10 @@ public interface DeleteArticleUseCase {
 
     /**
      * Delete Article Method
-     * @param articleId Article PK
+     * @param articleId Article ID
+     * @param userId User ID
      * @return is Article Delete?
      */
-    boolean deleteArticle(String articleId);
+    boolean deleteArticle(String articleId, String userId);
 
 }

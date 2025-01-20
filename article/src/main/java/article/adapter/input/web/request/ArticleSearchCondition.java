@@ -2,12 +2,10 @@ package article.adapter.input.web.request;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import lombok.Data;
+import org.springframework.data.domain.Pageable;
 
 @Data
 public class ArticleSearchCondition {
-
-    // TODO Login User 대체 필요
-    private String userId;
 
     private String title;
 
@@ -15,8 +13,6 @@ public class ArticleSearchCondition {
 
     private ArticleCategory category;
 
-    private int page;
-
-    private int size;
+    private Pageable pageable;
 
 }

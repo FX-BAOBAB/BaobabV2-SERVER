@@ -5,9 +5,9 @@ import article.adapter.output.persistence.repository.ArticleMongoRepository;
 import article.adapter.output.persistence.repository.ArticleQueryRepository;
 import article.application.port.output.ArticlePersistencePort;
 import article.core.common.converter.ArticleConverter;
-import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
+import article.domain.dto.ArticleSaveForm;
 import global.annotation.output.PersistenceAdapter;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +25,8 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     private final ArticleQueryRepository articleQueryRepository;
 
     @Override
-    public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
-        Article article = articleConverter.toArticle(articleSaveCommand);
+    public boolean saveArticle(ArticleSaveForm articleSaveForm) {
+        Article article = articleConverter.toArticle(articleSaveForm);
         Article savedArticle =  articleMongoRepository.save(article);
         return savedArticle.getId() != null;
     }
@@ -42,7 +42,7 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     }
 
     @Override
-    public Optional<Article> findById(String articleId) {
+    public Optional<Article> getArticleById(String articleId) {
         return articleMongoRepository.findById(articleId);
     }
 

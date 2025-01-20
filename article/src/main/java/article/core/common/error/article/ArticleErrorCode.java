@@ -1,4 +1,4 @@
-package article.core.common.error;
+package article.core.common.error.article;
 
 import global.errorcode.ErrorCodeIfs;
 import lombok.AllArgsConstructor;

@@ -1,10 +1,9 @@
 package article.application.port.output;
 
 import article.adapter.output.persistence.repository.Article;
-import article.domain.command.ArticleCommand;
-import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
+import article.domain.dto.ArticleSaveForm;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -17,10 +16,10 @@ public interface ArticlePersistencePort {
 
     /**
      * Save Article At DB
-     * @param articleSaveCommand Article Data
+     * @param articleSaveForm Article Data
      * @return is Article saved?
      */
-    boolean saveArticle(ArticleSaveCommand articleSaveCommand);
+    boolean saveArticle(ArticleSaveForm articleSaveForm);
 
     /**
      * Get Article List By SearchCondition
@@ -36,6 +35,12 @@ public interface ArticlePersistencePort {
      */
     List<Article> getMyArticles(String userId, Pageable pageable);
 
+    /**
+     * Get Article By Article Id
+     * @param articleId articleId
+     * @return Article
+     */
+    Optional<Article> getArticleById(String articleId);
 
     /**
      * Update Article Data
@@ -50,6 +55,4 @@ public interface ArticlePersistencePort {
      * @return is Article Deleted?
      */
     boolean deleteArticle(String articleId);
-
-    Optional<Article> findById(String articleId);
 }
