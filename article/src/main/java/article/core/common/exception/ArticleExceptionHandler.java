@@ -1,6 +1,6 @@
 package article.core.common.exception;
 
-import article.core.common.error.ArticleErrorCode;
+import article.core.common.error.article.ArticleErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
 import article.core.common.exception.article.NotPermittedException;
 import global.api.Api;
@@ -16,14 +16,14 @@ public class ArticleExceptionHandler {
 
     @ExceptionHandler(value = ArticleNotFoundException.class)
     public ResponseEntity<Api<Object>> notFoundArticleException(ArticleNotFoundException e) {
-        log.info("", e);
+        log.error("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(ArticleErrorCode.ARTICLE_NOT_FOUND));
     }
 
     @ExceptionHandler(value = NotPermittedException.class)
     public ResponseEntity<Api<Object>> notPermittedException(NotPermittedException e) {
-        log.info("", e);
+        log.error("", e);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
             .body(Api.ERROR(ArticleErrorCode.NOT_PERMITTED));
     }
