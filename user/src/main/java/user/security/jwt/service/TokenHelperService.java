@@ -8,9 +8,12 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import user.adapter.output.persistence.enums.UserRole;
+import user.core.common.converter.TokenConverter;
 import user.core.common.error.TokenErrorCode;
 import user.core.common.exception.token.TokenException;
 import user.security.jwt.ifs.TokenHelperIfs;
+import user.security.jwt.model.JwtInfoDto;
 import user.security.jwt.model.TokenDto;
 
 @Service
@@ -23,37 +26,47 @@ public class TokenHelperService {
     private final TokenHelperIfs tokenHelperIfs;
     private final HttpSession httpSession;
 
-    public TokenDto issueAccessToken(String userId) {
+    public TokenDto issueAccessToken(JwtInfoDto jwtInfoDto) {
         Map<String, Object> data = new HashMap<>();
-        data.put("userId", userId);
+        data.put("userId", jwtInfoDto.getUserId());
+        data.put("nickName", jwtInfoDto.getNickName());
+        data.put("role", jwtInfoDto.getRole());
         return tokenHelperIfs.issueAccessToken(data);
     }
 
-    public TokenDto issueRefreshToken(String userId) {
+    public TokenDto issueRefreshToken(JwtInfoDto jwtInfoDto) {
         Map<String, Object> data = new HashMap<>();
-        data.put("userId", userId);
+        data.put("userId", jwtInfoDto.getUserId());
+        data.put("nickName", jwtInfoDto.getNickName());
+        data.put("role", jwtInfoDto.getRole());
         return tokenHelperIfs.issueRefreshToken(data);
     }
 
     public TokenDto reIssueAccessToken(String refreshToken) {
-        String userId = validationToken(refreshToken);
+        JwtInfoDto jwtInfoDto = validationToken(refreshToken);
 
-        String storedToken = (String) httpSession.getAttribute("refreshToken:" + userId);
+        String storedToken = (String) httpSession.getAttribute("refreshToken:" + jwtInfoDto.getUserId());
         if (storedToken == null || !storedToken.equals(refreshToken)) {
             throw new TokenException(TokenErrorCode.INVALID_TOKEN);
         }
 
-        return issueRefreshToken(userId);
+        return issueRefreshToken(jwtInfoDto);
     }
 
-    public String validationToken(String token) {
+    public JwtInfoDto validationToken(String token) {
         Map<String, Object> userData = tokenHelperIfs.validationTokenWithThrow(token);
 
         Object userId = userData.get("userId");
+        Object nickName = userData.get("nickName");
+        Object role = userData.get("role");
         Objects.requireNonNull(userId, () -> {
             throw new TokenException(ErrorCode.NULL_POINT);
         });
-        return userId.toString();
+        return JwtInfoDto.builder()
+            .userId(userId.toString())
+            .nickName(nickName.toString())
+            .role(UserRole.valueOf(role.toString()))
+            .build();
     }
 
     public void saveRefreshToken(String userId, String refreshToken) {
