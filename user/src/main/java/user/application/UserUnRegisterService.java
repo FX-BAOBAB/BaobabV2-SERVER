@@ -2,7 +2,6 @@ package user.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.output.UserPersistencePort;
