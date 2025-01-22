@@ -1,31 +1,22 @@
 package user.application;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.AfterEach;
+import config.AcceptanceTestWithMongo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.domain.command.UserUnRegisterCommand;
 import user.utils.UserRegisterUtils;
 
 @SpringBootTest
-class UserUnRegisterServiceTest {
+class UserUnRegisterServiceTest extends AcceptanceTestWithMongo {
 
     @Autowired
     private UserUnRegisterService userUnRegisterService;
 
     @Autowired
     private UserRegisterUtils userRegisterUtils;
-
-    @Autowired
-    private UserMongoRepository userMongoRepository;
-
-    @AfterEach
-    void tearDown() {
-        userMongoRepository.deleteByAccount_Email("test@example.com");
-    }
 
     @Test
     void 회원탈퇴_성공() {

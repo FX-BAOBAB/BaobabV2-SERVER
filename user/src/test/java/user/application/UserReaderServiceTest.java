@@ -1,36 +1,30 @@
 package user.application;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import config.AcceptanceTestWithMongo;
+import config.EnableMongoTestServer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
-import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.domain.command.UserReaderCommand;
 import user.utils.UserRegisterUtils;
 
 @SpringBootTest
-class UserReaderServiceTest {
+@EnableMongoTestServer
+class UserReaderServiceTest extends AcceptanceTestWithMongo {
 
     @Autowired
     private UserReaderService userReaderService;
 
     @Autowired
     private UserRegisterUtils userRegisterUtils;
-
-    @Autowired
-    private UserMongoRepository userMongoRepository;
-
-    @AfterEach
-    void tearDown() {
-        userMongoRepository.deleteByAccount_Email("test@example.com");
-    }
 
     @Test
     void 사용자_조회_성공() {

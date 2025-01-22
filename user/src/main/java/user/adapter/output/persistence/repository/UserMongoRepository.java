@@ -14,7 +14,4 @@ public interface UserMongoRepository extends MongoRepository<UserDocument, Strin
 
     Optional<UserDocument> findFirstByAccount_EmailAndStatusOrderByIdDesc(String email, UserStatus status);
 
-    // TEST CASE 용
-    void deleteByAccount_Email(String email);
-
 }

@@ -1,13 +1,14 @@
 package user.application;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.AfterEach;
+import config.AcceptanceTestWithMongo;
+import config.EnableMongoTestServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.core.common.exception.token.TokenException;
 import user.domain.command.TokenCommand;
 import user.security.jwt.model.TokenDto;
@@ -15,7 +16,8 @@ import user.utils.UserLoginUtils;
 import user.utils.UserRegisterUtils;
 
 @SpringBootTest
-class ReIssueAccessTokenServiceTest {
+@EnableMongoTestServer
+class ReIssueAccessTokenServiceTest extends AcceptanceTestWithMongo {
 
     @Autowired
     private ReIssueAccessTokenService reIssueAccessTokenService;
@@ -25,14 +27,6 @@ class ReIssueAccessTokenServiceTest {
 
     @Autowired
     private UserLoginUtils userLoginUtils;
-
-    @Autowired
-    private UserMongoRepository userMongoRepository;
-
-    @AfterEach
-    void tearDown() {
-        userMongoRepository.deleteByAccount_Email("test@example.com");
-    }
 
     @Test
     void AccessToken_재발급_성공() {
