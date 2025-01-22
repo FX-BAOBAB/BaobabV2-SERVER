@@ -42,6 +42,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    // In-Memory Mongo
+    testImplementation 'de.bwaldvogel:mongo-java-server:1.46.0'
+
     //Netflix eureka client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0'
 

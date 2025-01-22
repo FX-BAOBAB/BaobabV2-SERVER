@@ -1,14 +1,14 @@
 package user.application;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import config.AcceptanceTestWithMongo;
+import config.EnableMongoTestServer;
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.core.common.exception.token.UserNotFoundException;
 import user.core.common.exception.user.PasswordMismatchException;
 import user.domain.command.TokenCommand;
@@ -16,21 +16,14 @@ import user.domain.command.UserLoginCommand;
 import user.utils.UserRegisterUtils;
 
 @SpringBootTest
-class UserLoginServiceTest {
+@EnableMongoTestServer
+class UserLoginServiceTest extends AcceptanceTestWithMongo {
 
     @Autowired
     private UserLoginService userLoginService;
 
     @Autowired
     private UserRegisterUtils userRegisterUtils;
-
-    @Autowired
-    private UserMongoRepository userMongoRepository;
-
-    @AfterEach
-    void tearDown() {
-        userMongoRepository.deleteByAccount_Email("test@example.com");
-    }
 
     @Test
     void 로그인_성공() {

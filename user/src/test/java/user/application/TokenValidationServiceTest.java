@@ -1,19 +1,18 @@
 package user.application;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.api.AfterEach;
+import config.AcceptanceTestWithMongo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.domain.command.TokenCommand;
 import user.security.jwt.model.JwtInfoDto;
 import user.utils.UserLoginUtils;
 import user.utils.UserRegisterUtils;
 
 @SpringBootTest
-class TokenValidationServiceTest {
+class TokenValidationServiceTest extends AcceptanceTestWithMongo {
 
     @Autowired
     private TokenValidationService tokenValidationService;
@@ -23,14 +22,6 @@ class TokenValidationServiceTest {
 
     @Autowired
     private UserLoginUtils userLoginUtils;
-
-    @Autowired
-    private UserMongoRepository userMongoRepository;
-
-    @AfterEach
-    void tearDown() {
-        userMongoRepository.deleteByAccount_Email("test@example.com");
-    }
 
     @Test
     void 토큰_검증_성공() {
