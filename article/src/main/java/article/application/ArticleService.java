@@ -46,11 +46,10 @@ public class ArticleService implements DefaultArticleUseCase {
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
 
-        articleSaveCommand.setStatus(ArticleStatus.ON_SALE);
-
-        articleSaveCommand.setRegisteredAt(LocalDateTime.now());
-
         try {
+            // TODO 추상화 Level 조정 및 공통 처리
+            // 공통 Util >> Interface >> 구현체
+            // Image ID Generator >> Interface >> 구현체
             List<ImageCommand> imageCommandList = articleSaveCommand.getImageList().stream()
                 .map(image -> {
                     String imageId = imageIdUtils.generateImageId(IMAGE_MODULE_CODE,
@@ -73,6 +72,7 @@ public class ArticleService implements DefaultArticleUseCase {
 
         } catch (InterruptedException | ExecutionException e) {
             // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
+            // TODO 좀 바꾸라고 이자식아
             throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR);
         }
     }

@@ -1,6 +1,8 @@
 package article.domain.command;
 
+import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.output.persistence.enums.ArticleCategory;
+import article.adapter.output.persistence.enums.ArticleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +22,24 @@ public class ArticleSearchCommand {
     private ArticleCategory category;
 
     private Pageable pageable;
+
+    private String userId;
+
+    private String articleId;
+
+    private ArticleStatus status;
+
+    // static factory Method
+    public static ArticleSearchCommand of(ArticleSearchCondition condition){
+        return ArticleSearchCommand.builder()
+                .title(condition.getTitle())
+                .content(condition.getContent())
+                .category(condition.getCategory())
+                .pageable(condition.getPageable())
+                .status(condition.getStatus())
+                .userId(condition.getUserId())
+                .articleId(condition.getArticleId())
+                .build();
+    }
 
 }

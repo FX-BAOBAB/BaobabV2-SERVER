@@ -1,6 +1,7 @@
 package article.adapter.input.web.request;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
+import article.adapter.output.persistence.enums.ArticleStatus;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
 
@@ -14,5 +15,11 @@ public class ArticleSearchCondition {
     private ArticleCategory category;
 
     private Pageable pageable;
+
+    private String userId;
+
+    private String articleId;
+
+    private ArticleStatus status;
 
 }

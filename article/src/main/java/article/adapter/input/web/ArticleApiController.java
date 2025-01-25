@@ -17,9 +17,12 @@ import article.domain.command.ArticleUpdateCommand;
 import global.annotation.AuthenticatedUser;
 import global.api.Api;
 import jakarta.validation.Valid;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,51 +42,38 @@ public class ArticleApiController {
     private final DeleteArticleUseCase deleteArticleUseCase;
 
     @PostMapping("/save")
-    public Api<Boolean> save(@Valid ArticleSaveRequest articleSaveRequest,
-        @AuthenticatedUser AuthUser authUser) {
+    public Api<Boolean> save(@Valid ArticleSaveRequest request, @AuthenticatedUser AuthUser authUser) {
 
-        ArticleSaveCommand articleSaveCommand = articleConverter.toSaveCommand(
-            articleSaveRequest, authUser.getUserId());
+        ArticleSaveCommand command = ArticleSaveCommand.of(request, authUser.getUserId());
 
-        return Api.OK(saveArticleUseCase.saveArticle(articleSaveCommand));
-    }
-
-    @GetMapping("/my-articles")
-    public Api<ArticleListResponse> getMyArticles(@AuthenticatedUser AuthUser authUser,
-        Pageable pageable) {
-
-        List<Article> articleList = getArticleUseCase.getMyArticles(
-            authUser.getUserId(), pageable);
-
-        return Api.OK(articleConverter.toResponse(articleList));
+        return Api.OK(saveArticleUseCase.saveArticle(command));
     }
 
     // TODO Article List Algorithm 적용 필요
-    @GetMapping("/list")
-    public Api<List<Article>> getAllArticles(@ModelAttribute ArticleSearchCondition condition) {
+    // TODO My-articles : Auth Filter 적용 필요
+    @GetMapping({"/list","/my-articles","/article/{articleId}"})
+    public Api<List<Article>> getAllArticles(@PathVariable(required=false) String articleId,@ModelAttribute ArticleSearchCondition condition,Pageable pageable) {
 
-        ArticleSearchCommand articleSearchCommand = articleConverter.toSearchCommand(condition);
+        condition.setPageable(pageable);
 
-        return Api.OK(getArticleUseCase.getArticleList(articleSearchCommand));
+        if(!StringUtils.isEmpty(articleId)) {
+            condition.setArticleId(articleId);
+        }
+
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition)));
     }
 
-    @GetMapping("/article/{articleId}")
-    public Api<Article> getArticleById(@PathVariable String articleId) {
-        return Api.OK(getArticleUseCase.getArticleBy(articleId));
-    }
-
-    @PutMapping("/article")
-    public Api<Boolean> updateArticle(
-        @Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest,
-        @AuthenticatedUser AuthUser authUser) {
-        ArticleUpdateCommand articleUpdateCommand = articleConverter.toUpdateCommand(
-            articleUpdateRequest, authUser.getUserId());
-        return Api.OK(updateArticleUseCase.updateArticle(articleUpdateCommand));
+    // TODO Yang ji ung 과제
+    @PostMapping("/article")
+    public Api<Boolean> updateArticle(@Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest, @AuthenticatedUser AuthUser authUser) {
+        ArticleUpdateCommand articleUpdateCommand = articleConverter.toUpdateCommand(articleUpdateRequest, authUser.getUserId());
+        updateArticleUseCase.updateArticle(articleUpdateCommand); // pass > throw Exception Handling
+        //return "redirect:"; //
+        return null;
     }
 
     @DeleteMapping("/article/{articleId}")
-    public Api<Boolean> deleteArticle(@PathVariable String articleId,
-        @AuthenticatedUser AuthUser authUser) {
+    public Api<Boolean> deleteArticle(@PathVariable String articleId, @AuthenticatedUser AuthUser authUser) {
         return Api.OK(deleteArticleUseCase.deleteArticle(articleId, authUser.getUserId()));
     }
 
