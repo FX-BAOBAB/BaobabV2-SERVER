@@ -1,5 +1,7 @@
 package user.core.config.web;
 
+import global.interceptor.AuthorizationInterceptor;
+import global.resolver.AuthenticatedUserResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +12,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import user.core.common.interceptor.AuthorizationInterceptor;
-import user.core.common.resolver.AuthenticatedUserResolver;
 
 @Configuration
 @RequiredArgsConstructor
