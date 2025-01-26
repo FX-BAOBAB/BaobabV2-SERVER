@@ -1,6 +1,5 @@
 package article.application;
 
-import article.adapter.output.persistence.enums.ArticleStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
@@ -13,6 +12,7 @@ import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
 import article.domain.dto.ArticleImage;
 import article.domain.dto.ArticleSaveForm;
+import file.application.port.input.ImageMetaDataUseCase;
 import file.application.port.input.ImageStorageUseCase;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
@@ -20,7 +20,6 @@ import file.domain.ImageCommand;
 import file.domain.ImageKind;
 import file.domain.ImageMetaData;
 import global.utils.ImageIdUtils;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -38,43 +37,20 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final ImageStorageUseCase imageStorageUseCase;
 
+    private final ImageMetaDataUseCase imageMetaDataUseCase;
+
     private final ArticlePersistencePort articlePersistencePort;
 
-    // TODO Module Code Environment DB 처리
-    private static final String IMAGE_MODULE_CODE = "ART";
+    private final String IMAGE_MODULE_CODE = "ARTICLE";
 
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
+        List<ImageMetaData> imageMetaDataList = imageMetaDataUseCase.processImageMetaDataList(
+            IMAGE_MODULE_CODE, articleSaveCommand.getUserId(), articleSaveCommand.getImageList());
 
-        try {
-            // TODO 추상화 Level 조정 및 공통 처리
-            // 공통 Util >> Interface >> 구현체
-            // Image ID Generator >> Interface >> 구현체
-            List<ImageCommand> imageCommandList = articleSaveCommand.getImageList().stream()
-                .map(image -> {
-                    String imageId = imageIdUtils.generateImageId(IMAGE_MODULE_CODE,
-                        articleSaveCommand.getUserId());
+        ArticleSaveForm form = ArticleSaveForm.of(articleSaveCommand, imageMetaDataList);
 
-                    return ImageCommand.builder()
-                        .id(imageId)
-                        .file(image)
-                        .kind(ImageKind.ARTICLE)
-                        .build();
-                }).toList();
-
-            List<ImageMetaData> imageMetaDataList =
-                imageStorageUseCase.saveImageList(imageCommandList).get();
-
-            ArticleSaveForm articleSaveForm = articleConverter.toArticleSaveForm(articleSaveCommand,
-                imageMetaDataList);
-
-            return articlePersistencePort.saveArticle(articleSaveForm);
-
-        } catch (InterruptedException | ExecutionException e) {
-            // TODO Mongo DB Exception 놓칠 위험있음 Catch 부 변경 필요
-            // TODO 좀 바꾸라고 이자식아
-            throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR);
-        }
+        return articlePersistencePort.saveArticle(form);
     }
 
     @Override

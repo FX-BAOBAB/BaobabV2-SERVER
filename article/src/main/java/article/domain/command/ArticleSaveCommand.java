@@ -5,8 +5,6 @@ import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import article.adapter.output.persistence.repository.Article;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,13 +33,16 @@ public class ArticleSaveCommand {
 
     private List<MultipartFile> imageList;
 
-    public static ArticleSaveCommand of(ArticleSaveRequest request,String userId) {
+    public static ArticleSaveCommand of(
+        ArticleSaveRequest request,
+        List<MultipartFile> imageList,
+        String userId) {
         return ArticleSaveCommand.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .category(request.getCategory())
                 .price(request.getPrice())
-                .imageList(request.getImageList())
+                .imageList(imageList)
                 .status(ArticleStatus.ON_SALE)
                 .registeredAt(LocalDateTime.now())
                 .userId(userId)

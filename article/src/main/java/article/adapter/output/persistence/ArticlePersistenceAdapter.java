@@ -26,8 +26,7 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
 
     @Override
     public boolean saveArticle(ArticleSaveForm articleSaveForm) {
-        Article article = articleConverter.toArticle(articleSaveForm);
-        Article savedArticle =  articleMongoRepository.save(article);
+        Article savedArticle =  articleMongoRepository.save(Article.of(articleSaveForm));
         return savedArticle.getId() != null;
     }
 

@@ -22,24 +22,12 @@ import java.util.stream.Collectors;
 @Converter
 public class ArticleConverter {
 
-    public ArticleSaveCommand toSaveCommand(ArticleSaveRequest articleSaveRequest, String userId) {
-        return ArticleSaveCommand.builder().title(articleSaveRequest.getTitle()).content(articleSaveRequest.getContent()).category(articleSaveRequest.getCategory()).price(articleSaveRequest.getPrice()).imageList(articleSaveRequest.getImageList()).userId(userId).status(ArticleStatus.ON_SALE).registeredAt(LocalDateTime.now()).build();
-    }
-
     public ArticleSearchCommand toSearchCommand(ArticleSearchCondition articleSearchCondition) {
         return ArticleSearchCommand.builder().title(articleSearchCondition.getTitle()).content(articleSearchCondition.getContent()).category(articleSearchCondition.getCategory()).pageable(articleSearchCondition.getPageable()).build();
     }
 
     public ArticleUpdateCommand toUpdateCommand(ArticleUpdateRequest articleUpdateRequest, String userId) {
         return ArticleUpdateCommand.builder().id(articleUpdateRequest.getId()).title(articleUpdateRequest.getTitle()).content(articleUpdateRequest.getContent()).category(articleUpdateRequest.getCategory()).status(articleUpdateRequest.getStatus()).price(articleUpdateRequest.getPrice()).imageList(articleUpdateRequest.getImageList()).updateImages(articleUpdateRequest.getUpdateImages()).deleteImageIdList(articleUpdateRequest.getDeleteImageIdList()).userId(userId).build();
-    }
-
-    public ArticleSaveForm toArticleSaveForm(ArticleSaveCommand articleSaveCommand, List<ImageMetaData> imageMetaDataList) {
-        return ArticleSaveForm.builder().title(articleSaveCommand.getTitle()).content(articleSaveCommand.getContent()).category(articleSaveCommand.getCategory()).price(articleSaveCommand.getPrice()).registeredAt(articleSaveCommand.getRegisteredAt()).status(articleSaveCommand.getStatus()).userId(articleSaveCommand.getUserId()).imageList(imageMetaDataList.stream().map(image -> ArticleImage.builder().imageId(image.getId()).imageUrl(image.getUrl()).build()).toList()).build();
-    }
-
-    public Article toArticle(ArticleSaveForm articleSaveForm) {
-        return Article.builder().title(articleSaveForm.getTitle()).content(articleSaveForm.getContent()).category(articleSaveForm.getCategory()).price(articleSaveForm.getPrice()).registeredAt(articleSaveForm.getRegisteredAt()).status(articleSaveForm.getStatus()).userId(articleSaveForm.getUserId()).imageList(articleSaveForm.getImageList()).build();
     }
 
     public Article toArticle(ArticleUpdateCommand articleUpdateCommand) {

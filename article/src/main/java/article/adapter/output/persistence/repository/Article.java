@@ -3,6 +3,7 @@ package article.adapter.output.persistence.repository;
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
 import article.domain.dto.ArticleImage;
+import article.domain.dto.ArticleSaveForm;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,4 +41,17 @@ public class Article {
     private String userId;
 
     private List<ArticleImage> imageList;
+
+    public static Article of(ArticleSaveForm form) {
+        return Article.builder()
+            .title(form.getTitle())
+            .content(form.getContent())
+            .category(form.getCategory())
+            .price(form.getPrice())
+            .registeredAt(form.getRegisteredAt())
+            .status(form.getStatus())
+            .userId(form.getUserId())
+            .imageList(form.getImageList())
+            .build();
+    }
 }

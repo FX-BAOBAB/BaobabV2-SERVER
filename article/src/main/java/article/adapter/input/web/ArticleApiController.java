@@ -3,7 +3,6 @@ package article.adapter.input.web;
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.input.web.request.ArticleUpdateRequest;
-import article.adapter.input.web.response.ArticleListResponse;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
@@ -17,9 +16,7 @@ import global.annotation.AuthenticatedUser;
 import global.api.Api;
 import global.resolver.AuthUser;
 import jakarta.validation.Valid;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -29,8 +26,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -48,9 +47,12 @@ public class ArticleApiController {
     private final DeleteArticleUseCase deleteArticleUseCase;
 
     @PostMapping("/save")
-    public Api<Boolean> save(@Valid ArticleSaveRequest request, @AuthenticatedUser AuthUser authUser) {
+    public Api<Boolean> save(
+        @Valid @ModelAttribute ArticleSaveRequest request,
+        @RequestPart("imageList") List<MultipartFile> imageList,
+        @AuthenticatedUser AuthUser authUser) {
 
-        ArticleSaveCommand command = ArticleSaveCommand.of(request, authUser.getUserId());
+        ArticleSaveCommand command = ArticleSaveCommand.of(request, imageList, authUser.getUserId());
 
         return Api.OK(saveArticleUseCase.saveArticle(command));
     }
