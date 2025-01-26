@@ -1,15 +1,12 @@
 package user.adapter.input.web.response;
 
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import user.domain.command.TokenCommand;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class TokenResponse {
 
     private String accessToken;
@@ -19,5 +16,14 @@ public class TokenResponse {
     private String refreshToken;
 
     private LocalDateTime refreshTokenExpiredAt;
+
+    public static TokenResponse toResponse(TokenCommand tokenCommand) {
+        return TokenResponse.builder()
+            .accessToken(tokenCommand.getAccessToken())
+            .accessTokenExpiredAt(tokenCommand.getAccessTokenExpiredAt())
+            .refreshToken(tokenCommand.getRefreshToken())
+            .refreshTokenExpiredAt(tokenCommand.getRefreshTokenExpiredAt())
+            .build();
+    }
 
 }

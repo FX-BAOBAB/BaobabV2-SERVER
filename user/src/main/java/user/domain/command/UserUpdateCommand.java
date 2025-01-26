@@ -33,7 +33,7 @@ public class UserUpdateCommand {
 
     private ProfileImage profileImage;
 
-    public static UserUpdateCommand toUpdateCommand(
+    public static UserUpdateCommand toCommand(
         UserUpdateRequest userUpdateRequest, ImageMetaData imageMetaData, String userId
     ) {
         ProfileImage imageInfo = ProfileImage.builder()

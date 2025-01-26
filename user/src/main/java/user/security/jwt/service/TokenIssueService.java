@@ -4,7 +4,6 @@ import global.errorcode.ErrorCode;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import user.core.common.converter.TokenConverter;
 import user.core.common.error.TokenErrorCode;
 import user.core.common.exception.token.TokenException;
 import user.core.common.exception.token.TokenSignatureException;
@@ -17,7 +16,6 @@ import user.security.jwt.model.TokenDto;
 public class TokenIssueService {
 
     private final TokenHelperService tokenHelperService;
-    private final TokenConverter tokenConverter;
 
     public TokenCommand issueToken(JwtInfoDto jwtInfoDto) {
         return Optional.ofNullable(jwtInfoDto).map(dto -> {
@@ -28,7 +26,7 @@ public class TokenIssueService {
             tokenHelperService.deleteRefreshToken(dto.getUserId());
             tokenHelperService.saveRefreshToken(dto.getUserId(), refreshToken.getToken());
 
-            return tokenConverter.toTokenCommand(accessToken, refreshToken);
+            return TokenCommand.toCommand(accessToken, refreshToken);
 
         }).orElseThrow(() -> new TokenException(ErrorCode.NULL_POINT));
     }

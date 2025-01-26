@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.dto.ProfileImage;
+import user.domain.dto.UserRegisterForm;
 import user.domain.dto.UserUpdateForm;
 
 @Data
@@ -71,6 +72,29 @@ public class UserDocument {
                     .post(userUpdateForm.getPost())
                     .build()
             )
+            .build();
+    }
+
+    public static UserDocument toUserDocument(UserRegisterForm userRegisterForm) {
+        return UserDocument.builder()
+            .nickName(userRegisterForm.getNickName())
+            .phone(userRegisterForm.getPhone())
+            .department(userRegisterForm.getDepartment())
+            .birth(userRegisterForm.getBirth())
+            .role(userRegisterForm.getRole())
+            .status(userRegisterForm.getStatus())
+            .registeredAt(userRegisterForm.getRegisteredAt())
+            .account(Account.builder()
+                .email(userRegisterForm.getEmail())
+                .password(userRegisterForm.getEncodingPassword())
+                .name(userRegisterForm.getName())
+                .build())
+            .address(Address.builder()
+                .address(userRegisterForm.getAddress())
+                .detailAddress(userRegisterForm.getDetailAddress())
+                .basicAddress(userRegisterForm.getBasicAddress())
+                .post(userRegisterForm.getPost())
+                .build())
             .build();
     }
 

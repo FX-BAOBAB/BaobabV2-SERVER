@@ -19,4 +19,12 @@ public class UserUnRegisterForm {
 
     private LocalDateTime unRegisterAt;
 
+    public static UserUnRegisterForm toForm(String userId) {
+        return UserUnRegisterForm.builder()
+            .userId(userId)
+            .status(UserStatus.UNREGISTERED)
+            .unRegisterAt(LocalDateTime.now())
+            .build();
+    }
+
 }

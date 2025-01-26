@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.output.UserPersistencePort;
-import user.core.common.converter.UserConverter;
 import user.domain.command.UserUnRegisterCommand;
 import user.domain.dto.UserUnRegisterForm;
 
@@ -15,12 +14,11 @@ import user.domain.dto.UserUnRegisterForm;
 public class UserUnRegisterService implements UserUnRegisterUseCase {
 
     private final UserPersistencePort userPersistencePort;
-    private final UserConverter userConverter;
 
     @Override
     public boolean unRegister(UserUnRegisterCommand userUnRegisterCommand) {
 
-        UserUnRegisterForm unRegisterForm = userConverter.toUnregisterForm(
+        UserUnRegisterForm unRegisterForm = UserUnRegisterForm.toForm(
             userUnRegisterCommand.getUserId());
 
         return userPersistencePort.unRegisterUser(unRegisterForm);

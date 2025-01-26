@@ -29,7 +29,6 @@ import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.input.UserUpdateUseCase;
 import user.core.common.annotation.DupleCheck;
 import user.core.common.annotation.PasswordCheck;
-import user.core.common.converter.UserConverter;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserUnRegisterCommand;
 import user.domain.command.UserUpdateCommand;
@@ -46,7 +45,6 @@ public class UserApiController {
     private final UserRegisterUseCase userRegisterUseCase;
     private final ImageIdUtils imageIdUtils;
 
-    private final UserConverter userConverter;
     private final ImageConverter imageConverter;
 
     @PostMapping("/update")
@@ -64,7 +62,7 @@ public class UserApiController {
 
             ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
 
-            UserUpdateCommand updateCommand = UserUpdateCommand.toUpdateCommand(
+            UserUpdateCommand updateCommand = UserUpdateCommand.toCommand(
                 userUpdateRequest.getBody(), imageMetaData, authUser.getUserId());
 
             boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);
@@ -81,7 +79,7 @@ public class UserApiController {
         @RequestBody @Valid Api<UserUnRegisterRequest> userUnRegisterRequest,
         @AuthenticatedUser AuthUser authUser
     ) {
-        UserUnRegisterCommand unRegisterCommand = userConverter.toUnRegisterCommand(
+        UserUnRegisterCommand unRegisterCommand = UserUnRegisterCommand.toCommand(
             userUnRegisterRequest.getBody(), authUser.getUserId());
 
         boolean isUnRegistered = userUnRegisterUseCase.unRegister(unRegisterCommand);
@@ -93,7 +91,7 @@ public class UserApiController {
         @AuthenticatedUser AuthUser authUser
     ) {
         UserReaderCommand userInfo = userReaderUseCase.getUserInfoBy(authUser.getUserId());
-        UserInfoResponse userInfoResponse = userConverter.toResponse(userInfo);
+        UserInfoResponse userInfoResponse = UserInfoResponse.toResponse(userInfo);
         return Api.OK(userInfoResponse);
     }
 

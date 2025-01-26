@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.domain.command.UserReaderCommand;
 import user.domain.dto.ProfileImage;
 
 @Data
@@ -48,5 +49,27 @@ public class UserInfoResponse {
     private LocalDateTime unRegisteredAt;
 
     private LocalDateTime lastLoginAt;
+
+    public static UserInfoResponse toResponse(UserReaderCommand userReaderCommand) {
+        return UserInfoResponse.builder()
+            .userId(userReaderCommand.getUserId())
+            .email(userReaderCommand.getEmail())
+            .nickName(userReaderCommand.getNickName())
+            .name(userReaderCommand.getName())
+            .phone(userReaderCommand.getPhone())
+            .department(userReaderCommand.getDepartment())
+            .birth(userReaderCommand.getBirth())
+            .address(userReaderCommand.getAddress())
+            .detailAddress(userReaderCommand.getDetailAddress())
+            .basicAddress(userReaderCommand.getBasicAddress())
+            .post(userReaderCommand.getPost())
+            .profileImage(userReaderCommand.getProfileImage())
+            .role(userReaderCommand.getRole())
+            .status(userReaderCommand.getStatus())
+            .registeredAt(userReaderCommand.getRegisteredAt())
+            .unRegisteredAt(userReaderCommand.getUnRegisteredAt())
+            .lastLoginAt(userReaderCommand.getLastLoginAt())
+            .build();
+    }
 
 }
