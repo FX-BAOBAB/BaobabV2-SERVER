@@ -2,20 +2,17 @@ package user.adapter.output.persistence.repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.dto.ProfileImage;
+import user.domain.dto.UserUpdateForm;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Document(collection = "user")
 public class UserDocument {
 
@@ -45,5 +42,36 @@ public class UserDocument {
     private Account account;
 
     private Address address;
+
+    public static UserDocument toUserDocument(UserUpdateForm userUpdateForm, UserDocument userDocument) {
+        return UserDocument.builder()
+            .id(userDocument.getId())
+            .nickName(userUpdateForm.getNickName())
+            .phone(userUpdateForm.getPhone())
+            .department(userUpdateForm.getDepartment())
+            .birth(userUpdateForm.getBirth())
+            .profileImage(userUpdateForm.getProfileImage())
+            .role(userDocument.getRole())
+            .status(UserStatus.REGISTERED)
+            .registeredAt(userDocument.getRegisteredAt())
+            .unRegisteredAt(userDocument.getUnRegisteredAt())
+            .lastLoginAt(userDocument.getLastLoginAt())
+            .account(
+                Account.builder()
+                    .email(userDocument.getAccount().getEmail())
+                    .password(userDocument.getAccount().getPassword())
+                    .name(userUpdateForm.getName())
+                    .build()
+            )
+            .address(
+                Address.builder()
+                    .address(userUpdateForm.getAddress())
+                    .basicAddress(userUpdateForm.getBasicAddress())
+                    .detailAddress(userUpdateForm.getDetailAddress())
+                    .post(userUpdateForm.getPost())
+                    .build()
+            )
+            .build();
+    }
 
 }

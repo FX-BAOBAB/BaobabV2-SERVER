@@ -10,8 +10,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import user.adapter.input.web.request.UserUnRegisterRequest;
+import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.output.persistence.enums.UserStatus;
-import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
@@ -32,43 +32,61 @@ public class PasswordCheckAdvice {
     @Before("passwordCheckPointcut()")
     public void checkPassword(JoinPoint joinPoint) {
 
-
-
-        String userId = null;
-        UserUnRegisterRequest userUnRegisterRequest = null;
-
         for (Object arg : joinPoint.getArgs()) {
 
-            // userId 추출
-            if (arg instanceof AuthUser) {
-                AuthUser authUser = (AuthUser) arg;
-                userId = authUser.getUserId();
-            }
-
-            // UserUnRegisterRequest 추출
             if (arg instanceof Api) {
                 Api<?> apiRequest = (Api<?>) arg;
                 Object requestBody = apiRequest.getBody();
 
-                if (requestBody instanceof UserUnRegisterRequest) {
-                    userUnRegisterRequest = (UserUnRegisterRequest) requestBody;
-                }
+                validateUserUnRegisterRequest(requestBody, joinPoint);
+                validateUserUpdateRequest(requestBody, joinPoint);
             }
         }
 
-        if (userId == null) {
-            throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
+    }
+
+    private void validateUserUpdateRequest(Object requestBody, JoinPoint joinPoint) {
+        if (requestBody instanceof UserUpdateRequest) {
+            UserUpdateRequest userUnRegisterRequest = (UserUpdateRequest) requestBody;
+
+            String currentPassword = getCurrentPassword(joinPoint);
+
+            // Password 검증
+            checkPasswordWithThrow(userUnRegisterRequest.getPassword(), currentPassword);
         }
+    }
 
+    private void validateUserUnRegisterRequest(Object requestBody, JoinPoint joinPoint) {
+        if (requestBody instanceof UserUnRegisterRequest) {
+            UserUnRegisterRequest userUnRegisterRequest = (UserUnRegisterRequest) requestBody;
 
-        UserDocument userDocument = userPersistencePort.getUserDocument(
-            userId, UserStatus.REGISTERED);
+            String currentPassword = getCurrentPassword(joinPoint);
 
-        // Password 검증
-        if (!BCrypt.checkpw(userUnRegisterRequest.getPassword(),
-            userDocument.getAccount().getPassword())) {
+            // Password 검증
+            checkPasswordWithThrow(userUnRegisterRequest.getPassword(), currentPassword);
+        }
+    }
+
+    private String getCurrentPassword(JoinPoint joinPoint) {
+        String userId = getUserIdBy(joinPoint);
+        return userPersistencePort.getUserDocument(userId, UserStatus.REGISTERED).getAccount()
+            .getPassword();
+    }
+
+    private static void checkPasswordWithThrow(String inputPassword, String currentPassword) {
+        if (!BCrypt.checkpw(inputPassword, currentPassword)) {
             throw new PasswordMismatchException(UserErrorCode.PASSWORD_MISMATCH);
         }
-
     }
+
+    private String getUserIdBy(JoinPoint joinPoint) {
+        // joinPoint 에서 AuthUser 추출
+        for (Object methodArg : joinPoint.getArgs()) {
+            if (methodArg instanceof AuthUser) {
+                return ((AuthUser) methodArg).getUserId();
+            }
+        }
+        throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
+    }
+
 }

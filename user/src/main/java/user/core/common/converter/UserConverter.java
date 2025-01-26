@@ -1,13 +1,11 @@
 package user.core.common.converter;
 
-import file.domain.ImageMetaData;
 import global.annotation.Converter;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.request.UserUnRegisterRequest;
-import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.input.web.response.UserInfoResponse;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
@@ -17,11 +15,8 @@ import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
 import user.domain.command.UserUnRegisterCommand;
-import user.domain.command.UserUpdateCommand;
-import user.domain.dto.ProfileImage;
 import user.domain.dto.UserRegisterForm;
 import user.domain.dto.UserUnRegisterForm;
-import user.domain.dto.UserUpdateForm;
 
 @Converter
 @RequiredArgsConstructor
@@ -88,31 +83,6 @@ public class UserConverter {
             .build();
     }
 
-    public UserUpdateCommand toUpdateCommand(
-        UserUpdateRequest userUpdateRequest,
-        ImageMetaData imageMetaData,
-        String userId
-    ) {
-        ProfileImage imageInfo = ProfileImage.builder()
-            .ImageId(imageMetaData.getId())
-            .ImageUrl(imageMetaData.getUrl())
-            .build();
-
-        return UserUpdateCommand.builder()
-            .userId(userId)
-            .nickName(userUpdateRequest.getNickName())
-            .name(userUpdateRequest.getName())
-            .phone(userUpdateRequest.getPhone())
-            .birth(userUpdateRequest.getBirth())
-            .department(userUpdateRequest.getDepartment())
-            .address(userUpdateRequest.getAddress())
-            .detailAddress(userUpdateRequest.getDetailAddress())
-            .basicAddress(userUpdateRequest.getBasicAddress())
-            .post(userUpdateRequest.getPost())
-            .profileImage(imageInfo)
-            .build();
-    }
-
     public UserRegisterForm toUserRegisterForm(UserRegisterCommand userRegisterCommand) {
         return UserRegisterForm.builder()
             .email(userRegisterCommand.getEmail())
@@ -131,53 +101,6 @@ public class UserConverter {
             .role(UserRole.BASIC_USER)
             .status(UserStatus.REGISTERED)
             .registeredAt(LocalDateTime.now())
-            .build();
-    }
-
-    public UserUpdateForm toUpdateForm(UserUpdateCommand userUpdateCommand) {
-        return UserUpdateForm.builder()
-            .userId(userUpdateCommand.getUserId())
-            .nickName(userUpdateCommand.getNickName())
-            .name(userUpdateCommand.getName())
-            .phone(userUpdateCommand.getPhone())
-            .birth(userUpdateCommand.getBirth())
-            .department(userUpdateCommand.getDepartment())
-            .address(userUpdateCommand.getAddress())
-            .detailAddress(userUpdateCommand.getDetailAddress())
-            .basicAddress(userUpdateCommand.getBasicAddress())
-            .post(userUpdateCommand.getPost())
-            .profileImage(userUpdateCommand.getProfileImage())
-            .build();
-    }
-
-    public UserDocument toUserDocument(UserUpdateForm userUpdateForm, UserDocument userDocument) {
-        return UserDocument.builder()
-            .id(userDocument.getId())
-            .nickName(userUpdateForm.getNickName())
-            .phone(userUpdateForm.getPhone())
-            .department(userUpdateForm.getDepartment())
-            .birth(userUpdateForm.getBirth())
-            .profileImage(userUpdateForm.getProfileImage())
-            .role(userDocument.getRole())
-            .status(UserStatus.REGISTERED)
-            .registeredAt(userDocument.getRegisteredAt())
-            .unRegisteredAt(userDocument.getUnRegisteredAt())
-            .lastLoginAt(userDocument.getLastLoginAt())
-            .account(
-                Account.builder()
-                    .email(userDocument.getAccount().getEmail())
-                    .password(userDocument.getAccount().getPassword())
-                    .name(userUpdateForm.getName())
-                    .build()
-            )
-            .address(
-                Address.builder()
-                    .address(userUpdateForm.getAddress())
-                    .basicAddress(userUpdateForm.getBasicAddress())
-                    .detailAddress(userUpdateForm.getDetailAddress())
-                    .post(userUpdateForm.getPost())
-                    .build()
-            )
             .build();
     }
 
