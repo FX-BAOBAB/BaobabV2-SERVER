@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import user.application.port.input.UserUpdateUseCase;
 import user.application.port.output.UserPersistencePort;
-import user.core.common.converter.UserConverter;
 import user.domain.command.UserUpdateCommand;
 import user.domain.dto.UserUpdateForm;
 
@@ -16,7 +15,7 @@ public class UserUpdateService implements UserUpdateUseCase {
 
     @Override
     public boolean updateUserInfo(UserUpdateCommand userUpdateCommand) {
-        UserUpdateForm userUpdateForm = UserUpdateForm.toUpdateForm(userUpdateCommand);
+        UserUpdateForm userUpdateForm = UserUpdateForm.toForm(userUpdateCommand);
         return userPersistenceAdapter.updateUser(userUpdateForm);
     }
 

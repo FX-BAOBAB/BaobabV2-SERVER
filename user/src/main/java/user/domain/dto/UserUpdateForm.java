@@ -33,7 +33,7 @@ public class UserUpdateForm {
 
     private String post;
 
-    public static UserUpdateForm toUpdateForm(UserUpdateCommand userUpdateCommand) {
+    public static UserUpdateForm toForm(UserUpdateCommand userUpdateCommand) {
         return UserUpdateForm.builder()
             .userId(userUpdateCommand.getUserId())
             .nickName(userUpdateCommand.getNickName())

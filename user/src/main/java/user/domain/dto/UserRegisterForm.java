@@ -6,13 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mindrot.jbcrypt.BCrypt;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.domain.command.UserRegisterCommand;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserRegisterForm {
 
     private String email;
@@ -42,5 +42,26 @@ public class UserRegisterForm {
     private UserStatus status;
 
     private LocalDateTime registeredAt;
+
+    public static UserRegisterForm toForm(UserRegisterCommand userRegisterCommand) {
+        return UserRegisterForm.builder()
+            .email(userRegisterCommand.getEmail())
+            .encodingPassword(
+                BCrypt.hashpw(userRegisterCommand.getPassword(), BCrypt.gensalt())
+            )
+            .nickName(userRegisterCommand.getNickName())
+            .name(userRegisterCommand.getName())
+            .phone(userRegisterCommand.getPhone())
+            .department(userRegisterCommand.getDepartment())
+            .birth(userRegisterCommand.getBirth())
+            .address(userRegisterCommand.getAddress())
+            .detailAddress(userRegisterCommand.getDetailAddress())
+            .basicAddress(userRegisterCommand.getBasicAddress())
+            .post(userRegisterCommand.getPost())
+            .role(UserRole.BASIC_USER)
+            .status(UserStatus.REGISTERED)
+            .registeredAt(LocalDateTime.now())
+            .build();
+    }
 
 }

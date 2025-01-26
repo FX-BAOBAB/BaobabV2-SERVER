@@ -7,7 +7,6 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.application.port.output.UserPersistencePort;
-import user.core.common.converter.UserConverter;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
@@ -21,7 +20,6 @@ import user.domain.dto.UserUpdateForm;
 public class UserPersistenceAdapter implements UserPersistencePort {
 
     private final UserMongoRepository userMongoRepository;
-    private final UserConverter userConverter;
 
     @Override
     public boolean checkEmailDuplicate(String email) {
@@ -35,7 +33,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public String saveUser(UserRegisterForm userRegisterForm) {
-        UserDocument user = userConverter.toUserDocument(userRegisterForm);
+        UserDocument user = UserDocument.toUserDocument(userRegisterForm);
         UserDocument savedUser = userMongoRepository.save(user);
         return savedUser.getId();
     }
@@ -88,7 +86,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     public UserReaderCommand getUserInfo(String userId, UserStatus status) {
         UserDocument user = userMongoRepository.findFirstByIdAndStatusOrderByIdDesc(userId, status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
-        return userConverter.toReaderCommand(user);
+        return UserReaderCommand.toCommand(user);
     }
 
     @Override

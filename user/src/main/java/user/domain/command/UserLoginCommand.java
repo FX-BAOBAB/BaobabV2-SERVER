@@ -1,18 +1,22 @@
 package user.domain.command;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import user.adapter.input.web.request.UserLoginRequest;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserLoginCommand {
 
     private String email;
 
     private String password;
+
+    public static UserLoginCommand toCommand(UserLoginRequest userLoginRequest) {
+        return UserLoginCommand.builder()
+            .email(userLoginRequest.getEmail())
+            .password(userLoginRequest.getPassword())
+            .build();
+    }
 
 }

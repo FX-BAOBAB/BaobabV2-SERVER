@@ -11,16 +11,14 @@ import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.input.web.response.JwtInfoResponse;
 import user.adapter.input.web.response.TokenResponse;
 import user.adapter.input.web.response.UserRegisterResponse;
-import user.adapter.input.web.response.JwtInfoResponse;
 import user.application.TokenValidationService;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.input.UserRegisterUseCase;
 import user.core.common.annotation.DupleCheck;
-import user.core.common.converter.TokenConverter;
-import user.core.common.converter.UserConverter;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
 import user.domain.command.UserRegisterCommand;
@@ -36,27 +34,24 @@ public class UserOpenApiController {
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
     private final TokenValidationService tokenValidationService;
 
-    private final UserConverter userConverter;
-    private final TokenConverter tokenConverter;
-
     @PostMapping("/register")
     @DupleCheck
     public Api<UserRegisterResponse> register(
         @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
-        UserRegisterCommand registerCommand = userConverter.toRegisterCommand(
+        UserRegisterCommand registerCommand = UserRegisterCommand.toCommand(
             userRegisterRequest.getBody());
 
         String userId = userRegisterUseCase.register(registerCommand);
-        UserRegisterResponse response = UserRegisterResponse.builder().userId(userId).build();
+        UserRegisterResponse response = UserRegisterResponse.toResponse(userId);
         return Api.OK(response);
     }
 
     @PostMapping("/login")
     public Api<TokenResponse> login(@RequestBody @Valid Api<UserLoginRequest> userLoginRequest) {
-        UserLoginCommand loginCommand = tokenConverter.toLoginCommand(userLoginRequest.getBody());
+        UserLoginCommand loginCommand = UserLoginCommand.toCommand(userLoginRequest.getBody());
         TokenCommand tokenCommand = userLoginUseCase.login(loginCommand);
-        TokenResponse response = tokenConverter.toTokenResponse(tokenCommand);
+        TokenResponse response = TokenResponse.toResponse(tokenCommand);
         return Api.OK(response);
     }
 
@@ -85,7 +80,7 @@ public class UserOpenApiController {
     @PostMapping("/validation")
     public Api<JwtInfoResponse> validateToken(@RequestHeader("Authorization") String accessToken) {
         JwtInfoDto jwtInfoDto = tokenValidationService.validateToken(accessToken);
-        JwtInfoResponse response = tokenConverter.toJwtInfoResponse(jwtInfoDto);
+        JwtInfoResponse response = JwtInfoResponse.toResponse(jwtInfoDto);
         return Api.OK(response);
     }
 

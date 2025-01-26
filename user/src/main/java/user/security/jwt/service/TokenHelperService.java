@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import user.adapter.output.persistence.enums.UserRole;
-import user.core.common.converter.TokenConverter;
 import user.core.common.error.TokenErrorCode;
 import user.core.common.exception.token.TokenException;
 import user.security.jwt.ifs.TokenHelperIfs;

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.dto.ProfileImage;
@@ -43,5 +44,21 @@ public class UserRegisterCommand {
     private UserStatus status;
 
     private LocalDateTime registeredAt;
+
+    public static UserRegisterCommand toCommand(UserRegisterRequest userRegisterRequest) {
+        return UserRegisterCommand.builder()
+            .email(userRegisterRequest.getEmail())
+            .password(userRegisterRequest.getPassword())
+            .nickName(userRegisterRequest.getNickName())
+            .name(userRegisterRequest.getNickName())
+            .phone(userRegisterRequest.getPhone())
+            .department(userRegisterRequest.getDepartment())
+            .birth(userRegisterRequest.getBirth())
+            .address(userRegisterRequest.getAddress())
+            .detailAddress(userRegisterRequest.getDetailAddress())
+            .basicAddress(userRegisterRequest.getBasicAddress())
+            .post(userRegisterRequest.getPost())
+            .build();
+    }
 
 }

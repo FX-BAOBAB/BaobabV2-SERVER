@@ -1,15 +1,12 @@
 package user.security.jwt.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import user.adapter.output.persistence.enums.UserRole;
+import user.adapter.output.persistence.repository.UserDocument;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class JwtInfoDto {
 
     private String userId;
@@ -17,5 +14,13 @@ public class JwtInfoDto {
     private String nickName;
 
     private UserRole role;
+
+    public static JwtInfoDto toTokenInfo(UserDocument userDocument) {
+        return JwtInfoDto.builder()
+            .userId(userDocument.getId())
+            .nickName(userDocument.getNickName())
+            .role(userDocument.getRole())
+            .build();
+    }
 
 }
