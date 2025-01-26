@@ -31,16 +31,12 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         // Gateway 에서 전달한 Header 추출
         String userId = request.getHeader(X_USER_ID);
 
-        if (userId == null) {
-            throw new RuntimeException(ErrorCode.MISSING_REQUIRED_HEADER.getDescription());
+        if (userId != null) {
+            RequestAttributes requestContext = Objects.requireNonNull(
+                RequestContextHolder.getRequestAttributes());
+            requestContext.setAttribute(X_USER_ID, userId, RequestAttributes.SCOPE_REQUEST);
         }
 
-        RequestAttributes requestContext = Objects.requireNonNull(
-            RequestContextHolder.getRequestAttributes());
-
-        requestContext.setAttribute(X_USER_ID, userId, RequestAttributes.SCOPE_REQUEST);
-
         return true;
-
     }
 }
