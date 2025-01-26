@@ -50,7 +50,7 @@ public class UserApiController {
     private final ImageConverter imageConverter;
 
     @PostMapping("/update")
-    @DupleCheck
+    @DupleCheck @PasswordCheck
     public Api<Boolean> update(
         @RequestPart("userUpdateRequest") @Valid Api<UserUpdateRequest> userUpdateRequest,
         @RequestPart("profileImage") MultipartFile profileImage,
@@ -64,7 +64,7 @@ public class UserApiController {
 
             ImageMetaData imageMetaData = imageStorageUseCase.saveImage(imageCommand).get();
 
-            UserUpdateCommand updateCommand = userConverter.toUpdateCommand(
+            UserUpdateCommand updateCommand = UserUpdateCommand.toUpdateCommand(
                 userUpdateRequest.getBody(), imageMetaData, authUser.getUserId());
 
             boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);

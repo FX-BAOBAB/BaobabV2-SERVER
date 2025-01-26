@@ -53,7 +53,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
         UserDocument userDocument = getUserDocument(userUpdateForm.getUserId(),
             UserStatus.REGISTERED);
 
-        UserDocument updatedDocument = userConverter.toUserDocument(userUpdateForm, userDocument);
+        UserDocument updatedDocument = UserDocument.toUserDocument(userUpdateForm, userDocument);
         UserDocument savedUser = userMongoRepository.save(updatedDocument);
         return savedUser.getId() != null;
     }

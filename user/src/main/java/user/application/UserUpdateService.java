@@ -13,11 +13,10 @@ import user.domain.dto.UserUpdateForm;
 public class UserUpdateService implements UserUpdateUseCase {
 
     private final UserPersistencePort userPersistenceAdapter;
-    private final UserConverter userConverter;
 
     @Override
     public boolean updateUserInfo(UserUpdateCommand userUpdateCommand) {
-        UserUpdateForm userUpdateForm = userConverter.toUpdateForm(userUpdateCommand);
+        UserUpdateForm userUpdateForm = UserUpdateForm.toUpdateForm(userUpdateCommand);
         return userPersistenceAdapter.updateUser(userUpdateForm);
     }
 
