@@ -20,6 +20,11 @@ import user.security.jwt.model.TokenDto;
 @RequiredArgsConstructor
 public class TokenHelperService {
 
+    private final String USER_ID = "userId";
+    private final String NICK_NAME = "nickName";
+    private final String ROLE = "role";
+    private final String REFRESH_TOKEN = "refreshToken:";
+
     @Value("${jwt.refresh-token.plus-hour}")
     private int refreshTokenPlusHour;
 
@@ -28,24 +33,24 @@ public class TokenHelperService {
 
     public TokenDto issueAccessToken(JwtInfoDto jwtInfoDto) {
         Map<String, Object> data = new HashMap<>();
-        data.put("userId", jwtInfoDto.getUserId());
-        data.put("nickName", jwtInfoDto.getNickName());
-        data.put("role", jwtInfoDto.getRole());
+        data.put(USER_ID, jwtInfoDto.getUserId());
+        data.put(NICK_NAME, jwtInfoDto.getNickName());
+        data.put(ROLE, jwtInfoDto.getRole());
         return tokenHelperIfs.issueAccessToken(data);
     }
 
     public TokenDto issueRefreshToken(JwtInfoDto jwtInfoDto) {
         Map<String, Object> data = new HashMap<>();
-        data.put("userId", jwtInfoDto.getUserId());
-        data.put("nickName", jwtInfoDto.getNickName());
-        data.put("role", jwtInfoDto.getRole());
+        data.put(USER_ID, jwtInfoDto.getUserId());
+        data.put(NICK_NAME, jwtInfoDto.getNickName());
+        data.put(ROLE, jwtInfoDto.getRole());
         return tokenHelperIfs.issueRefreshToken(data);
     }
 
     public TokenDto reIssueAccessToken(String refreshToken) {
         JwtInfoDto jwtInfoDto = validationToken(refreshToken);
 
-        String storedToken = (String) httpSession.getAttribute("refreshToken:" + jwtInfoDto.getUserId());
+        String storedToken = (String) httpSession.getAttribute(REFRESH_TOKEN + jwtInfoDto.getUserId());
         if (storedToken == null || !storedToken.equals(refreshToken)) {
             throw new TokenException(TokenErrorCode.INVALID_TOKEN);
         }
@@ -56,9 +61,9 @@ public class TokenHelperService {
     public JwtInfoDto validationToken(String token) {
         Map<String, Object> userData = tokenHelperIfs.validationTokenWithThrow(token);
 
-        Object userId = userData.get("userId");
-        Object nickName = userData.get("nickName");
-        Object role = userData.get("role");
+        Object userId = userData.get(USER_ID);
+        Object nickName = userData.get(NICK_NAME);
+        Object role = userData.get(ROLE);
         Objects.requireNonNull(userId, () -> {
             throw new TokenException(ErrorCode.NULL_POINT);
         });
@@ -72,12 +77,12 @@ public class TokenHelperService {
     public void saveRefreshToken(String userId, String refreshToken) {
         int expirationInSeconds = refreshTokenPlusHour * 60 * 60; // 시간을 초 단위로 변환
 
-        httpSession.setAttribute("refreshToken:" + userId, refreshToken);
+        httpSession.setAttribute(REFRESH_TOKEN + userId, refreshToken);
         httpSession.setMaxInactiveInterval(expirationInSeconds); // 세션 만료 시간 설정
     }
 
     public void deleteRefreshToken(String userId) {
-        httpSession.removeAttribute("refreshToken:" + userId);
+        httpSession.removeAttribute(REFRESH_TOKEN + userId);
     }
 
 }
