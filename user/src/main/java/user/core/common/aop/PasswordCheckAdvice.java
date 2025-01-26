@@ -1,6 +1,7 @@
 package user.core.common.aop;
 
 import global.api.Api;
+import global.resolver.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,7 +16,6 @@ import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
 import user.core.common.exception.user.PasswordMismatchException;
-import user.core.common.resolver.AuthUser;
 
 @Aspect
 @Component

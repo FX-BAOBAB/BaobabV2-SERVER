@@ -10,12 +10,12 @@ import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
 import article.application.port.input.UpdateArticleUseCase;
 import article.core.common.converter.ArticleConverter;
-import article.core.common.resolver.AuthUser;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
 import global.annotation.AuthenticatedUser;
 import global.api.Api;
+import global.resolver.AuthUser;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -24,7 +24,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController

@@ -1,4 +1,4 @@
-package user.core.common.resolver;
+package global.resolver;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

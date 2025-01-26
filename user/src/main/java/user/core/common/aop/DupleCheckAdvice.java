@@ -1,6 +1,7 @@
 package user.core.common.aop;
 
 import global.api.Api;
+import global.resolver.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -20,7 +21,6 @@ import user.core.common.exception.token.UserNotFoundException;
 import user.core.common.exception.user.EmailExistsException;
 import user.core.common.exception.user.NickNameExistsException;
 import user.core.common.exception.user.UserExistsException;
-import user.core.common.resolver.AuthUser;
 
 @Slf4j
 @Aspect
