@@ -2,9 +2,8 @@ package article.application.port.output;
 
 import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleSearchCommand;
-import article.domain.command.ArticleUpdateCommand;
 import article.domain.dto.ArticleSaveForm;
-
+import article.domain.dto.ArticleUpdateForm;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,10 +35,10 @@ public interface ArticlePersistencePort {
 
     /**
      * Update Article Data
-     * @param articleUpdateCommand Updated Article Data
+     * @param articleUpdateForm Updated Article Data
      * @return is Article Updated?
      */
-    boolean updateArticle(ArticleUpdateCommand articleUpdateCommand);
+    boolean updateArticle(ArticleUpdateForm articleUpdateForm);
 
     /**
      * Delete Article Data

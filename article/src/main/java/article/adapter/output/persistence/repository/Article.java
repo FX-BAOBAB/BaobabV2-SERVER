@@ -4,9 +4,9 @@ import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
 import article.domain.dto.ArticleImage;
 import article.domain.dto.ArticleSaveForm;
+import article.domain.dto.ArticleUpdateForm;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.querydsl.core.annotations.QueryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +44,20 @@ public class Article {
 
     public static Article of(ArticleSaveForm form) {
         return Article.builder()
+            .title(form.getTitle())
+            .content(form.getContent())
+            .category(form.getCategory())
+            .price(form.getPrice())
+            .registeredAt(form.getRegisteredAt())
+            .status(form.getStatus())
+            .userId(form.getUserId())
+            .imageList(form.getImageList())
+            .build();
+    }
+
+    public static Article of(ArticleUpdateForm form) {
+        return Article.builder()
+            .id(form.getId())
             .title(form.getTitle())
             .content(form.getContent())
             .category(form.getCategory())

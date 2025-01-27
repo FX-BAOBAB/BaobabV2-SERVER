@@ -4,10 +4,9 @@ import article.adapter.output.persistence.repository.Article;
 import article.adapter.output.persistence.repository.ArticleMongoRepository;
 import article.adapter.output.persistence.repository.ArticleQueryRepository;
 import article.application.port.output.ArticlePersistencePort;
-import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleSearchCommand;
-import article.domain.command.ArticleUpdateCommand;
 import article.domain.dto.ArticleSaveForm;
+import article.domain.dto.ArticleUpdateForm;
 import global.annotation.output.PersistenceAdapter;
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class ArticlePersistenceAdapter implements ArticlePersistencePort {
-
-    private final ArticleConverter articleConverter;
 
     private final ArticleMongoRepository articleMongoRepository;
 
@@ -40,9 +37,8 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     }
 
     @Override
-    public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
-        Article article = articleConverter.toArticle(articleUpdateCommand);
-        Article updatedArticle =  articleMongoRepository.save(article);
+    public boolean updateArticle(ArticleUpdateForm articleUpdateForm) {
+        Article updatedArticle =  articleMongoRepository.save(Article.of(articleUpdateForm));
         return updatedArticle.getId() != null;
     }
 

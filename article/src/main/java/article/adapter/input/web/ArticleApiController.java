@@ -8,7 +8,6 @@ import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
 import article.application.port.input.UpdateArticleUseCase;
-import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
@@ -16,11 +15,14 @@ import global.annotation.AuthenticatedUser;
 import global.api.Api;
 import global.resolver.AuthUser;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,13 +31,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ArticleApiController {
-
-    private final ArticleConverter articleConverter;
 
     private final SaveArticleUseCase saveArticleUseCase;
 
@@ -76,13 +77,24 @@ public class ArticleApiController {
         return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition)));
     }
 
-    // TODO Yang ji ung 과제
-    @PostMapping("/article")
-    public Api<Boolean> updateArticle(@Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest, @AuthenticatedUser AuthUser authUser) {
-        ArticleUpdateCommand articleUpdateCommand = articleConverter.toUpdateCommand(articleUpdateRequest, authUser.getUserId());
-        updateArticleUseCase.updateArticle(articleUpdateCommand); // pass > throw Exception Handling
-        //return "redirect:"; //
-        return null;
+    @PostMapping("/update")
+    public ResponseEntity<Void> update(
+        @Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest,
+        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages,
+        @AuthenticatedUser AuthUser authUser) {
+
+        ArticleUpdateCommand command = ArticleUpdateCommand.of(articleUpdateRequest,
+            addImages, authUser.getUserId());
+
+        updateArticleUseCase.updateArticle(command);
+
+        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/article/" + articleUpdateRequest.getId())
+            .toUriString();
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+            .location(URI.create(redirectUrl))
+            .build();
     }
 
     @DeleteMapping("/article/{articleId}")
