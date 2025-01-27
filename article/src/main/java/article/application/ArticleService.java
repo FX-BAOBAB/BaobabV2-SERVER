@@ -3,7 +3,6 @@ package article.application;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
-import article.core.common.converter.ArticleConverter;
 import article.core.common.error.article.ArticleErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
 import article.core.common.exception.article.NotPermittedException;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,8 +30,6 @@ import org.springframework.stereotype.Service;
 public class ArticleService implements DefaultArticleUseCase {
 
     private final ImageIdUtils imageIdUtils;
-
-    private final ArticleConverter articleConverter;
 
     private final ImageStorageUseCase imageStorageUseCase;
 
@@ -51,17 +47,6 @@ public class ArticleService implements DefaultArticleUseCase {
         ArticleSaveForm form = ArticleSaveForm.of(articleSaveCommand, imageMetaDataList);
 
         return articlePersistencePort.saveArticle(form);
-    }
-
-    @Override
-    public List<Article> getMyArticles(String userId, Pageable pageable) {
-        return articlePersistencePort.getMyArticles(userId, pageable);
-    }
-
-    @Override
-    public Article getArticleBy(String articleId) {
-        return articlePersistencePort.getArticleById(articleId).orElseThrow(() ->
-            new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
     }
 
     @Override

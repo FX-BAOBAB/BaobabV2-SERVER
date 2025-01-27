@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,15 +56,21 @@ public class ArticleApiController {
         return Api.OK(saveArticleUseCase.saveArticle(command));
     }
 
-    // TODO Article List Algorithm 적용 필요
-    // TODO My-articles : Auth Filter 적용 필요
     @GetMapping({"/list","/my-articles","/article/{articleId}"})
-    public Api<List<Article>> getAllArticles(@PathVariable(required=false) String articleId,@ModelAttribute ArticleSearchCondition condition,Pageable pageable) {
+    public Api<List<Article>> getAllArticles(
+        @PathVariable(required = false) String articleId,
+        @ModelAttribute ArticleSearchCondition condition,
+        @AuthenticatedUser(required = false) AuthUser authUser,
+        Pageable pageable) {
 
         condition.setPageable(pageable);
 
         if(!StringUtils.isEmpty(articleId)) {
             condition.setArticleId(articleId);
+        }
+
+        if(authUser != null) {
+            condition.setUserId(authUser.getUserId());
         }
 
         return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition)));
