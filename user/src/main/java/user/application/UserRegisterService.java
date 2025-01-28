@@ -1,6 +1,7 @@
 package user.application;
 
 import file.application.port.input.ImageMetaDataUseCase;
+import file.domain.ImageKind;
 import file.domain.ImageMetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class UserRegisterService implements UserRegisterUseCase {
     }
 
     private ProfileImage saveProfileImage(String userId, MultipartFile profileImage) {
-        ImageMetaData imageMetaData = imageMetaDataUseCase.processImageMetaData("USER",
+        ImageMetaData imageMetaData = imageMetaDataUseCase.processImageMetaData(ImageKind.USER,
                     userId, profileImage);
         return ProfileImage.builder()
             .ImageId(imageMetaData.getId())
