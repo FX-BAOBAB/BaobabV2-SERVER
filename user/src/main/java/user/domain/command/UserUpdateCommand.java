@@ -4,6 +4,7 @@ import file.domain.ImageMetaData;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.UserUpdateRequest;
 import user.domain.dto.ProfileImage;
 
@@ -31,16 +32,13 @@ public class UserUpdateCommand {
 
     private String post;
 
-    private ProfileImage profileImage;
+    private MultipartFile profileImage;
+
+    private String deleteImageId;
 
     public static UserUpdateCommand toCommand(
-        UserUpdateRequest userUpdateRequest, ImageMetaData imageMetaData, String userId
+        UserUpdateRequest userUpdateRequest, MultipartFile profileImage, String userId
     ) {
-        ProfileImage imageInfo = ProfileImage.builder()
-            .ImageId(imageMetaData.getId())
-            .ImageUrl(imageMetaData.getUrl())
-            .build();
-
         return UserUpdateCommand.builder()
             .userId(userId)
             .nickName(userUpdateRequest.getNickName())
@@ -52,7 +50,8 @@ public class UserUpdateCommand {
             .detailAddress(userUpdateRequest.getDetailAddress())
             .basicAddress(userUpdateRequest.getBasicAddress())
             .post(userUpdateRequest.getPost())
-            .profileImage(imageInfo)
+            .profileImage(profileImage)
+            .deleteImageId(userUpdateRequest.getDeleteImageId())
             .build();
     }
 

@@ -1,10 +1,8 @@
 package user.domain.dto;
 
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import user.domain.command.UserUpdateCommand;
 
 @Data
@@ -33,7 +31,7 @@ public class UserUpdateForm {
 
     private String post;
 
-    public static UserUpdateForm toForm(UserUpdateCommand userUpdateCommand) {
+    public static UserUpdateForm toForm(UserUpdateCommand userUpdateCommand, ProfileImage profileImage) {
         return UserUpdateForm.builder()
             .userId(userUpdateCommand.getUserId())
             .nickName(userUpdateCommand.getNickName())
@@ -45,7 +43,7 @@ public class UserUpdateForm {
             .detailAddress(userUpdateCommand.getDetailAddress())
             .basicAddress(userUpdateCommand.getBasicAddress())
             .post(userUpdateCommand.getPost())
-            .profileImage(userUpdateCommand.getProfileImage())
+            .profileImage(profileImage)
             .build();
     }
 
