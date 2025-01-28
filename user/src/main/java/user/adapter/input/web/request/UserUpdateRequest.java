@@ -57,4 +57,6 @@ public class UserUpdateRequest {
     )
     private String password;
 
+    private String deleteImageId;
+
 }
