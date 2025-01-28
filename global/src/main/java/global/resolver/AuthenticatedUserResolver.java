@@ -25,13 +25,14 @@ public class AuthenticatedUserResolver implements HandlerMethodArgumentResolver 
         boolean parameterType = parameter.getParameterType().equals(AuthUser.class);
 
         return (annotation && parameterType);
-
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         // supportsParameter true 시 실행
+
+        boolean required = parameter.getParameterAnnotation(AuthenticatedUser.class).required();
 
         // request context holder 에서 user id 찾기
         RequestAttributes requestContext = Objects.requireNonNull(
@@ -40,13 +41,10 @@ public class AuthenticatedUserResolver implements HandlerMethodArgumentResolver 
         Object userId = requestContext.getAttribute("x-user-id",
             RequestAttributes.SCOPE_REQUEST);
 
-        if (userId == null) {
+        if (userId == null && required) {
             throw new RuntimeException(ErrorCode.MISSING_REQUIRED_HEADER.getDescription());
         }
 
-        return AuthUser.builder()
-            .userId(userId.toString())
-            .build();
+        return (userId != null) ? AuthUser.builder().userId(userId.toString()).build() : null;
     }
-
 }

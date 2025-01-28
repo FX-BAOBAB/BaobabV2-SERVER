@@ -2,20 +2,18 @@ package article.domain.dto;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
-import article.domain.command.ArticleSaveCommand;
-import file.domain.ImageMetaData;
+import article.adapter.output.persistence.repository.Article;
+import article.domain.command.ArticleUpdateCommand;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ArticleSaveForm {
+public class ArticleUpdateForm {
+
+    private String id;
 
     private String title;
 
@@ -33,18 +31,17 @@ public class ArticleSaveForm {
 
     private List<ArticleImage> imageList;
 
-    public static ArticleSaveForm of(ArticleSaveCommand command, List<ImageMetaData> imageList) {
-        return ArticleSaveForm.builder()
+    public static ArticleUpdateForm of(ArticleUpdateCommand command, Article article) {
+        return ArticleUpdateForm.builder()
+            .id(command.getId())
             .title(command.getTitle())
             .content(command.getContent())
             .category(command.getCategory())
             .price(command.getPrice())
-            .registeredAt(command.getRegisteredAt())
+            .registeredAt(article.getRegisteredAt())
             .status(command.getStatus())
-            .userId(command.getUserId())
-            .imageList(imageList.stream().map(imageMetaData ->
-                    ArticleImage.of(imageMetaData.getId(), imageMetaData.getUrl()))
-                .toList())
+            .userId(article.getUserId())
+            .imageList(article.getImageList())
             .build();
     }
 

@@ -2,7 +2,6 @@ package article.adapter.input.web.request;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
-import article.domain.dto.ArticleImage;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,7 +9,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -35,10 +33,6 @@ public class ArticleUpdateRequest {
 
     @NotNull(message = "상태를 확인하세요")
     private ArticleStatus status;
-
-    private List<MultipartFile> updateImages;
-
-    private List<ArticleImage> imageList;
 
     private List<String> deleteImageIdList;
 

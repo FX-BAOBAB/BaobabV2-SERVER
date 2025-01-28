@@ -4,21 +4,17 @@ import article.adapter.output.persistence.repository.Article;
 import article.adapter.output.persistence.repository.ArticleMongoRepository;
 import article.adapter.output.persistence.repository.ArticleQueryRepository;
 import article.application.port.output.ArticlePersistencePort;
-import article.core.common.converter.ArticleConverter;
 import article.domain.command.ArticleSearchCommand;
-import article.domain.command.ArticleUpdateCommand;
 import article.domain.dto.ArticleSaveForm;
+import article.domain.dto.ArticleUpdateForm;
 import global.annotation.output.PersistenceAdapter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class ArticlePersistenceAdapter implements ArticlePersistencePort {
-
-    private final ArticleConverter articleConverter;
 
     private final ArticleMongoRepository articleMongoRepository;
 
@@ -26,8 +22,7 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
 
     @Override
     public boolean saveArticle(ArticleSaveForm articleSaveForm) {
-        Article article = articleConverter.toArticle(articleSaveForm);
-        Article savedArticle =  articleMongoRepository.save(article);
+        Article savedArticle =  articleMongoRepository.save(Article.of(articleSaveForm));
         return savedArticle.getId() != null;
     }
 
@@ -37,19 +32,13 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     }
 
     @Override
-    public List<Article> getMyArticles(String userId, Pageable pageable) {
-        return articleMongoRepository.findAllByUserId(userId, pageable);
-    }
-
-    @Override
     public Optional<Article> getArticleById(String articleId) {
         return articleMongoRepository.findById(articleId);
     }
 
     @Override
-    public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
-        Article article = articleConverter.toArticle(articleUpdateCommand);
-        Article updatedArticle =  articleMongoRepository.save(article);
+    public boolean updateArticle(ArticleUpdateForm articleUpdateForm) {
+        Article updatedArticle =  articleMongoRepository.save(Article.of(articleUpdateForm));
         return updatedArticle.getId() != null;
     }
 

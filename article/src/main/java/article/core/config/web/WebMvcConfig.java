@@ -19,7 +19,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthorizationInterceptor authorizationInterceptor;
 
-    private final List<String> WHITE_LIST = List.of();
+    private final List<String> WHITE_LIST = List.of(
+        "/list",
+        "/article/{articleId}"
+    );
 
     private final List<String> URL = List.of("http://localhost:8000");
 
@@ -44,7 +47,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor)
             .addPathPatterns("/**")
-            .excludePathPatterns(WHITE_LIST)
-        ;
+            .excludePathPatterns(WHITE_LIST);
     }
 }
