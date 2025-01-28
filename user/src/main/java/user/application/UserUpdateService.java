@@ -2,6 +2,7 @@ package user.application;
 
 import file.application.port.input.ImageMetaDataUseCase;
 import file.application.port.input.ImageStorageUseCase;
+import file.domain.ImageKind;
 import file.domain.ImageMetaData;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class UserUpdateService implements UserUpdateUseCase {
     }
 
     private ProfileImage saveProfileImage(String userId, MultipartFile profileImage) {
-        ImageMetaData imageMetaData = imageMetaDataUseCase.processImageMetaData("USER",
+        ImageMetaData imageMetaData = imageMetaDataUseCase.processImageMetaData(ImageKind.USER,
             userId, profileImage);
         return ProfileImage.builder()
             .ImageId(imageMetaData.getId())

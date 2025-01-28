@@ -14,6 +14,7 @@ import article.domain.dto.ArticleSaveForm;
 import article.domain.dto.ArticleUpdateForm;
 import file.application.port.input.ImageMetaDataUseCase;
 import file.application.port.input.ImageStorageUseCase;
+import file.domain.ImageKind;
 import file.domain.ImageMetaData;
 import java.util.List;
 import java.util.Optional;
@@ -30,12 +31,10 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final ArticlePersistencePort articlePersistencePort;
 
-    private final String IMAGE_MODULE_CODE = "ARTICLE";
-
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
         List<ImageMetaData> imageMetaDataList = imageMetaDataUseCase.processImageMetaDataList(
-            IMAGE_MODULE_CODE, articleSaveCommand.getUserId(), articleSaveCommand.getImageList());
+            ImageKind.ARTICLE, articleSaveCommand.getUserId(), articleSaveCommand.getImageList());
 
         ArticleSaveForm form = ArticleSaveForm.of(articleSaveCommand, imageMetaDataList);
 
@@ -103,7 +102,7 @@ public class ArticleService implements DefaultArticleUseCase {
 
                 // 추가 이미지 메타 데이터 리스트 가져오기
                 List<ImageMetaData> imageMetaDataList = imageMetaDataUseCase.processImageMetaDataList(
-                    IMAGE_MODULE_CODE, articleUpdateCommand.getUserId(), addImages);
+                    ImageKind.ARTICLE, articleUpdateCommand.getUserId(), addImages);
 
                 // 아티클 이미지 객체 리스트 생성
                 List<ArticleImage> articleImageList = imageMetaDataList.stream()

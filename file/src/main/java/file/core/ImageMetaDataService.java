@@ -22,9 +22,9 @@ public class ImageMetaDataService implements ImageMetaDataUseCase {
     private final ImageStorageUseCase imageStorageUseCase;
 
     @Override
-    public ImageMetaData processImageMetaData(String module, String userId, MultipartFile image) {
+    public ImageMetaData processImageMetaData(ImageKind imageKind, String userId, MultipartFile image) {
 
-        ImageCommand imageCommand = generateImageCommand(module, userId, image);
+        ImageCommand imageCommand = generateImageCommand(imageKind, userId, image);
 
         try {
             return imageStorageUseCase.saveImage(imageCommand).get();
@@ -38,19 +38,19 @@ public class ImageMetaDataService implements ImageMetaDataUseCase {
 
     @Override
     public List<ImageMetaData> processImageMetaDataList(
-        String module, String userId, List<MultipartFile> imageList) {
+        ImageKind imageKind, String userId, List<MultipartFile> imageList) {
 
         return imageList.stream()
-            .map(image -> processImageMetaData(module, userId, image))
+            .map(image -> processImageMetaData(imageKind, userId, image))
             .toList();
     }
 
-    private ImageCommand generateImageCommand(String module, String userId, MultipartFile image) {
-        String imageId = imageIdUtils.generateImageId(module, userId);
+    private ImageCommand generateImageCommand(ImageKind imageKind, String userId, MultipartFile image) {
+        String imageId = imageIdUtils.generateImageId(imageKind.getDescription(), userId);
         return ImageCommand.builder()
             .id(imageId)
             .file(image)
-            .kind(ImageKind.valueOf(module))
+            .kind(imageKind)
             .build();
     }
 
