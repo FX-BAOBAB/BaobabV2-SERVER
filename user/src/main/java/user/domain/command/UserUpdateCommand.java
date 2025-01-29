@@ -1,12 +1,10 @@
 package user.domain.command;
 
-import file.domain.ImageMetaData;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.UserUpdateRequest;
-import user.domain.dto.ProfileImage;
 
 @Data
 @Builder
@@ -36,7 +34,7 @@ public class UserUpdateCommand {
 
     private String deleteImageId;
 
-    public static UserUpdateCommand toCommand(
+    public static UserUpdateCommand of(
         UserUpdateRequest userUpdateRequest, MultipartFile profileImage, String userId
     ) {
         return UserUpdateCommand.builder()

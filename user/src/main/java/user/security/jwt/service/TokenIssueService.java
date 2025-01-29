@@ -26,7 +26,7 @@ public class TokenIssueService {
             tokenHelperService.deleteRefreshToken(dto.getUserId());
             tokenHelperService.saveRefreshToken(dto.getUserId(), refreshToken.getToken());
 
-            return TokenCommand.toCommand(accessToken, refreshToken);
+            return TokenCommand.of(accessToken, refreshToken);
 
         }).orElseThrow(() -> new TokenException(ErrorCode.NULL_POINT));
     }

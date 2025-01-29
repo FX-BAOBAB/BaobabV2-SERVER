@@ -39,7 +39,7 @@ public class UserOpenApiController {
     public Api<UserRegisterResponse> register(
         @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
-        UserRegisterCommand registerCommand = UserRegisterCommand.toCommand(
+        UserRegisterCommand registerCommand = UserRegisterCommand.of(
             userRegisterRequest.getBody());
 
         String userId = userRegisterUseCase.register(registerCommand);
@@ -49,7 +49,7 @@ public class UserOpenApiController {
 
     @PostMapping("/login")
     public Api<TokenResponse> login(@RequestBody @Valid Api<UserLoginRequest> userLoginRequest) {
-        UserLoginCommand loginCommand = UserLoginCommand.toCommand(userLoginRequest.getBody());
+        UserLoginCommand loginCommand = UserLoginCommand.of(userLoginRequest.getBody());
         TokenCommand tokenCommand = userLoginUseCase.login(loginCommand);
         TokenResponse response = TokenResponse.toResponse(tokenCommand);
         return Api.OK(response);

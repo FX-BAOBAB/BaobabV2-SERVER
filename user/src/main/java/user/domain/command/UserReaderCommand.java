@@ -49,25 +49,25 @@ public class UserReaderCommand {
 
     private LocalDateTime lastLoginAt;
 
-    public static UserReaderCommand toCommand(UserDocument user) {
+    public static UserReaderCommand of(UserDocument userDocument) {
         return UserReaderCommand.builder()
-            .userId(user.getId())
-            .email(user.getAccount().getEmail())
-            .nickName(user.getNickName())
-            .name(user.getAccount().getName())
-            .phone(user.getPhone())
-            .department(user.getDepartment())
-            .birth(user.getBirth())
-            .address(user.getAddress().getAddress())
-            .detailAddress(user.getAddress().getDetailAddress())
-            .basicAddress(user.getAddress().getBasicAddress())
-            .post(user.getAddress().getPost())
-            .profileImage(user.getProfileImage())
-            .role(user.getRole())
-            .status(user.getStatus())
-            .registeredAt(user.getRegisteredAt())
-            .unRegisteredAt(user.getUnRegisteredAt())
-            .lastLoginAt(user.getLastLoginAt())
+            .userId(userDocument.getId())
+            .email(userDocument.getAccount().getEmail())
+            .nickName(userDocument.getNickName())
+            .name(userDocument.getAccount().getName())
+            .phone(userDocument.getPhone())
+            .department(userDocument.getDepartment())
+            .birth(userDocument.getBirth())
+            .address(userDocument.getAddress().getAddress())
+            .detailAddress(userDocument.getAddress().getDetailAddress())
+            .basicAddress(userDocument.getAddress().getBasicAddress())
+            .post(userDocument.getAddress().getPost())
+            .profileImage(userDocument.getProfileImage())
+            .role(userDocument.getRole())
+            .status(userDocument.getStatus())
+            .registeredAt(userDocument.getRegisteredAt())
+            .unRegisteredAt(userDocument.getUnRegisteredAt())
+            .lastLoginAt(userDocument.getLastLoginAt())
             .build();
     }
 

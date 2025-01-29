@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
-import user.adapter.output.persistence.repository.Account;
-import user.adapter.output.persistence.repository.Address;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserUpdateCommand;
 

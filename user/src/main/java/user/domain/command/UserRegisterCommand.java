@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
-import user.domain.dto.ProfileImage;
 
 @Data
 @Builder
@@ -45,7 +44,7 @@ public class UserRegisterCommand {
 
     private LocalDateTime registeredAt;
 
-    public static UserRegisterCommand toCommand(UserRegisterRequest userRegisterRequest) {
+    public static UserRegisterCommand of(UserRegisterRequest userRegisterRequest) {
         return UserRegisterCommand.builder()
             .email(userRegisterRequest.getEmail())
             .password(userRegisterRequest.getPassword())

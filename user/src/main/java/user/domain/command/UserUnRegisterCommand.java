@@ -12,7 +12,7 @@ public class UserUnRegisterCommand {
 
     private String password;
 
-    public static UserUnRegisterCommand toCommand(
+    public static UserUnRegisterCommand of(
         UserUnRegisterRequest userUnRegisterRequest, String userId
     ) {
         return UserUnRegisterCommand.builder()

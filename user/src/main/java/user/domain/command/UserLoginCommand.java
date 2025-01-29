@@ -12,7 +12,7 @@ public class UserLoginCommand {
 
     private String password;
 
-    public static UserLoginCommand toCommand(UserLoginRequest userLoginRequest) {
+    public static UserLoginCommand of(UserLoginRequest userLoginRequest) {
         return UserLoginCommand.builder()
             .email(userLoginRequest.getEmail())
             .password(userLoginRequest.getPassword())

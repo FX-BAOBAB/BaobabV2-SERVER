@@ -1,10 +1,8 @@
 package user.domain.command;
 
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import user.security.jwt.model.TokenDto;
 
 @Data
@@ -19,7 +17,7 @@ public class TokenCommand {
 
     private LocalDateTime refreshTokenExpiredAt;
 
-    public static TokenCommand toCommand(TokenDto accessToken, TokenDto refreshToken) {
+    public static TokenCommand of(TokenDto accessToken, TokenDto refreshToken) {
         return TokenCommand.builder()
             .accessToken(accessToken.getToken())
             .accessTokenExpiredAt(accessToken.getExpiredAt())
