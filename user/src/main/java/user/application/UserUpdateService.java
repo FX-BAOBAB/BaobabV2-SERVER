@@ -8,6 +8,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.input.UserUpdateUseCase;
 import user.application.port.output.UserPersistencePort;
 import user.domain.command.UserUpdateCommand;
@@ -25,11 +27,16 @@ public class UserUpdateService implements UserUpdateUseCase {
     @Override
     public boolean updateUserInfo(UserUpdateCommand userUpdateCommand) {
 
+        UserDocument userDocument = userPersistenceAdapter.getUserDocument(
+            userUpdateCommand.getUserId(), UserStatus.REGISTERED);
+
         ProfileImage profileImage = saveProfileImage(userUpdateCommand.getUserId(),
             userUpdateCommand.getProfileImage());
         deleteProfileImage(userUpdateCommand);
 
-        UserUpdateForm userUpdateForm = UserUpdateForm.toForm(userUpdateCommand, profileImage);
+        userDocument.setProfileImage(profileImage);
+
+        UserUpdateForm userUpdateForm = UserUpdateForm.toForm(userUpdateCommand, userDocument);
         return userPersistenceAdapter.updateUser(userUpdateForm);
     }
 

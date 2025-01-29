@@ -33,7 +33,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public String saveUser(UserRegisterForm userRegisterForm) {
-        UserDocument user = UserDocument.toUserDocument(userRegisterForm);
+        UserDocument user = UserDocument.of(userRegisterForm);
         UserDocument savedUser = userMongoRepository.save(user);
         return savedUser.getId();
     }
@@ -48,10 +48,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public boolean updateUser(UserUpdateForm userUpdateForm) {
-        UserDocument userDocument = getUserDocument(userUpdateForm.getUserId(),
-            UserStatus.REGISTERED);
-
-        UserDocument updatedDocument = UserDocument.toUserDocument(userUpdateForm, userDocument);
+        UserDocument updatedDocument = UserDocument.of(userUpdateForm);
         UserDocument savedUser = userMongoRepository.save(updatedDocument);
         return savedUser.getId() != null;
     }
