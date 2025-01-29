@@ -32,7 +32,7 @@ public class UserRegisterService implements UserRegisterUseCase {
     }
 
     private UserRegisterForm initUserParameter(UserRegisterCommand userRegisterCommand) {
-        return UserRegisterForm.toForm(userRegisterCommand);
+        return UserRegisterForm.of(userRegisterCommand);
     }
 
     private ProfileImage saveProfileImage(String userId, MultipartFile profileImage) {

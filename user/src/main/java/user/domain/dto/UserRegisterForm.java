@@ -2,10 +2,8 @@ package user.domain.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
@@ -43,7 +41,7 @@ public class UserRegisterForm {
 
     private LocalDateTime registeredAt;
 
-    public static UserRegisterForm toForm(UserRegisterCommand userRegisterCommand) {
+    public static UserRegisterForm of(UserRegisterCommand userRegisterCommand) {
         return UserRegisterForm.builder()
             .email(userRegisterCommand.getEmail())
             .encodingPassword(

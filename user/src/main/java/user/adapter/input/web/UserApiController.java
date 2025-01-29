@@ -41,7 +41,7 @@ public class UserApiController {
         @RequestPart("profileImage") MultipartFile profileImage,
         @AuthenticatedUser AuthUser authUser
     ) {
-        UserUpdateCommand updateCommand = UserUpdateCommand.toCommand(
+        UserUpdateCommand updateCommand = UserUpdateCommand.of(
             userUpdateRequest.getBody(), profileImage, authUser.getUserId());
 
         boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);
@@ -54,7 +54,7 @@ public class UserApiController {
         @RequestBody @Valid Api<UserUnRegisterRequest> userUnRegisterRequest,
         @AuthenticatedUser AuthUser authUser
     ) {
-        UserUnRegisterCommand unRegisterCommand = UserUnRegisterCommand.toCommand(
+        UserUnRegisterCommand unRegisterCommand = UserUnRegisterCommand.of(
             userUnRegisterRequest.getBody(), authUser.getUserId());
 
         boolean isUnRegistered = userUnRegisterUseCase.unRegister(unRegisterCommand);

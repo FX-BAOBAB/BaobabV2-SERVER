@@ -44,23 +44,23 @@ public class UserDocument {
 
     private Address address;
 
-    public static UserDocument toUserDocument(UserUpdateForm userUpdateForm, UserDocument userDocument) {
+    public static UserDocument of(UserUpdateForm userUpdateForm) {
         return UserDocument.builder()
-            .id(userDocument.getId())
+            .id(userUpdateForm.getUserId())
             .nickName(userUpdateForm.getNickName())
             .phone(userUpdateForm.getPhone())
             .department(userUpdateForm.getDepartment())
             .birth(userUpdateForm.getBirth())
             .profileImage(userUpdateForm.getProfileImage())
-            .role(userDocument.getRole())
+            .role(userUpdateForm.getRole())
             .status(UserStatus.REGISTERED)
-            .registeredAt(userDocument.getRegisteredAt())
-            .unRegisteredAt(userDocument.getUnRegisteredAt())
-            .lastLoginAt(userDocument.getLastLoginAt())
+            .registeredAt(userUpdateForm.getRegisteredAt())
+            .unRegisteredAt(userUpdateForm.getUnRegisteredAt())
+            .lastLoginAt(userUpdateForm.getLastLoginAt())
             .account(
                 Account.builder()
-                    .email(userDocument.getAccount().getEmail())
-                    .password(userDocument.getAccount().getPassword())
+                    .email(userUpdateForm.getEmail())
+                    .password(userUpdateForm.getPassword())
                     .name(userUpdateForm.getName())
                     .build()
             )
@@ -75,7 +75,7 @@ public class UserDocument {
             .build();
     }
 
-    public static UserDocument toUserDocument(UserRegisterForm userRegisterForm) {
+    public static UserDocument of(UserRegisterForm userRegisterForm) {
         return UserDocument.builder()
             .nickName(userRegisterForm.getNickName())
             .phone(userRegisterForm.getPhone())

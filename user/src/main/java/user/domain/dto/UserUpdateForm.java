@@ -1,8 +1,12 @@
 package user.domain.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
+import user.adapter.output.persistence.enums.UserRole;
+import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserUpdateCommand;
 
 @Data
@@ -10,6 +14,10 @@ import user.domain.command.UserUpdateCommand;
 public class UserUpdateForm {
 
     private String userId;
+
+    private String email;
+
+    private String password;
 
     private String name;
 
@@ -31,9 +39,21 @@ public class UserUpdateForm {
 
     private String post;
 
-    public static UserUpdateForm toForm(UserUpdateCommand userUpdateCommand, ProfileImage profileImage) {
+    private UserRole role;
+
+    private UserStatus status;
+
+    private LocalDateTime registeredAt;
+
+    private LocalDateTime unRegisteredAt;
+
+    private LocalDateTime lastLoginAt;
+
+    public static UserUpdateForm toForm(UserUpdateCommand userUpdateCommand, UserDocument userDocument) {
         return UserUpdateForm.builder()
             .userId(userUpdateCommand.getUserId())
+            .email(userDocument.getAccount().getEmail())
+            .password(userDocument.getAccount().getPassword())
             .nickName(userUpdateCommand.getNickName())
             .name(userUpdateCommand.getName())
             .phone(userUpdateCommand.getPhone())
@@ -43,7 +63,12 @@ public class UserUpdateForm {
             .detailAddress(userUpdateCommand.getDetailAddress())
             .basicAddress(userUpdateCommand.getBasicAddress())
             .post(userUpdateCommand.getPost())
-            .profileImage(profileImage)
+            .role(userDocument.getRole())
+            .status(userDocument.getStatus())
+            .registeredAt(userDocument.getRegisteredAt())
+            .unRegisteredAt(userDocument.getUnRegisteredAt())
+            .lastLoginAt(userDocument.getLastLoginAt())
+            .profileImage(userDocument.getProfileImage())
             .build();
     }
 
