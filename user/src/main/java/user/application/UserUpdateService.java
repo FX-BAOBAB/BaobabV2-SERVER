@@ -30,8 +30,8 @@ public class UserUpdateService implements UserUpdateUseCase {
         UserDocument userDocument = userPersistenceAdapter.getUserDocument(
             userUpdateCommand.getUserId(), UserStatus.REGISTERED);
 
-        ProfileImage profileImage = saveProfileImage(userUpdateCommand.getUserId(),
-            userUpdateCommand.getProfileImage());
+        ProfileImage profileImage = saveProfileImage(userUpdateCommand,
+            userDocument.getProfileImage());
         deleteProfileImage(userUpdateCommand);
 
         userDocument.setProfileImage(profileImage);
@@ -45,13 +45,18 @@ public class UserUpdateService implements UserUpdateUseCase {
             .ifPresent(imageStorageUseCase::deleteImage);
     }
 
-    private ProfileImage saveProfileImage(String userId, MultipartFile profileImage) {
-        ImageMetaData imageMetaData = imageMetaDataUseCase.processImageMetaData(ImageKind.USER,
-            userId, profileImage);
-        return ProfileImage.builder()
-            .ImageId(imageMetaData.getId())
-            .ImageUrl(imageMetaData.getUrl())
-            .build();
+    private ProfileImage saveProfileImage(UserUpdateCommand userUpdateCommand,
+        ProfileImage existingProfileImage) {
+        return Optional.ofNullable(userUpdateCommand.getProfileImage())
+            .filter(image -> !image.isEmpty())
+            .map(image -> {
+                ImageMetaData imageMetaData = imageMetaDataUseCase.processImageMetaData(
+                    ImageKind.USER, userUpdateCommand.getUserId(), image);
+                return ProfileImage.builder()
+                    .ImageId(imageMetaData.getId())
+                    .ImageUrl(imageMetaData.getUrl())
+                    .build();
+            })
+            .orElse(existingProfileImage); // 새로운 이미지가 없으면 기존 이미지를 유지
     }
-
 }
