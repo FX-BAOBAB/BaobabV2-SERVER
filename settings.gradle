@@ -5,3 +5,5 @@ include 'user'
 include 'article'
 include 'file'
 include 'eureka'
+include 'chat'
+
