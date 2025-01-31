@@ -24,8 +24,6 @@ public class UserDocument {
 
     private String phone;
 
-    private String department;
-
     private LocalDate birth;
 
     private ProfileImage profileImage;
@@ -49,7 +47,6 @@ public class UserDocument {
             .id(userUpdateForm.getUserId())
             .nickName(userUpdateForm.getNickName())
             .phone(userUpdateForm.getPhone())
-            .department(userUpdateForm.getDepartment())
             .birth(userUpdateForm.getBirth())
             .profileImage(userUpdateForm.getProfileImage())
             .role(userUpdateForm.getRole())
@@ -79,7 +76,6 @@ public class UserDocument {
         return UserDocument.builder()
             .nickName(userRegisterForm.getNickName())
             .phone(userRegisterForm.getPhone())
-            .department(userRegisterForm.getDepartment())
             .birth(userRegisterForm.getBirth())
             .role(userRegisterForm.getRole())
             .status(userRegisterForm.getStatus())

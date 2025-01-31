@@ -23,8 +23,6 @@ public class UserRegisterForm {
 
     private String phone;
 
-    private String department;
-
     private LocalDate birth;
 
     private String address;
@@ -50,7 +48,6 @@ public class UserRegisterForm {
             .nickName(userRegisterCommand.getNickName())
             .name(userRegisterCommand.getName())
             .phone(userRegisterCommand.getPhone())
-            .department(userRegisterCommand.getDepartment())
             .birth(userRegisterCommand.getBirth())
             .address(userRegisterCommand.getAddress())
             .detailAddress(userRegisterCommand.getDetailAddress())

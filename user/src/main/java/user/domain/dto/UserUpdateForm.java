@@ -25,8 +25,6 @@ public class UserUpdateForm {
 
     private String phone;
 
-    private String department;
-
     private LocalDate birth;
 
     private ProfileImage profileImage;
@@ -58,7 +56,6 @@ public class UserUpdateForm {
             .name(userUpdateCommand.getName())
             .phone(userUpdateCommand.getPhone())
             .birth(userUpdateCommand.getBirth())
-            .department(userUpdateCommand.getDepartment())
             .address(userUpdateCommand.getAddress())
             .detailAddress(userUpdateCommand.getDetailAddress())
             .basicAddress(userUpdateCommand.getBasicAddress())

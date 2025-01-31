@@ -40,9 +40,6 @@ public class UserRegisterRequest {
     )
     private String phone;
 
-    // TODO ENUM 처리 고려
-    private String department;
-
     private LocalDate birth;
 
     @NotBlank(message = "필수 입력 사항입니다.")
