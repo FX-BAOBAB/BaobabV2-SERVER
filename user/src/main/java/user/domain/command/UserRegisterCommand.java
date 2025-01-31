@@ -2,18 +2,14 @@ package user.domain.command;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserRegisterCommand {
 
     private String email;
@@ -25,8 +21,6 @@ public class UserRegisterCommand {
     private String name;
 
     private String phone;
-
-    private String department;
 
     private LocalDate birth;
 
@@ -51,7 +45,6 @@ public class UserRegisterCommand {
             .nickName(userRegisterRequest.getNickName())
             .name(userRegisterRequest.getNickName())
             .phone(userRegisterRequest.getPhone())
-            .department(userRegisterRequest.getDepartment())
             .birth(userRegisterRequest.getBirth())
             .address(userRegisterRequest.getAddress())
             .detailAddress(userRegisterRequest.getDetailAddress())

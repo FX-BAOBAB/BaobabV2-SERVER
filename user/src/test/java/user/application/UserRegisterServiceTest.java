@@ -39,7 +39,6 @@ class UserRegisterServiceTest extends AcceptanceTestWithMongo {
             .nickName("testUser")
             .name("Test User")
             .phone("010-0000-0000")
-            .department("Software")
             .birth(LocalDate.of(2001, 9, 7))
             .address("Seoul")
             .detailAddress("Gangnam")

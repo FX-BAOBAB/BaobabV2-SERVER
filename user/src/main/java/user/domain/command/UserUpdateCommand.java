@@ -20,8 +20,6 @@ public class UserUpdateCommand {
 
     private LocalDate birth;
 
-    private String department;
-
     private String address;
 
     private String detailAddress;
@@ -43,7 +41,6 @@ public class UserUpdateCommand {
             .name(userUpdateRequest.getName())
             .phone(userUpdateRequest.getPhone())
             .birth(userUpdateRequest.getBirth())
-            .department(userUpdateRequest.getDepartment())
             .address(userUpdateRequest.getAddress())
             .detailAddress(userUpdateRequest.getDetailAddress())
             .basicAddress(userUpdateRequest.getBasicAddress())

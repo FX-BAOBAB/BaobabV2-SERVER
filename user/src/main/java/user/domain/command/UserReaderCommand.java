@@ -25,8 +25,6 @@ public class UserReaderCommand {
 
     private String phone;
 
-    private String department;
-
     private LocalDate birth;
 
     private String address;
@@ -56,7 +54,6 @@ public class UserReaderCommand {
             .nickName(userDocument.getNickName())
             .name(userDocument.getAccount().getName())
             .phone(userDocument.getPhone())
-            .department(userDocument.getDepartment())
             .birth(userDocument.getBirth())
             .address(userDocument.getAddress().getAddress())
             .detailAddress(userDocument.getAddress().getDetailAddress())

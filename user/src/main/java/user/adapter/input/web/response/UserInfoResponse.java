@@ -26,8 +26,6 @@ public class UserInfoResponse {
 
     private String phone;
 
-    private String department;
-
     private LocalDate birth;
 
     private String address;
@@ -57,7 +55,6 @@ public class UserInfoResponse {
             .nickName(userReaderCommand.getNickName())
             .name(userReaderCommand.getName())
             .phone(userReaderCommand.getPhone())
-            .department(userReaderCommand.getDepartment())
             .birth(userReaderCommand.getBirth())
             .address(userReaderCommand.getAddress())
             .detailAddress(userReaderCommand.getDetailAddress())

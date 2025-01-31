@@ -7,7 +7,6 @@ import file.domain.ImageMetaData;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.input.UserUpdateUseCase;
