@@ -1,5 +1,6 @@
 package chat.adapter.output.persistence.repository;
 
+import chat.domain.dto.ChatRoomSaveForm;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +24,13 @@ public class ChatRoomDocument {
     private String buyerId;
 
     private LocalDateTime registeredAt;
+
+    public static ChatRoomDocument of(ChatRoomSaveForm chatRoomSaveForm) {
+        return ChatRoomDocument.builder()
+            .articleId(chatRoomSaveForm.getArticleId())
+            .buyerId(chatRoomSaveForm.getBuyerId())
+            .registeredAt(chatRoomSaveForm.getRegisteredAt())
+            .build();
+    }
 
 }
