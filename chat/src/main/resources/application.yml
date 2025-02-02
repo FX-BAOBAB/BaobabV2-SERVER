@@ -8,6 +8,7 @@ spring:
   jpa:
     show-sql: true
 
+  data:
     mongodb:
       uri: mongodb://admin:admin@localhost:27017
       database: baobab

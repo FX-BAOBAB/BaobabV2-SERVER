@@ -7,6 +7,8 @@ public interface ChatRoomPersistencePort {
 
     boolean saveChatRoom(ChatRoomSaveForm chatRoomSaveForm);
 
+    boolean existsChatRoom(String articleId, String buyerId);
+
     ChatRoomDocument getChatRoomList(String userId);
 
 }
