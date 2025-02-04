@@ -5,7 +5,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_URL}
 
 spring:
   main:
@@ -38,8 +38,8 @@ logging:
 
 log:
   config:
-    path: logs
+    path: ${LOG_CONFIG_PATH}
 
 token:
   validation:
-    url: http://localhost:8000/user-service/open-api/validation
+    url: ${VALIDATION_URL}
