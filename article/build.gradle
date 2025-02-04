@@ -53,8 +53,18 @@ dependencies {
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
     annotationProcessor 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    // OpenFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     implementation project(":global")
     implementation project(":file")
+}
+
+dependencyManagement {
+
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
+    }
 }
 
 // 컴파일러 옵션에 annotationProcessor 직접 지정
