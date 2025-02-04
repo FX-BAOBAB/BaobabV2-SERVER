@@ -1,0 +1,41 @@
+server:
+  port: 0 # 랜덤 포트를 사용하기 위함
+
+spring:
+  application:
+    name: baobab-chat
+
+  jpa:
+    show-sql: true
+
+  data:
+    mongodb:
+      uri: ${MONGO_URL}
+      database: ${MONGO_DATABASE}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+# logging
+logging:
+  level:
+    org:
+      springframework.web: DEBUG
+      hibernate: ERROR
+
+log:
+  config:
+    path: ${LOG_CONFIG_PATH}
+
+file:
+  upload-dir: ${FILE_UPLOAD_DIR}
+
+cipher:
+  key: ${CIPHER_KEY}
