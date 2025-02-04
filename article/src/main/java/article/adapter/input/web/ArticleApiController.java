@@ -3,7 +3,7 @@ package article.adapter.input.web;
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.input.web.request.ArticleUpdateRequest;
-import article.adapter.output.persistence.repository.Article;
+import article.adapter.input.web.response.ArticleInfoResponse;
 import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
@@ -58,7 +58,7 @@ public class ArticleApiController {
     }
 
     @GetMapping({"/list","/my-articles","/article/{articleId}"})
-    public Api<List<Article>> getAllArticles(
+    public Api<List<ArticleInfoResponse>> getAllArticles(
         @PathVariable(required = false) String articleId,
         @ModelAttribute ArticleSearchCondition condition,
         @AuthenticatedUser(required = false) AuthUser authUser,
