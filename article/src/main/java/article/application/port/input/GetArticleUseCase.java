@@ -1,6 +1,6 @@
 package article.application.port.input;
 
-import article.adapter.output.persistence.repository.Article;
+import article.adapter.input.web.response.ArticleInfoResponse;
 import article.domain.command.ArticleSearchCommand;
 
 import java.util.List;
@@ -12,10 +12,10 @@ public interface GetArticleUseCase {
 
     /**
      * Get Article List By Search Condition
-     * @see ArticleSearchCommand
+     *
      * @param articleSearchCommand Article Search Condition
-     * @return Article List
+     * @return ArticleInfoResponse List
      */
-    List<Article> getArticleList(ArticleSearchCommand articleSearchCommand);
+    List<ArticleInfoResponse> getArticleList(ArticleSearchCommand articleSearchCommand);
 
 }
