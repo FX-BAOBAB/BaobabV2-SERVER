@@ -4,9 +4,11 @@ import global.annotation.input.RestAdapter;
 import global.api.Api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
@@ -15,8 +17,10 @@ import user.adapter.input.web.response.JwtInfoResponse;
 import user.adapter.input.web.response.TokenResponse;
 import user.adapter.input.web.response.UserRegisterResponse;
 import user.application.TokenValidationService;
+import user.application.UserReaderService;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
+import user.application.port.input.UserReaderUseCase;
 import user.application.port.input.UserRegisterUseCase;
 import user.core.common.annotation.DupleCheck;
 import user.domain.command.TokenCommand;
@@ -33,6 +37,7 @@ public class UserOpenApiController {
     private final UserLoginUseCase userLoginUseCase;
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
     private final TokenValidationService tokenValidationService;
+    private final UserReaderUseCase userReaderUseCase;
 
     @PostMapping("/register")
     @DupleCheck
@@ -82,6 +87,11 @@ public class UserOpenApiController {
         JwtInfoDto jwtInfoDto = tokenValidationService.validateToken(accessToken);
         JwtInfoResponse response = JwtInfoResponse.toResponse(jwtInfoDto);
         return Api.OK(response);
+    }
+
+    @GetMapping("/nickname")
+    String getNickname(@RequestParam("userId") String userId){
+        return userReaderUseCase.getUserInfoBy(userId).getNickName();
     }
 
 }
