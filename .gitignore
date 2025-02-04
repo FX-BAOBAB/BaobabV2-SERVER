@@ -8,6 +8,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+*.env
+**/src/test/**/application-test.yml
+
 ### STS ###
 .apt_generated
 .classpath
@@ -38,5 +41,3 @@ out/
 
 ### VS Code ###
 .vscode/
-article/src/main/java/article/application/port/input/GetArticleUseCase.java
-article/src/main/java/article/application/port/input/SaveArticleUseCase.java
