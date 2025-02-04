@@ -19,4 +19,4 @@ logging:
 
 log:
   config:
-    path: logs
+    path: ${LOG_CONFIG_PATH}
