@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.output.UserPersistencePort;
 import user.domain.command.UserUnRegisterCommand;
-import user.domain.dto.UserUnRegisterForm;
+import user.domain.form.UserUnRegisterForm;
 
 @Service
 @RequiredArgsConstructor

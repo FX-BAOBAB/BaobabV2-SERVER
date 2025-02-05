@@ -28,7 +28,7 @@ public class UserLoginService implements UserLoginUseCase {
         UserDocument userDocument = userPersistencePort.getUserDocumentBy(
             userLoginCommand.getEmail(), UserStatus.REGISTERED);
 
-        if(!BCrypt.checkpw(userLoginCommand.getPassword(), userDocument.getAccount().getPassword())) {
+        if(!BCrypt.checkpw(userLoginCommand.getPassword(), userDocument.getUserAccount().getPassword())) {
             throw new PasswordMismatchException(UserErrorCode.PASSWORD_MISMATCH);
         }
 

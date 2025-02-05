@@ -5,9 +5,9 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.ProfileImage;
-import user.domain.dto.UserRegisterForm;
-import user.domain.dto.UserUnRegisterForm;
-import user.domain.dto.UserUpdateForm;
+import user.domain.form.UserRegisterForm;
+import user.domain.form.UserUnRegisterForm;
+import user.domain.form.UserUpdateForm;
 
 public interface UserPersistencePort {
 

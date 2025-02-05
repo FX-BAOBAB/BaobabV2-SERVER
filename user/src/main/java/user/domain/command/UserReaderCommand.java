@@ -5,14 +5,18 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import user.adapter.output.persistence.enums.CarrierType;
+import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.domain.dto.ProfileImage;
+import user.domain.dto.UserAddress;
+import user.domain.dto.UserPhoneInfo;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class UserReaderCommand {
 
     private String userId;
@@ -23,17 +27,15 @@ public class UserReaderCommand {
 
     private String name;
 
-    private String phone;
+    private UserPhoneInfo userPhoneInfo;
+
+    private GenderType genderType;
+
+    private Boolean isForeigner;
 
     private LocalDate birth;
 
-    private String address;
-
-    private String detailAddress;
-
-    private String basicAddress;
-
-    private String post;
+    private UserAddress userAddress;
 
     private ProfileImage profileImage;
 
@@ -50,15 +52,14 @@ public class UserReaderCommand {
     public static UserReaderCommand of(UserDocument userDocument) {
         return UserReaderCommand.builder()
             .userId(userDocument.getId())
-            .email(userDocument.getAccount().getEmail())
+            .email(userDocument.getUserAccount().getEmail())
             .nickName(userDocument.getNickName())
-            .name(userDocument.getAccount().getName())
-            .phone(userDocument.getPhone())
+            .name(userDocument.getUserAccount().getName())
+            .userPhoneInfo(userDocument.getUserPhoneInfo())
+            .genderType(userDocument.getGenderType())
+            .isForeigner(userDocument.getIsForeigner())
             .birth(userDocument.getBirth())
-            .address(userDocument.getAddress().getAddress())
-            .detailAddress(userDocument.getAddress().getDetailAddress())
-            .basicAddress(userDocument.getAddress().getBasicAddress())
-            .post(userDocument.getAddress().getPost())
+            .userAddress(userDocument.getUserAddress())
             .profileImage(userDocument.getProfileImage())
             .role(userDocument.getRole())
             .status(userDocument.getStatus())

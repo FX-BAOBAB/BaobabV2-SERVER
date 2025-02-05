@@ -8,9 +8,14 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import user.adapter.output.persistence.enums.CarrierType;
+import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.command.UserRegisterCommand;
+import user.domain.dto.UserAccount;
+import user.domain.dto.UserAddress;
+import user.domain.dto.UserPhoneInfo;
 
 @SpringBootTest
 class UserRegisterServiceTest extends AcceptanceTestWithMongo {
@@ -34,16 +39,25 @@ class UserRegisterServiceTest extends AcceptanceTestWithMongo {
 
     private UserRegisterCommand getRegisterCommand() {
         return UserRegisterCommand.builder()
-            .email("test@example.com")
-            .password("Password@123")
+            .userAccount(UserAccount.builder()
+                .email("test@example.com")
+                .password("Password@123")
+                .name("Test User")
+                .build())
             .nickName("testUser")
-            .name("Test User")
-            .phone("010-0000-0000")
+            .userPhoneInfo(UserPhoneInfo.builder()
+                .carrierType(CarrierType.KT)
+                .phoneNumber("010-0000-0000")
+                .build())
+            .genderType(GenderType.MALE)
+            .isForeigner(false)
             .birth(LocalDate.of(2001, 9, 7))
-            .address("Seoul")
-            .detailAddress("Gangnam")
-            .basicAddress("Seoul, Gangnam")
-            .post("12345")
+            .userAddress(UserAddress.builder()
+                .address("Seoul")
+                .detailAddress("Gangnam")
+                .basicAddress("Seoul, Gangnam")
+                .post("12345")
+                .build())
             .role(UserRole.BASIC_USER)
             .status(UserStatus.REGISTERED)
             .registeredAt(LocalDateTime.now())
