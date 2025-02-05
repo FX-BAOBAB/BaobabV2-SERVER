@@ -6,11 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import user.adapter.output.persistence.enums.CarrierType;
+import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.domain.dto.UserAccount;
+import user.domain.dto.UserAddress;
 import user.domain.dto.ProfileImage;
-import user.domain.dto.UserRegisterForm;
-import user.domain.dto.UserUpdateForm;
+import user.domain.dto.UserPhoneInfo;
+import user.domain.form.UserRegisterForm;
+import user.domain.form.UserUpdateForm;
 
 @Data
 @Builder
@@ -22,7 +27,11 @@ public class UserDocument {
 
     private String nickName;
 
-    private String phone;
+    private UserPhoneInfo userPhoneInfo;
+
+    private GenderType genderType;
+
+    private Boolean isForeigner;
 
     private LocalDate birth;
 
@@ -38,59 +47,41 @@ public class UserDocument {
 
     private LocalDateTime lastLoginAt;
 
-    private Account account;
+    private UserAccount userAccount;
 
-    private Address address;
+    private UserAddress userAddress;
 
     public static UserDocument of(UserUpdateForm userUpdateForm) {
         return UserDocument.builder()
             .id(userUpdateForm.getUserId())
+            .userAccount(userUpdateForm.getUserAccount())
             .nickName(userUpdateForm.getNickName())
-            .phone(userUpdateForm.getPhone())
+            .userPhoneInfo(userUpdateForm.getUserPhoneInfo())
+            .genderType(userUpdateForm.getGenderType())
+            .isForeigner(userUpdateForm.getIsForeigner())
             .birth(userUpdateForm.getBirth())
             .profileImage(userUpdateForm.getProfileImage())
+            .userAddress(userUpdateForm.getUserAddress())
             .role(userUpdateForm.getRole())
-            .status(UserStatus.REGISTERED)
+            .status(userUpdateForm.getStatus())
             .registeredAt(userUpdateForm.getRegisteredAt())
             .unRegisteredAt(userUpdateForm.getUnRegisteredAt())
             .lastLoginAt(userUpdateForm.getLastLoginAt())
-            .account(
-                Account.builder()
-                    .email(userUpdateForm.getEmail())
-                    .password(userUpdateForm.getPassword())
-                    .name(userUpdateForm.getName())
-                    .build()
-            )
-            .address(
-                Address.builder()
-                    .address(userUpdateForm.getAddress())
-                    .basicAddress(userUpdateForm.getBasicAddress())
-                    .detailAddress(userUpdateForm.getDetailAddress())
-                    .post(userUpdateForm.getPost())
-                    .build()
-            )
             .build();
     }
 
     public static UserDocument of(UserRegisterForm userRegisterForm) {
         return UserDocument.builder()
+            .userAccount(userRegisterForm.getUserAccount())
             .nickName(userRegisterForm.getNickName())
-            .phone(userRegisterForm.getPhone())
+            .userPhoneInfo(userRegisterForm.getUserPhoneInfo())
+            .genderType(userRegisterForm.getGenderType())
+            .isForeigner(userRegisterForm.getIsForeigner())
             .birth(userRegisterForm.getBirth())
             .role(userRegisterForm.getRole())
             .status(userRegisterForm.getStatus())
             .registeredAt(userRegisterForm.getRegisteredAt())
-            .account(Account.builder()
-                .email(userRegisterForm.getEmail())
-                .password(userRegisterForm.getEncodingPassword())
-                .name(userRegisterForm.getName())
-                .build())
-            .address(Address.builder()
-                .address(userRegisterForm.getAddress())
-                .detailAddress(userRegisterForm.getDetailAddress())
-                .basicAddress(userRegisterForm.getBasicAddress())
-                .post(userRegisterForm.getPost())
-                .build())
+            .userAddress(userRegisterForm.getUserAddress())
             .build();
     }
 

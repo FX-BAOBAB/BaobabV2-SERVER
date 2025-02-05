@@ -1,32 +1,26 @@
 package user.domain.command;
 
-import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.UserUpdateRequest;
+import user.adapter.output.persistence.enums.CarrierType;
+import user.domain.dto.UserAddress;
+import user.domain.dto.UserPhoneInfo;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class UserUpdateCommand {
 
     private String userId;
 
     private String nickName;
 
-    private String name;
+    private UserPhoneInfo userPhoneInfo;
 
-    private String phone;
-
-    private LocalDate birth;
-
-    private String address;
-
-    private String detailAddress;
-
-    private String basicAddress;
-
-    private String post;
+    private UserAddress userAddress;
 
     private MultipartFile profileImage;
 
@@ -38,13 +32,16 @@ public class UserUpdateCommand {
         return UserUpdateCommand.builder()
             .userId(userId)
             .nickName(userUpdateRequest.getNickName())
-            .name(userUpdateRequest.getName())
-            .phone(userUpdateRequest.getPhone())
-            .birth(userUpdateRequest.getBirth())
-            .address(userUpdateRequest.getAddress())
-            .detailAddress(userUpdateRequest.getDetailAddress())
-            .basicAddress(userUpdateRequest.getBasicAddress())
-            .post(userUpdateRequest.getPost())
+            .userPhoneInfo(UserPhoneInfo.builder()
+                .carrierType(userUpdateRequest.getCarrierType())
+                .phoneNumber(userUpdateRequest.getPhoneNumber())
+                .build())
+            .userAddress(UserAddress.builder()
+                .address(userUpdateRequest.getAddress())
+                .basicAddress(userUpdateRequest.getBasicAddress())
+                .detailAddress(userUpdateRequest.getDetailAddress())
+                .post(userUpdateRequest.getPost())
+                .build())
             .profileImage(profileImage)
             .deleteImageId(userUpdateRequest.getDeleteImageId())
             .build();

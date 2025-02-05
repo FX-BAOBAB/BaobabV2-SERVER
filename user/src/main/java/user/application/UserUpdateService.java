@@ -13,7 +13,7 @@ import user.application.port.input.UserUpdateUseCase;
 import user.application.port.output.UserPersistencePort;
 import user.domain.command.UserUpdateCommand;
 import user.domain.dto.ProfileImage;
-import user.domain.dto.UserUpdateForm;
+import user.domain.form.UserUpdateForm;
 
 @Service
 @RequiredArgsConstructor
