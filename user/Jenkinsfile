@@ -9,9 +9,10 @@ pipeline {
     environment {
         MODULE = 'user'
         IMAGE_NAME = 'seongeun308/test-hub'
-        ENV_FILE = credentials('env_file')
         FILE_YML = credentials('file_test_yml')
         USER_YML = credentials('user_test_yml')
+        USERNAME = credentials('ssh_user')
+        HOST = credentials('ssh_host')
     }
 
     stages {
@@ -41,12 +42,6 @@ pipeline {
             }
         }
 
-        stage("Prepare Env file") {
-            steps {
-                sh "cp $ENV_FILE $WORKSPACE/.env"
-            }
-        }
-
         stage('Build Gradle') {
             steps {
                 script {
@@ -59,10 +54,23 @@ pipeline {
             }
         }
 
-        stage('Remove Container and Images') {
-            steps {
+        stage('Remove Old Container and Image In Remote Server') {
+            steps { // 원격 서버 기존 컨테이너 및 이미지 제거
+                sshagent(credentials: ['baobab']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOST} '
+                            sudo docker stop ${MODULE} || true &&
+                            sudo docker rm ${MODULE} || true &&
+                            sudo docker rmi ${IMAGE_NAME}:${MODULE}-latest || true
+                        '
+                    """
+                }
+            }
+        }
+
+        stage("Remove Old Docker Image") {
+            steps { // 현재 서버 기존 이미지 제거
                 sh """
-                    docker stop ${MODULE} && docker rm ${MODULE}
                     docker images | grep -E "${IMAGE_NAME}.*${MODULE}.*" | awk '{print \$1 ":" \$2}' | xargs docker rmi -f || true
                 """
             }
@@ -96,12 +104,24 @@ pipeline {
             }
         }
 
-        stage('Deploy to Production') {
+        stage('Remove New Docker Images') {
             steps {
-                script {
+                sh """
+                    docker images | grep -E "${IMAGE_NAME}.*${MODULE}.*" | awk '{print \$1 ":" \$2}' | xargs docker rmi -f || true
+                """
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sshagent(credentials: ['baobab']) {
                     sh """
-                    docker pull ${IMAGE_NAME}:${MODULE}-latest
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p 0:0 ${IMAGE_NAME}:${MODULE}-latest
+                    ssh ${USERNAME}@${HOST} '
+                        sudo docker pull ${IMAGE_NAME}:${MODULE}-latest &&
+                        doppler secrets download --config dev --no-cache --no-file --format docker > dev.env
+                        sudo docker run --env-file dev.env -d --name ${MODULE} -p 0:0 ${IMAGE_NAME}:${MODULE}-latest
+                        rm -f dev.env
+                    '
                     """
                 }
             }
