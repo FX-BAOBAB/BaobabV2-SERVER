@@ -1,0 +1,91 @@
+pipeline {
+    agent any
+
+    triggers {
+        // GitHub push 이벤트로 빌드를 트리거
+        githubPush()
+    }
+
+    environment {
+        MODULE = 'gateway'
+        IMAGE_NAME = 'seongeun308/test-hub'  // 도커 이미지 이름
+        ENV_FILE = credentials('env_file')
+    }
+
+
+    stages {
+        stage("Prepare Env file") {
+            steps {
+                sh "cp $ENV_FILE $WORKSPACE/.env"
+            }
+        }
+
+        stage('Build Gradle') {
+            steps {
+                echo "Build Start ${MODULE}"
+                sh "./gradlew :${MODULE}:build"
+                echo "Build End ${MODULE}"
+            }
+        }
+
+        stage('Remove Container and Images') {
+            steps {
+                sh """
+                    docker stop ${MODULE} && docker rm ${MODULE}
+                    docker images | grep -E "${IMAGE_NAME}.*${MODULE}.*" | awk '{print \$1 ":" \$2}' | xargs docker rmi -f || true
+                """
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Build Docker ${MODULE} image"
+                sh "docker build -t ${IMAGE_NAME}:${MODULE}-latest -t ${IMAGE_NAME}:${MODULE}-${env.GIT_COMMIT} ./${MODULE}"
+            }
+        }
+
+        stage('Log in to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub',
+                usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    echo "Logging in to Docker Hub"
+                    sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+
+                }
+            }
+        }
+
+        stage('Push Docker Hub') {
+            steps {
+                echo "Push Docker ${MODULE} image"
+                sh """
+                    docker push ${IMAGE_NAME}:${MODULE}-latest
+                    docker push ${IMAGE_NAME}:${MODULE}-${env.GIT_COMMIT}
+                """
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                script {
+                    sh """
+                    docker pull ${IMAGE_NAME}:${MODULE}-latest
+                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p 8000:8000 ${IMAGE_NAME}:${MODULE}-latest
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()  // 작업 후 작업 공간 정리
+        }
+        success {
+            echo '배포가 성공적으로 완료되었습니다.'
+        }
+        failure {
+            echo '배포가 실패했습니다.'
+        }
+    }
+}
