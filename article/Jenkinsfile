@@ -10,9 +10,23 @@ pipeline {
         MODULE = 'article'
         IMAGE_NAME = 'seongeun308/test-hub'
         ENV_FILE = credentials('env_file')
+        FILE_YML = credentials('file_test_yml')
     }
 
     stages {
+        stage("Set File Application Test Yml") {
+            steps {
+                script {
+                    sh """
+                        echo "Set File Application Test Yml"
+                        mkdir -p file/src/test/resources
+                        cp ${FILE_YML} file/src/test/resources/application-test.yml
+                        find file/src/test/resources
+                    """
+                }
+            }
+        }
+
         stage("Prepare Env file") {
             steps {
                 sh "cp $ENV_FILE $WORKSPACE/.env"
