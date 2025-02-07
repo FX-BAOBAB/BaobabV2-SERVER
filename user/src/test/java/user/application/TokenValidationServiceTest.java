@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import user.domain.command.TokenCommand;
-import user.security.jwt.model.JwtInfoDto;
 import user.utils.UserLoginUtils;
 import user.utils.UserRegisterUtils;
 
@@ -32,9 +31,9 @@ class TokenValidationServiceTest extends AcceptanceTestWithMongo {
 
         // When
         String bearerToken = "Bearer " + tokenCommand.getAccessToken();
-        JwtInfoDto jwtInfoDto = tokenValidationService.validateToken(bearerToken);
+        String userId = tokenValidationService.validateToken(bearerToken);
 
         // Then
-        assertNotNull(jwtInfoDto);
+        assertNotNull(userId);
     }
 }

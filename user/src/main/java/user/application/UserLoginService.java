@@ -12,7 +12,6 @@ import user.core.common.error.UserErrorCode;
 import user.core.common.exception.user.PasswordMismatchException;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
-import user.security.jwt.model.JwtInfoDto;
 import user.security.jwt.service.TokenIssueService;
 
 @Service
@@ -35,9 +34,7 @@ public class UserLoginService implements UserLoginUseCase {
         LocalDateTime lastLoginAt = LocalDateTime.now();
         userPersistencePort.setLastLoginAt(userDocument.getId(), lastLoginAt);
 
-        JwtInfoDto jwtInfoDto = JwtInfoDto.toTokenInfo(userDocument);
-
-        return tokenIssueService.issueToken(jwtInfoDto);
+        return tokenIssueService.issueToken(userDocument.getId());
     }
 
 }
