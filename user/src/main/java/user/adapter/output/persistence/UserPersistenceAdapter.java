@@ -11,9 +11,9 @@ import user.core.common.error.UserErrorCode;
 import user.core.common.exception.token.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.ProfileImage;
-import user.domain.dto.UserRegisterForm;
-import user.domain.dto.UserUnRegisterForm;
-import user.domain.dto.UserUpdateForm;
+import user.domain.form.UserRegisterForm;
+import user.domain.form.UserUnRegisterForm;
+import user.domain.form.UserUpdateForm;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public boolean checkEmailDuplicate(String email) {
-        return userMongoRepository.existsByAccount_Email(email);
+        return userMongoRepository.existsByUserAccount_Email(email);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
      */
     @Override
     public UserDocument getUserDocumentBy(String email, UserStatus status) {
-        return userMongoRepository.findFirstByAccount_EmailAndStatusOrderByIdDesc(email, status)
+        return userMongoRepository.findFirstByUserAccount_EmailAndStatusOrderByIdDesc(email, status)
             .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
     }
 

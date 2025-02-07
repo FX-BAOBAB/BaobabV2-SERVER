@@ -69,7 +69,7 @@ public class PasswordCheckAdvice {
 
     private String getCurrentPassword(JoinPoint joinPoint) {
         String userId = getUserIdBy(joinPoint);
-        return userPersistencePort.getUserDocument(userId, UserStatus.REGISTERED).getAccount()
+        return userPersistencePort.getUserDocument(userId, UserStatus.REGISTERED).getUserAccount()
             .getPassword();
     }
 

@@ -2,35 +2,36 @@ package user.domain.command;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.output.persistence.enums.CarrierType;
+import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.domain.dto.UserAccount;
+import user.domain.dto.UserAddress;
+import user.domain.dto.UserPhoneInfo;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class UserRegisterCommand {
 
-    private String email;
-
-    private String password;
+    private UserAccount userAccount;
 
     private String nickName;
 
-    private String name;
+    private UserPhoneInfo userPhoneInfo;
 
-    private String phone;
+    private GenderType genderType;
+
+    private Boolean isForeigner;
 
     private LocalDate birth;
 
-    private String address;
-
-    private String detailAddress;
-
-    private String basicAddress;
-
-    private String post;
+    private UserAddress userAddress;
 
     private UserRole role;
 
@@ -40,16 +41,25 @@ public class UserRegisterCommand {
 
     public static UserRegisterCommand of(UserRegisterRequest userRegisterRequest) {
         return UserRegisterCommand.builder()
-            .email(userRegisterRequest.getEmail())
-            .password(userRegisterRequest.getPassword())
+            .userAccount(UserAccount.builder()
+                .email(userRegisterRequest.getEmail())
+                .password(userRegisterRequest.getPassword())
+                .name(userRegisterRequest.getNickName())
+                .build())
             .nickName(userRegisterRequest.getNickName())
-            .name(userRegisterRequest.getNickName())
-            .phone(userRegisterRequest.getPhone())
+            .userPhoneInfo(UserPhoneInfo.builder()
+                .carrierType(userRegisterRequest.getCarrierType())
+                .phoneNumber(userRegisterRequest.getPhoneNumber())
+                .build())
+            .genderType(userRegisterRequest.getGenderType())
+            .isForeigner(userRegisterRequest.getIsForeigner())
             .birth(userRegisterRequest.getBirth())
-            .address(userRegisterRequest.getAddress())
-            .detailAddress(userRegisterRequest.getDetailAddress())
-            .basicAddress(userRegisterRequest.getBasicAddress())
-            .post(userRegisterRequest.getPost())
+            .userAddress(UserAddress.builder()
+                .address(userRegisterRequest.getAddress())
+                .detailAddress(userRegisterRequest.getDetailAddress())
+                .basicAddress(userRegisterRequest.getBasicAddress())
+                .post(userRegisterRequest.getPost())
+                .build())
             .build();
     }
 

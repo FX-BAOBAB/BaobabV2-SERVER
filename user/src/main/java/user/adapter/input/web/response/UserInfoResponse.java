@@ -6,16 +6,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.ProfileImage;
+import user.domain.dto.UserAddress;
+import user.domain.dto.UserPhoneInfo;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoResponse {
+
     private String userId;
 
     private String email;
@@ -24,17 +28,15 @@ public class UserInfoResponse {
 
     private String name;
 
-    private String phone;
+    private UserPhoneInfo userPhoneInfo;
+
+    private GenderType genderType;
+
+    private Boolean isForeigner;
 
     private LocalDate birth;
 
-    private String address;
-
-    private String detailAddress;
-
-    private String basicAddress;
-
-    private String post;
+    private UserAddress userAddress;
 
     private ProfileImage profileImage;
 
@@ -54,12 +56,11 @@ public class UserInfoResponse {
             .email(userReaderCommand.getEmail())
             .nickName(userReaderCommand.getNickName())
             .name(userReaderCommand.getName())
-            .phone(userReaderCommand.getPhone())
+            .userPhoneInfo(userReaderCommand.getUserPhoneInfo())
+            .genderType(userReaderCommand.getGenderType())
+            .isForeigner(userReaderCommand.getIsForeigner())
             .birth(userReaderCommand.getBirth())
-            .address(userReaderCommand.getAddress())
-            .detailAddress(userReaderCommand.getDetailAddress())
-            .basicAddress(userReaderCommand.getBasicAddress())
-            .post(userReaderCommand.getPost())
+            .userAddress(userReaderCommand.getUserAddress())
             .profileImage(userReaderCommand.getProfileImage())
             .role(userReaderCommand.getRole())
             .status(userReaderCommand.getStatus())

@@ -1,4 +1,4 @@
-package user.domain.dto;
+package user.domain.form;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
