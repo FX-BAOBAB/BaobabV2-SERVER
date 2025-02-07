@@ -15,7 +15,6 @@ import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.response.TokenResponse;
 import user.adapter.input.web.response.UserRegisterResponse;
-import user.application.TokenValidationService;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.input.UserReaderUseCase;
@@ -33,7 +32,6 @@ public class UserOpenApiController {
     private final UserRegisterUseCase userRegisterUseCase;
     private final UserLoginUseCase userLoginUseCase;
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
-    private final TokenValidationService tokenValidationService;
     private final UserReaderUseCase userReaderUseCase;
 
     @PostMapping("/register")
