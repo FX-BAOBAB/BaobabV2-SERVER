@@ -40,6 +40,6 @@ log:
   config:
     path: ${LOG_CONFIG_PATH}
 
-token:
-  validation:
-    url: ${VALIDATION_URL}
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
