@@ -8,7 +8,6 @@ import user.core.common.error.TokenErrorCode;
 import user.core.common.exception.token.TokenException;
 import user.core.common.exception.token.TokenSignatureException;
 import user.domain.command.TokenCommand;
-import user.security.jwt.model.JwtInfoDto;
 import user.security.jwt.model.TokenDto;
 
 @Service
@@ -17,14 +16,14 @@ public class TokenIssueService {
 
     private final TokenHelperService tokenHelperService;
 
-    public TokenCommand issueToken(JwtInfoDto jwtInfoDto) {
-        return Optional.ofNullable(jwtInfoDto).map(dto -> {
+    public TokenCommand issueToken(String userId) {
+        return Optional.ofNullable(userId).map(id -> {
 
-            TokenDto accessToken = tokenHelperService.issueAccessToken(dto);
-            TokenDto refreshToken = tokenHelperService.issueRefreshToken(dto);
+            TokenDto accessToken = tokenHelperService.issueAccessToken(id);
+            TokenDto refreshToken = tokenHelperService.issueRefreshToken(id);
 
-            tokenHelperService.deleteRefreshToken(dto.getUserId());
-            tokenHelperService.saveRefreshToken(dto.getUserId(), refreshToken.getToken());
+            tokenHelperService.deleteRefreshToken(id);
+            tokenHelperService.saveRefreshToken(id, refreshToken.getToken());
 
             return TokenCommand.of(accessToken, refreshToken);
 

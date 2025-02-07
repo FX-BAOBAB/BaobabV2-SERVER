@@ -13,11 +13,8 @@ import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
-import user.adapter.input.web.response.JwtInfoResponse;
 import user.adapter.input.web.response.TokenResponse;
 import user.adapter.input.web.response.UserRegisterResponse;
-import user.application.TokenValidationService;
-import user.application.UserReaderService;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.input.UserReaderUseCase;
@@ -26,7 +23,6 @@ import user.core.common.annotation.DupleCheck;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
 import user.domain.command.UserRegisterCommand;
-import user.security.jwt.model.JwtInfoDto;
 import user.security.jwt.model.TokenDto;
 
 @RestAdapter
@@ -36,7 +32,6 @@ public class UserOpenApiController {
     private final UserRegisterUseCase userRegisterUseCase;
     private final UserLoginUseCase userLoginUseCase;
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
-    private final TokenValidationService tokenValidationService;
     private final UserReaderUseCase userReaderUseCase;
 
     @PostMapping("/register")
@@ -80,13 +75,6 @@ public class UserOpenApiController {
         @RequestBody @Valid Api<DuplicationNickNameRequest> duplicationNickNameRequest
     ) {
         return Api.OK(true);
-    }
-
-    @PostMapping("/validation")
-    public Api<JwtInfoResponse> validateToken(@RequestHeader("Authorization") String accessToken) {
-        JwtInfoDto jwtInfoDto = tokenValidationService.validateToken(accessToken);
-        JwtInfoResponse response = JwtInfoResponse.toResponse(jwtInfoDto);
-        return Api.OK(response);
     }
 
     @GetMapping("/nickname")
