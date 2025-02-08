@@ -119,7 +119,7 @@ pipeline {
                     ssh ${USERNAME}@${HOST} '
                         sudo docker pull ${IMAGE_NAME}:${MODULE}-latest &&
                         doppler secrets download --config dev --no-cache --no-file --format docker > dev.env
-                        sudo docker run --env-file dev.env -d --name ${MODULE} -p 0:0 ${IMAGE_NAME}:${MODULE}-latest
+                        sudo docker run --env-file dev.env -d --name ${MODULE} -p 32827:32827 ${IMAGE_NAME}:${MODULE}-latest
                         rm -f dev.env
                     '
                     """
