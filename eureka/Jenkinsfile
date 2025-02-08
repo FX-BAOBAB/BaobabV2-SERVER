@@ -1,10 +1,9 @@
 pipeline {
-    agent any
-//     agent {
-//         docker {
-//             image 'openjdk:21-jdk-bullseye'
-//         }
-//     }
+    agent {
+        docker {
+            image 'openjdk:21-jdk-bullseye'
+        }
+    }
 
     triggers {
         // GitHub push 이벤트로 빌드를 트리거
@@ -19,14 +18,14 @@ pipeline {
     }
 
     stages {
-//         stage('Install Dependencies') {
-//             steps {
-//                 sh '''
-//                 apt-get update
-//                 apt-get install -y sudo docker.io
-//                 '''
-//             }
-//         }
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                apt-get update
+                apt-get install -y sudo docker.io
+                '''
+            }
+        }
 
         stage('Build Gradle') {
             steps {
