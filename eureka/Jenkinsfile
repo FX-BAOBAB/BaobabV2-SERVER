@@ -1,9 +1,10 @@
 pipeline {
-    agent {
+    agent any
+//     agent {
 //         docker {
 //             image 'openjdk:21-jdk-bullseye'
 //         }
-    }
+//     }
 
     triggers {
         // GitHub push 이벤트로 빌드를 트리거
