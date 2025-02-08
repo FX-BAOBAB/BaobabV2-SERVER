@@ -1,22 +1,28 @@
-package gateway.security.filter;
+package gateway.filter;
 
 import gateway.common.error.TokenErrorCode;
 import gateway.common.exception.token.NotPermittedException;
-import java.nio.charset.StandardCharsets;
+import gateway.common.exception.token.TokenException;
+import gateway.common.exception.token.TokenExpiredException;
+import gateway.common.exception.token.TokenSignatureException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import java.util.HashMap;
 import java.util.Map;
+import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -28,14 +34,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final int AUTH_HEADER_BEGIN_INDEX = BEARER_PREFIX.length();
 
-    @Value("${token.validation.url}")
-    private String tokenValidationUrl;
-
-    private final WebClient webClient;
-
-    public AuthenticationFilter(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.build();
-    }
+    @Value("${jwt.secret.key}")
+    private String secretKey;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -63,32 +63,36 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         return headers.getFirst(HttpHeaders.AUTHORIZATION);
     }
 
-    private Mono<Void> validateToken(ServerWebExchange exchange, GatewayFilterChain chain,
+    private Mono<Void> validateToken(
+        ServerWebExchange exchange,
+        GatewayFilterChain chain,
         String accessToken) {
-        return webClient.post()
-            .uri(tokenValidationUrl)
-            .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, response ->
-                response.bodyToMono(String.class).flatMap(errorBody -> {
-                    exchange.getResponse().setStatusCode(response.statusCode());
-                    exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                    DataBufferFactory bufferFactory = exchange.getResponse().bufferFactory();
-                    DataBuffer buffer = bufferFactory.wrap(errorBody.getBytes(StandardCharsets.UTF_8));
-                    return exchange.getResponse().writeWith(Mono.just(buffer)).then(Mono.empty());
-                })
-            )
-            .bodyToMono(Map.class)
-            .flatMap(response -> {
-                Map<String, Object> body = (Map<String, Object>) response.get("body");
-                String userId = body.get("userId").toString();
 
-                ServerHttpRequest request = exchange.getRequest().mutate()
+        String userId = validationTokenWithThrow(accessToken).get("userId").toString();
+
+        ServerHttpRequest request = exchange.getRequest().mutate()
                     .header("x-user-id", userId)
                     .build();
 
-                return chain.filter(exchange.mutate().request(request).build());
-            });
+        return chain.filter(exchange.mutate().request(request).build());
+    }
+
+    private Map<String, Object> validationTokenWithThrow(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        JwtParser parser = Jwts.parser().verifyWith(key).build();
+
+        try{
+            Jws<Claims> result = parser.parseSignedClaims(token);
+            return new HashMap<>(result.getPayload());
+        }catch (Exception e){
+            if (e instanceof SignatureException){
+                throw new TokenSignatureException(TokenErrorCode.INVALID_TOKEN, e);
+            }else if (e instanceof ExpiredJwtException){
+                throw new TokenExpiredException(TokenErrorCode.EXPIRED_TOKEN, e);
+            }else {
+                throw new TokenException(TokenErrorCode.TOKEN_EXCEPTION, e);
+            }
+        }
     }
 
     @Override
