@@ -27,6 +27,14 @@ pipeline {
             }
         }
 
+        stage('Install Doppler') {
+            steps {
+                script {
+                    sh 'curl -sSfL https://github.com/DopplerHQ/doppler-cli/releases/latest/download/doppler-cli-linux-amd64.tar.gz | tar xz -C /usr/local/bin'
+                }
+            }
+        }
+
         stage('Build Gradle') {
             steps {
                 echo "Build Start ${MODULE}"
