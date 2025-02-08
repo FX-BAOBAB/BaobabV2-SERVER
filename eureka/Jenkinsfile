@@ -1,8 +1,8 @@
 pipeline {
     agent {
-        docker {
-            image 'openjdk:21-jdk-bullseye'
-        }
+//         docker {
+//             image 'openjdk:21-jdk-bullseye'
+//         }
     }
 
     triggers {
@@ -12,25 +12,20 @@ pipeline {
 
     environment {
         MODULE = 'eureka'
-        IMAGE_NAME = 'seongeun308/test-hub'  // 도커 이미지 이름
-        ENV_FILE = credentials('env_file')
+        IMAGE_NAME = 'seongeun308/test-hub'
+        DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
+        PORT = 'EUREKA_PORT'
     }
 
     stages {
-        stage('Install Dependencies') {
-            steps {
-                sh '''
-                apt-get update
-                apt-get install -y sudo docker.io
-                '''
-            }
-        }
-
-        stage("Prepare Env file") {
-            steps {
-                sh "cp $ENV_FILE $WORKSPACE/.env"
-            }
-        }
+//         stage('Install Dependencies') {
+//             steps {
+//                 sh '''
+//                 apt-get update
+//                 apt-get install -y sudo docker.io
+//                 '''
+//             }
+//         }
 
         stage('Build Gradle') {
             steps {
@@ -80,9 +75,11 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 script {
+                    def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
                     sh """
                     docker pull ${IMAGE_NAME}:${MODULE}-latest
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p 8761:8761 ${IMAGE_NAME}:${MODULE}-latest
+                    doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
+                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                     """
                 }
             }
