@@ -22,18 +22,11 @@ pipeline {
             steps {
                 sh '''
                 apt-get update
-                apt-get install -y sudo docker.io
+                apt-get install -y sudo docker.io doppler
                 '''
             }
         }
 
-        stage('Install Doppler') {
-            steps {
-                script {
-                    sh 'curl -sSfL https://github.com/DopplerHQ/doppler-cli/releases/latest/download/doppler-cli-linux-amd64.tar.gz | tar xz -C /usr/local/bin'
-                }
-            }
-        }
 
         stage('Build Gradle') {
             steps {
