@@ -50,7 +50,7 @@ class UserReaderServiceTest extends AcceptanceTestWithMongo {
         assertEquals(LocalDate.of(2001, 9, 7), userInfo.getBirth());
         assertEquals("Seoul", userInfo.getUserAddress().getAddress());
         assertEquals("Gangnam", userInfo.getUserAddress().getDetailAddress());
-        assertEquals("Seoul, Gangnam", userInfo.getUserAddress().getBasicAddress());
+        assertEquals(true, userInfo.getUserAddress().getBasicAddress());
         assertEquals("12345", userInfo.getUserAddress().getPost());
         assertEquals(UserRole.BASIC_USER, userInfo.getRole());
         assertEquals(UserStatus.REGISTERED, userInfo.getStatus());

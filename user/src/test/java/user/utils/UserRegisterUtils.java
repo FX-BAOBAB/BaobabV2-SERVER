@@ -39,7 +39,7 @@ public class UserRegisterUtils {
             .userAddress(UserAddress.builder()
                 .address("Seoul")
                 .detailAddress("Gangnam")
-                .basicAddress("Seoul, Gangnam")
+                .basicAddress(true)
                 .post("12345")
                 .build())
             .role(UserRole.BASIC_USER)
