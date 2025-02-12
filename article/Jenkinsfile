@@ -26,6 +26,17 @@ pipeline {
             }
         }
 
+        stage('Set Article Application Test Yml') {
+            steps {
+                sh """
+                    echo "Set Article Application Test Yml"
+                    mkdir -p ${MODULE}/src/test/resources
+                    cp ${USER_YML} ${MODULE}/src/test/resources/application-test.yml
+                    find ${MODULE}/src/test/resources
+                """
+            }
+        }
+
         stage('Build Gradle') {
             steps {
                 echo "Build Start ${MODULE}"

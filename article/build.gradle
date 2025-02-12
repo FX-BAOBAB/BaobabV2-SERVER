@@ -56,12 +56,14 @@ dependencies {
     // OpenFeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+    // In-Memory Mongo
+    testImplementation 'de.bwaldvogel:mongo-java-server:1.46.0'
+
     implementation project(":global")
     implementation project(":file")
 }
 
 dependencyManagement {
-
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
     }
