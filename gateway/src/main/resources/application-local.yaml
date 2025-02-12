@@ -29,6 +29,21 @@ spring:
           filters:
             - RewritePath=/user-service/(open-api|api)/(?<segment>.*), /$\{segment}
 
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
 # logging
 logging:
   level:
