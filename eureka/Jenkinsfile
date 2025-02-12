@@ -12,8 +12,9 @@ pipeline {
 
     environment {
         MODULE = 'eureka'
-        IMAGE_NAME = 'seongeun308/test-hub'  // 도커 이미지 이름
-        ENV_FILE = credentials('env_file')
+        IMAGE_NAME = 'seongeun308/test-hub'
+        DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
+        PORT = 'EUREKA_PORT'
     }
 
     stages {
@@ -22,15 +23,14 @@ pipeline {
                 sh '''
                 apt-get update
                 apt-get install -y sudo docker.io
+                apt-get install -y apt-transport-https ca-certificates curl gnupg
+                curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | gpg --dearmor -o /usr/share/keyrings/doppler-archive-keyring.gpg
+                echo "deb [signed-by=/usr/share/keyrings/doppler-archive-keyring.gpg] https://packages.doppler.com/public/cli/deb/debian any-version main" | tee /etc/apt/sources.list.d/doppler-cli.list
+                apt-get update && apt-get install doppler
                 '''
             }
         }
 
-        stage("Prepare Env file") {
-            steps {
-                sh "cp $ENV_FILE $WORKSPACE/.env"
-            }
-        }
 
         stage('Build Gradle') {
             steps {
@@ -80,9 +80,11 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 script {
+                    def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
                     sh """
                     docker pull ${IMAGE_NAME}:${MODULE}-latest
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p 8761:8761 ${IMAGE_NAME}:${MODULE}-latest
+                    doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
+                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                     """
                 }
             }

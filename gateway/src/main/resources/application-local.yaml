@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: ${GATEWAY_PORT}
 eureka:
   client:
     register-with-eureka: true

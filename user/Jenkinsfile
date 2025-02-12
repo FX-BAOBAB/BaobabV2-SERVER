@@ -13,6 +13,8 @@ pipeline {
         USER_YML = credentials('user_test_yml')
         USERNAME = credentials('ssh_user')
         HOST = credentials('ssh_host')
+        PORT = 'USER_PORT'
+        DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
     }
 
     stages {
@@ -114,15 +116,18 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['baobab']) {
-                    sh """
-                    ssh ${USERNAME}@${HOST} '
-                        sudo docker pull ${IMAGE_NAME}:${MODULE}-latest &&
-                        doppler secrets download --config dev --no-cache --no-file --format docker > dev.env
-                        sudo docker run --network devops_default --env-file dev.env -d --name ${MODULE} -p 32827:32827 ${IMAGE_NAME}:${MODULE}-latest
-                        rm -f dev.env
-                    '
-                    """
+                script {
+                    def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
+                    sshagent(credentials: ['baobab']) {
+                        sh """
+                        ssh ${USERNAME}@${HOST} '
+                            sudo docker pull ${IMAGE_NAME}:${MODULE}-latest &&
+                            doppler secrets download --config dev --no-cache --no-file --format docker > dev.env
+                            sudo docker run --network devops_default --env-file dev.env -d --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
+                            rm -f dev.env
+                        '
+                        """
+                    }
                 }
             }
         }

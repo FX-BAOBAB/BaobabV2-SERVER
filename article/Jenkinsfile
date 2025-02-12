@@ -9,27 +9,20 @@ pipeline {
     environment {
         MODULE = 'article'
         IMAGE_NAME = 'seongeun308/test-hub'
-        ENV_FILE = credentials('env_file')
         FILE_YML = credentials('file_test_yml')
+        DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
+        PORT = 'ARTICLE_PORT'
     }
 
     stages {
         stage("Set File Application Test Yml") {
             steps {
-                script {
-                    sh """
-                        echo "Set File Application Test Yml"
-                        mkdir -p file/src/test/resources
-                        cp ${FILE_YML} file/src/test/resources/application-test.yml
-                        find file/src/test/resources
-                    """
-                }
-            }
-        }
-
-        stage("Prepare Env file") {
-            steps {
-                sh "cp $ENV_FILE $WORKSPACE/.env"
+                sh """
+                    echo "Set File Application Test Yml"
+                    mkdir -p file/src/test/resources
+                    cp ${FILE_YML} file/src/test/resources/application-test.yml
+                    find file/src/test/resources
+                """
             }
         }
 
@@ -78,12 +71,15 @@ pipeline {
             }
         }
 
+
         stage('Deploy to Production') {
             steps {
                 script {
+                    def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
                     sh """
                     docker pull ${IMAGE_NAME}:${MODULE}-latest
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p 0:0 ${IMAGE_NAME}:${MODULE}-latest
+                    doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
+                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                     """
                 }
             }
