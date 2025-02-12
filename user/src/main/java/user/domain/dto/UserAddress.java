@@ -13,7 +13,7 @@ public class UserAddress {
 
     private String detailAddress;
 
-    private String basicAddress;
+    private Boolean basicAddress;
 
     private String post;
 

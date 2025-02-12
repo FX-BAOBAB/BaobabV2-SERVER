@@ -67,9 +67,8 @@ public class UserRegisterRequest {
     @Size(max = 200, message = "최대 200자까지 입력 가능합니다.")
     private String detailAddress;
 
-    @NotBlank(message = "필수 입력 사항입니다.")
-    @Size(max = 200, message = "최대 200자까지 입력 가능합니다.")
-    private String basicAddress;
+    @NotNull(message = "필수 입력 사항입니다.")
+    private Boolean basicAddress;
 
     @Pattern(
         regexp = "^[0-9]{5}$",
