@@ -32,9 +32,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOriginPatterns("*")
-            .allowedMethods("GET", "POST", "OPTIONS")
-            .allowedHeaders("*")
+            .allowedOrigins("http://localhost:3000", "https://baobab.run")
+            .allowedMethods("GET", "POST")
             .allowCredentials(true);
     }
 
