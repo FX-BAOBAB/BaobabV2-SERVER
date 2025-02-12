@@ -1,5 +1,5 @@
 server:
-  port: 8761
+  port: ${EUREKA_PORT}
 
 spring:
   application:
