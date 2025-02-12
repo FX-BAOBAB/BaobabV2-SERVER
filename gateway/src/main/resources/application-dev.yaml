@@ -1,0 +1,60 @@
+server:
+  port: 8000
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id : baobab-article
+          uri : lb://BAOBAB-ARTICLE
+          predicates:
+            - Path=/article-service/**
+          filters:
+            - RewritePath=/article-service/(open-api|api)/(?<segment>.*), /$\{segment}
+
+        - id: baobab-users
+          uri: lb://BAOBAB-USERS
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service/(open-api|api)/(?<segment>.*), /$\{segment}
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+# logging
+logging:
+  level:
+    org:
+      springframework.web: DEBUG
+      hibernate: ERROR
+
+log:
+  config:
+    path: ${LOG_CONFIG_PATH}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}

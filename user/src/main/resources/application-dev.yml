@@ -1,0 +1,84 @@
+server:
+  port: ${USER_PORT}
+
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
+
+spring:
+  application:
+    name: baobab-users
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  session:
+    redis:
+      namespace: baobab:session
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      repositories:
+        enabled: true
+
+    mongodb:
+      uri: ${MONGO_URL}
+      database: ${MONGO_DATABASE}
+
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_URL}
+      group-id: ${KAFKA_GROUP_ID}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: ${KAFKA_GROUP_ID}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+  access-token:
+    plus-hour: ${JWT_ACCESS_PLUS_HOUR}
+  refresh-token:
+    plus-hour: ${JWT_REFRESH_PLUS_HOUR}
+
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: ${USER_SERVER_HOST}
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+# logging
+logging:
+  level:
+    org:
+      springframework.web: DEBUG
+      hibernate: ERROR
+
+log:
+  config:
+    path: ${LOG_CONFIG_PATH}
+
+file:
+  upload-dir: ${FILE_UPLOAD_DIR}
+  context-path: ${FILE_CONTEXT_PATH}
+
+cipher:
+  key: ${CIPHER_KEY}
