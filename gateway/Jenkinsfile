@@ -9,17 +9,12 @@ pipeline {
     environment {
         MODULE = 'gateway'
         IMAGE_NAME = 'seongeun308/test-hub'  // 도커 이미지 이름
-        ENV_FILE = credentials('env_file')
+        DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
+        PORT = 'GATEWAY_PORT'
     }
 
 
     stages {
-        stage("Prepare Env file") {
-            steps {
-                sh "cp $ENV_FILE $WORKSPACE/.env"
-            }
-        }
-
         stage('Build Gradle') {
             steps {
                 echo "Build Start ${MODULE}"
@@ -68,9 +63,10 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 script {
+                    def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
                     sh """
-                    docker pull ${IMAGE_NAME}:${MODULE}-latest
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p 80:8000 ${IMAGE_NAME}:${MODULE}-latest
+                    doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
+                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                     """
                 }
             }

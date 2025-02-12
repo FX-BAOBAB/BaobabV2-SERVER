@@ -11,6 +11,7 @@ pipeline {
         IMAGE_NAME = 'seongeun308/test-hub'
         FILE_YML = credentials('file_test_yml')
         DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
+        PORT = 'ARTICLE_PORT'
     }
 
     stages {
@@ -74,11 +75,11 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 script {
-                    def articlePort = sh(script: "doppler secrets get ARTICLE_PORT --plain", returnStdout: true).trim()
+                    def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
                     sh """
                     docker pull ${IMAGE_NAME}:${MODULE}-latest
                     doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${articlePort}:${articlePort} ${IMAGE_NAME}:${MODULE}-latest
+                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                     """
                 }
             }
