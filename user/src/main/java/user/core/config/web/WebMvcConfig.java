@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         "/validation"
     );
 
-    private final List<String> URL = List.of("http://localhost:8000");
+    private final List<String> URL = List.of("http://localhost:3000");
 
     private final List<String> METHODS = List.of("GET", "POST", "OPTIONS");
 
