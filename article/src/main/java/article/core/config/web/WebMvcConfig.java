@@ -24,20 +24,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         "/article/{articleId}"
     );
 
-    private final List<String> URL = List.of("http://localhost:8000");
-
-    private final List<String> METHODS = List.of("GET", "POST", "OPTIONS");
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(URL);
-        configuration.setAllowedMethods(METHODS);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new AuthenticatedUserResolver());

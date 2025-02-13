@@ -30,15 +30,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     );
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-            .allowedOriginPatterns("*")
-            .allowedMethods("GET", "POST", "OPTIONS")
-            .allowedHeaders("*")
-            .allowCredentials(true);
-    }
-
-    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new AuthenticatedUserResolver());
     }
