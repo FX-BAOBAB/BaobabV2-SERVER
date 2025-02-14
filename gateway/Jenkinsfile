@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        jdk ("jdk21")
+    }
+
     triggers {
         // GitHub push 이벤트로 빌드를 트리거
         githubPush()
