@@ -10,6 +10,7 @@ pipeline {
         MODULE = 'article'
         IMAGE_NAME = 'seongeun308/test-hub'
         FILE_YML = credentials('file_test_yml')
+        ARTICLE_YML = credentials('article_test_yml')
         DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
         PORT = 'ARTICLE_PORT'
         VOLUME_NAME = credentials('VOLUME_NAME')
@@ -33,7 +34,7 @@ pipeline {
                 sh """
                     echo "Set Article Application Test Yml"
                     mkdir -p ${MODULE}/src/test/resources
-                    cp ${USER_YML} ${MODULE}/src/test/resources/application-test.yml
+                    cp ${ARTICLE_YML} ${MODULE}/src/test/resources/application-test.yml
                     find ${MODULE}/src/test/resources
                 """
             }
