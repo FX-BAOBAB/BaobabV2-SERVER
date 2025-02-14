@@ -15,6 +15,8 @@ pipeline {
         HOST = credentials('ssh_host')
         PORT = 'USER_PORT'
         DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
+        VOLUME_NAME = credentials('VOLUME_NAME')
+        MOUNT_PATH = credentials('MOUNT_PATH')
     }
 
     stages {
@@ -123,7 +125,7 @@ pipeline {
                         ssh ${USERNAME}@${HOST} '
                             sudo docker pull ${IMAGE_NAME}:${MODULE}-latest &&
                             doppler secrets download --config dev --no-cache --no-file --format docker > dev.env
-                            sudo docker run --network devops_default --env-file dev.env -d --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
+                            sudo docker run -v ${env.VOLUME_NAME}:${env.MOUNT_PATH} --network devops_default --env-file dev.env -d --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                             rm -f dev.env
                         '
                         """

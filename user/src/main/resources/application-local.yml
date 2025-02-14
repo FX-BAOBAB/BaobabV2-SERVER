@@ -80,5 +80,12 @@ file:
   upload-dir: ${FILE_UPLOAD_DIR}
   context-path: ${FILE_CONTEXT_PATH}
 
+url:
+  scheme: ${FILE_URL_SCHEME}
+  host: ${FILE_URL_HOST}
+  path:
+    article: ${FILE_PATH_ARTICLE}
+    user: ${FILE_PATH_USER}
+
 cipher:
   key: ${CIPHER_KEY}
