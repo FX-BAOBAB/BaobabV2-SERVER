@@ -81,8 +81,9 @@ public class MongoDBImageMetaDataService {
     }
 
     private String createImageUrl(Path filePath, ImageKind kind) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
+        return UriComponentsBuilder.newInstance()
                 .scheme(scheme)
+                .host(host)
                 .path(resolvePathForImageKind(kind) + contextPath + filePath.getFileName())
                 .toUriString();
     }
