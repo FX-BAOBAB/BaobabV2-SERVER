@@ -1,5 +1,6 @@
 package chat.application;
 
+import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.factory.ChatRoomTitleStrategyFactory;
 import chat.application.stragety.ChatRoomTitleStrategy;
 import java.util.List;
@@ -10,15 +11,22 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 @RequiredArgsConstructor
-public class ChatRoomGenerator {
-
-    private ChatRoomTitleStrategy strategy;
+public class ChatRoomGenerator implements ChatRoomFactory{
 
     private final ChatRoomTitleStrategyFactory chatRoomTitleStrategyFactory;
 
-    public String generateDefaultTitle(List<String> nickNameList) {
-        this.strategy = chatRoomTitleStrategyFactory.getTitleStrategy(nickNameList.size());
-        return strategy.generateTitle(nickNameList);
+    public String generateDefaultTitle(List<Long> userIdList) {
+        ChatRoomTitleStrategy titleGenerator = chatRoomTitleStrategyFactory.getTitleStrategy(userIdList);
+        // TODO User Nick Name List 통신 필요 , Module 간 통신 FeignClient 이용
+        return titleGenerator.generateTitle(userIdList);
+    }
+
+    @Override
+    public ChatRoomDocument createChatRoom(List<Long> userIdList) {
+        String roomTitle = generateDefaultTitle(userIdList);
+        return ChatRoomDocument.builder()
+                .title(roomTitle)
+                .build();
     }
 
 }

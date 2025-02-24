@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ChatRoomTitleStrategy {
 
-    String generateTitle(List<String> nickNameList);
+    String generateTitle(List<Long> nickNameList);
 
 }
