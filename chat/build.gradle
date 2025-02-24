@@ -36,6 +36,14 @@ dependencies {
     //Netflix eureka client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0'
 
+    // QueryDsl
+    implementation("com.querydsl:querydsl-mongodb:5.0.0") {
+        exclude group: "org.mongodb", module: "mongo-java-driver"
+    }
+    implementation 'com.querydsl:querydsl-core:5.0.0'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
+    annotationProcessor 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
     implementation project(":global")
     implementation project(":file")
 
