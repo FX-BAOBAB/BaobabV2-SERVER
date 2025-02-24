@@ -5,15 +5,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class ChatRoomGeneratorTest {
 
+    @Autowired
+    private ChatRoomGenerator chatRoomGenerator;
+
     @Test
     void 채팅방_제목_생성_성공() {
         // Given
-        ChatRoomGenerator chatRoomGenerator = new ChatRoomGenerator();
 
         // When
         String generatedTitle = chatRoomGenerator.generateDefaultTitle(List.of("닉네임1", "닉네임2", "닉네임3"));
@@ -25,9 +28,8 @@ class ChatRoomGeneratorTest {
 
     @Test
     void 채팅방_제목_생성_100명_성공() {
-        // Given
-        ChatRoomGenerator chatRoomGenerator = new ChatRoomGenerator();
 
+        // Given
         List<String> nickNameList = new ArrayList<>();
         for (int i = 1; i <= 100; i++) {
             nickNameList.add("닉네임" + i);

@@ -1,25 +1,24 @@
 package chat.application;
 
+import chat.application.factory.ChatRoomTitleStrategyFactory;
 import chat.application.stragety.ChatRoomTitleStrategy;
-import chat.application.stragety.NormalTitleGenerator;
-import chat.application.stragety.TruncatedTitleGenerator;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 @Setter
+@Component
+@RequiredArgsConstructor
 public class ChatRoomGenerator {
 
-    private ChatRoomTitleStrategy chatRoomChatRoomTitleStrategy;
+    private ChatRoomTitleStrategy strategy;
 
-    private static final int MAX_USER_TITLE = 5;
+    private final ChatRoomTitleStrategyFactory chatRoomTitleStrategyFactory;
 
     public String generateDefaultTitle(List<String> nickNameList) {
-        if (nickNameList.size() > MAX_USER_TITLE) {
-            this.setChatRoomChatRoomTitleStrategy(new TruncatedTitleGenerator());
-        } else {
-            this.setChatRoomChatRoomTitleStrategy(new NormalTitleGenerator());
-        }
-        return chatRoomChatRoomTitleStrategy.generateTitle(nickNameList);
+        this.strategy = chatRoomTitleStrategyFactory.getTitleStrategy(nickNameList.size());
+        return strategy.generateTitle(nickNameList);
     }
 
 }
