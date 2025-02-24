@@ -2,10 +2,20 @@ package chat.application;
 
 import java.util.List;
 
-public class ChatRoomGenerator {
+public class ChatRoomGenerator implements ChatRoomTitleGeneratorUseCase {
 
-    public String generateTitle(List<String> userNickNameList) {
+    private static final int MAX_USER_TITLE = 5;
 
+    @Override
+    public String generateDefaultTitle(List<String> userNickNameList) {
+        if (userNickNameList.size() > MAX_USER_TITLE) {
+            return generateTitle(userNickNameList.subList(0, MAX_USER_TITLE))
+                + " 외 " + (userNickNameList.size() - MAX_USER_TITLE) + "명의 채팅방";
+        }
+        return generateTitle(userNickNameList) + "의 채팅방";
+    }
+
+    private String generateTitle(List<String> userNickNameList) {
         StringBuilder titleBuilder = new StringBuilder();
         boolean first = true;
 
@@ -17,8 +27,6 @@ public class ChatRoomGenerator {
             first = false;
         }
 
-        titleBuilder.append("의 채팅방");
         return titleBuilder.toString();
     }
-
 }
