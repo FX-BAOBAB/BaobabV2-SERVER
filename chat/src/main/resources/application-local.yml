@@ -12,6 +12,7 @@ spring:
     mongodb:
       uri: ${MONGO_URL}
       database: ${MONGO_DATABASE}
+      auto-index-creation: true
 
 eureka:
   instance:
