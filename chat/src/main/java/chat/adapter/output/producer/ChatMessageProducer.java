@@ -1,4 +1,4 @@
-package chat.core.config.kafka;
+package chat.adapter.output.producer;
 
 import global.message.MessageProducer;
 import lombok.RequiredArgsConstructor;
