@@ -19,10 +19,10 @@ class ChatRoomGeneratorTest {
         // Given
 
         // When
-        String generatedTitle = chatRoomGenerator.generateDefaultTitle(List.of("닉네임1", "닉네임2", "닉네임3"));
+        String generatedTitle = chatRoomGenerator.generateDefaultTitle(List.of(1000L, 2000L));
 
         // Then
-        assertEquals("닉네임1, 닉네임2, 닉네임3의 채팅방", generatedTitle);
+        assertEquals("[1000, 2000]의 채팅방", generatedTitle);
     }
 
 
@@ -30,16 +30,16 @@ class ChatRoomGeneratorTest {
     void 채팅방_제목_생성_100명_성공() {
 
         // Given
-        List<String> nickNameList = new ArrayList<>();
+        List<Long> nickNameList = new ArrayList<>();
         for (int i = 1; i <= 100; i++) {
-            nickNameList.add("닉네임" + i);
+            nickNameList.add((long) i);
         }
 
         // When
         String generatedTitle = chatRoomGenerator.generateDefaultTitle(nickNameList);
 
         // Then
-        assertEquals("닉네임1, 닉네임2, 닉네임3, 닉네임4, 닉네임5 외 95명의 채팅방", generatedTitle);
+        assertEquals("1님의 단톡방", generatedTitle);
     }
 
 
