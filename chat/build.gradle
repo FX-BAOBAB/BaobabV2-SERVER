@@ -44,6 +44,9 @@ dependencies {
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
     annotationProcessor 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    //Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     implementation project(":global")
     implementation project(":file")
 
