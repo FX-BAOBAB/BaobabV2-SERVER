@@ -35,11 +35,15 @@ public class ChatRoomSaveService {
         String buyerId = chatRoomSaveCommand.getBuyerId();
         ArticleFeignResponse articleInfo = getArticleBy(chatRoomSaveCommand.getArticleId());
 
-        // article userId => sellerId
-        String chatRoomId = createChatRoom(buyerId, articleInfo);
+        // articleId로 ChatRoom 존재 여부 확인, 없으면 생성
+        String chatRoomId = chatRoomPersistencePort.getChatRoomBy(chatRoomSaveCommand.getArticleId())
+            .orElseGet(() ->
+                createChatRoom(buyerId, chatRoomSaveCommand.getArticleId(), articleInfo)
+            );
 
-        saveUserChat(chatRoomId, buyerId);
-        saveUserChat(chatRoomId, articleInfo.getUserId());
+        // UserChat 존재 유뮤 확인, 없으면 생성
+        saveUserChatIfNotExists(chatRoomId, buyerId);
+        saveUserChatIfNotExists(chatRoomId, articleInfo.getUserId());
 
         return chatRoomId;
     }
@@ -48,7 +52,7 @@ public class ChatRoomSaveService {
         return articleClient.getArticleBy(articleId);
     }
 
-    private String createChatRoom(String buyerId, ArticleFeignResponse articleInfo) {
+    private String createChatRoom(String buyerId, String articleId, ArticleFeignResponse articleInfo) {
         String buyerNickName = userClient.getNickname(buyerId);
         String sellerNickName = userClient.getNickname(articleInfo.getUserId());
 
@@ -56,11 +60,14 @@ public class ChatRoomSaveService {
             List.of(buyerNickName, sellerNickName));
 
         return chatRoomPersistencePort.saveChatRoom(
-            ChatRoomSaveForm.of(title, articleInfo.getArticleImage()));
+            ChatRoomSaveForm.of(title, articleId, articleInfo.getArticleImage()));
     }
 
-    private void saveUserChat(String chatRoomId, String userId) {
-        userChatPersistencePort.saveUserChat(UserChatSaveForm.of(chatRoomId, userId));
+    private void saveUserChatIfNotExists(String chatRoomId, String userId) {
+        Boolean existsUserChat = userChatPersistencePort.existsBy(chatRoomId, userId);
+        if (!existsUserChat) {
+            userChatPersistencePort.saveUserChat(UserChatSaveForm.of(chatRoomId, userId));
+        }
     }
 
 }

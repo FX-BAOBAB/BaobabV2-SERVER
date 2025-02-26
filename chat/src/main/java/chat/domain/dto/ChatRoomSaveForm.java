@@ -17,9 +17,10 @@ public class ChatRoomSaveForm {
 
     private ArticleImage thumbnail;
 
-    public static ChatRoomSaveForm of(String title, ArticleImage articleImage) {
+    public static ChatRoomSaveForm of(String title, String articleId, ArticleImage articleImage) {
         return ChatRoomSaveForm.builder()
             .title(title)
+            .articleId(articleId)
             .thumbnail(articleImage)
             .build();
     }

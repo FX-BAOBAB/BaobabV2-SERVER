@@ -6,4 +6,5 @@ public interface UserChatPersistencePort {
 
     Boolean saveUserChat(UserChatSaveForm userChatSaveForm);
 
+    Boolean existsBy(String chatRoomId, String userId);
 }

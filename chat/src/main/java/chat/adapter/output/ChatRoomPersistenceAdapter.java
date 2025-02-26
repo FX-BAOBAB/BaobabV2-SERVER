@@ -5,6 +5,7 @@ import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.domain.dto.ChatRoomSaveForm;
 import global.annotation.output.PersistenceAdapter;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @PersistenceAdapter
@@ -23,6 +24,12 @@ public class ChatRoomPersistenceAdapter implements ChatRoomPersistencePort {
         ChatRoomDocument savedChatRoom = chatRoomMongoRepository.save(
             ChatRoomDocument.of(chatRoomSaveForm));
         return savedChatRoom.getId();
+    }
+
+    @Override
+    public Optional<String> getChatRoomBy(String articleId) {
+        return Optional.ofNullable(chatRoomMongoRepository.findByArticleId(articleId)).map(
+            ChatRoomDocument::getId);
     }
 
 }

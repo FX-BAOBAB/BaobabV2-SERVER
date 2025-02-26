@@ -19,4 +19,9 @@ public class UserChatPersistenceAdapter implements UserChatPersistencePort {
         return savedUserChat.getUserId() != null;
     }
 
+    @Override
+    public Boolean existsBy(String chatRoomId, String userId) {
+        return userChatMongoRepository.existsByChatRoomIdAndUserId(chatRoomId, userId);
+    }
+
 }
