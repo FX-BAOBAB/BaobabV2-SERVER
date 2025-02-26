@@ -79,7 +79,7 @@ public class UserOpenApiController {
 
     @GetMapping("/nickname")
     String getNickname(@RequestParam("userId") String userId){
-        return userReaderUseCase.getUserInfoBy(userId).getNickName();
+        return userReaderUseCase.getUserNickname(userId);
     }
 
 }
