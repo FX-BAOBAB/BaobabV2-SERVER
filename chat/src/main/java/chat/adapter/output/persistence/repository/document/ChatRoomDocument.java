@@ -1,5 +1,7 @@
 package chat.adapter.output.persistence.repository.document;
 
+import chat.domain.dto.ArticleImage;
+import chat.domain.dto.ChatRoomSaveForm;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +21,16 @@ public class ChatRoomDocument {
 
     private String title;
 
-    private String thumbnailId;
+    private String articleId;
+
+    private ArticleImage thumbnailId;
+
+    public static ChatRoomDocument of(ChatRoomSaveForm chatRoomSaveForm) {
+        return ChatRoomDocument.builder()
+            .title(chatRoomSaveForm.getTitle())
+            .articleId(chatRoomSaveForm.getArticleId())
+            .thumbnailId(chatRoomSaveForm.getThumbnail())
+            .build();
+    }
 
 }

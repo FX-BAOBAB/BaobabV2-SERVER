@@ -1,6 +1,7 @@
 package chat.application;
 
 import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
+import chat.application.factory.ChatRoomFactory;
 import chat.application.factory.ChatRoomTitleStrategyFactory;
 import chat.application.stragety.ChatRoomTitleStrategy;
 import java.util.List;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 @RequiredArgsConstructor
-public class ChatRoomGenerator implements ChatRoomFactory{
+public class ChatRoomGenerator implements ChatRoomFactory {
 
     private final ChatRoomTitleStrategyFactory chatRoomTitleStrategyFactory;
 

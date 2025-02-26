@@ -1,4 +1,4 @@
-package chat.application;
+package chat.application.factory;
 
 import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 

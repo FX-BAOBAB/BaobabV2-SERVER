@@ -1,0 +1,26 @@
+package chat.domain.dto;
+
+import chat.adapter.output.client.response.ArticleFeignResponse;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+@AllArgsConstructor
+public class ChatRoomSaveForm {
+
+    private String title;
+
+    private String articleId;
+
+    private ArticleImage thumbnail;
+
+    public static ChatRoomSaveForm of(String title, ArticleImage articleImage) {
+        return ChatRoomSaveForm.builder()
+            .title(title)
+            .thumbnail(articleImage)
+            .build();
+    }
+}
