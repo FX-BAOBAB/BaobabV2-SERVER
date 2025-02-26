@@ -3,6 +3,7 @@ package article.adapter.input.web;
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.input.web.request.ArticleUpdateRequest;
+import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
 import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -100,6 +102,12 @@ public class ArticleApiController {
     @DeleteMapping("/article/{articleId}")
     public Api<Boolean> deleteArticle(@PathVariable String articleId, @AuthenticatedUser AuthUser authUser) {
         return Api.OK(deleteArticleUseCase.deleteArticle(articleId, authUser.getUserId()));
+    }
+
+    // Chat-Service Feign Client 에서 사용
+    @GetMapping("/articleId")
+    public ArticleFeignResponse getArticleBy(@RequestParam String articleId) {
+        return getArticleUseCase.getArticleBy(articleId);
     }
 
 }

@@ -1,5 +1,6 @@
 package article.application;
 
+import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
 import article.adapter.output.client.UserClient;
 import article.adapter.output.persistence.repository.Article;
@@ -122,6 +123,13 @@ public class ArticleService implements DefaultArticleUseCase {
                 // 아티클 이미지 리스트에 이미지 추가
                 article.getImageList().addAll(articleImageList);
             });
+    }
+
+    @Override
+    public ArticleFeignResponse getArticleBy(String articleId) {
+        Article article = articlePersistencePort.getArticleById(articleId)
+            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+        return ArticleFeignResponse.of(article.getUserId(), article.getImageList());
     }
 
 }

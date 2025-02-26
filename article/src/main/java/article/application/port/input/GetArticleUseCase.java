@@ -1,5 +1,6 @@
 package article.application.port.input;
 
+import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
 import article.domain.command.ArticleSearchCommand;
 
@@ -17,5 +18,7 @@ public interface GetArticleUseCase {
      * @return ArticleInfoResponse List
      */
     List<ArticleInfoResponse> getArticleList(ArticleSearchCommand articleSearchCommand);
+
+    ArticleFeignResponse getArticleBy(String articleId);
 
 }
