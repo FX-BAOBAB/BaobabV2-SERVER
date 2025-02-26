@@ -3,6 +3,7 @@ package user.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.input.UserReaderUseCase;
 import user.application.port.output.UserPersistencePort;
 import user.domain.command.UserReaderCommand;
@@ -22,8 +23,11 @@ public class UserReaderService implements UserReaderUseCase {
 
     @Override
     public String getUserNickname(String userId) {
-        String nickname = userPersistencePort.getUserInfo(userId, UserStatus.REGISTERED).getNickName();
-        return nickname == null ? UNREGISTERED_USER_NICKNAME : nickname;
+        UserReaderCommand user = userPersistencePort.getUserInfo(userId);
+        if (user.getStatus().equals(UserStatus.UNREGISTERED)) {
+            return UNREGISTERED_USER_NICKNAME;
+        }
+        return user.getNickName();
     }
 
 }
