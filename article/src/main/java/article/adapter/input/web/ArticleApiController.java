@@ -97,7 +97,7 @@ public class ArticleApiController {
             .build();
     }
 
-    @DeleteMapping("/article/{articleId}")
+    @DeleteMapping("/{articleId}")
     public Api<Boolean> deleteArticle(@PathVariable String articleId, @AuthenticatedUser AuthUser authUser) {
         return Api.OK(deleteArticleUseCase.deleteArticle(articleId, authUser.getUserId()));
     }
