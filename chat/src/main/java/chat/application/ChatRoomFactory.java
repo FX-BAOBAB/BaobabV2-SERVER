@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ChatRoomFactory {
 
-    ChatRoomDocument createChatRoom(List<Long> userIdList);
+    ChatRoomDocument createChatRoom(List<String> userNickNameList);
 
 }

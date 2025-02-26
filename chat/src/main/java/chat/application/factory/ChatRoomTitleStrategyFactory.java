@@ -12,16 +12,16 @@ public class ChatRoomTitleStrategyFactory {
 
     private static final int OrganizationCount = 2;
 
-    public ChatRoomTitleStrategy getTitleStrategy(List<Long> userIdList) {
-        if (isOrganization(userIdList)) {
+    public ChatRoomTitleStrategy getTitleStrategy(List<String> userNickNameList) {
+        if (isOrganization(userNickNameList)) {
             return new TruncatedTitleGenerator();
         }
         return new NormalTitleGenerator();
     }
 
 
-    private boolean isOrganization(List<Long> userIdList){
-        return userIdList.size() > OrganizationCount;
+    private boolean isOrganization(List<String> userNickNameList){
+        return userNickNameList.size() > OrganizationCount;
     }
 
 }

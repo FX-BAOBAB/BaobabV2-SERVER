@@ -15,15 +15,15 @@ public class ChatRoomGenerator implements ChatRoomFactory{
 
     private final ChatRoomTitleStrategyFactory chatRoomTitleStrategyFactory;
 
-    public String generateDefaultTitle(List<Long> userIdList) {
-        ChatRoomTitleStrategy titleGenerator = chatRoomTitleStrategyFactory.getTitleStrategy(userIdList);
+    public String generateDefaultTitle(List<String> userNickNameList) {
+        ChatRoomTitleStrategy titleGenerator = chatRoomTitleStrategyFactory.getTitleStrategy(userNickNameList);
         // TODO User Nick Name List 통신 필요 , Module 간 통신 FeignClient 이용
-        return titleGenerator.generateTitle(userIdList);
+        return titleGenerator.generateTitle(userNickNameList);
     }
 
     @Override
-    public ChatRoomDocument createChatRoom(List<Long> userIdList) {
-        String roomTitle = generateDefaultTitle(userIdList);
+    public ChatRoomDocument createChatRoom(List<String> userNickNameList) {
+        String roomTitle = generateDefaultTitle(userNickNameList);
         return ChatRoomDocument.builder()
                 .title(roomTitle)
                 .build();
