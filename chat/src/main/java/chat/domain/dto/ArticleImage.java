@@ -15,11 +15,4 @@ public class ArticleImage {
 
     private String imageUrl;
 
-    public static ArticleImage of(String imageId, String imageUrl) {
-        return ArticleImage.builder()
-            .imageId(imageId)
-            .imageUrl(imageUrl)
-            .build();
-    }
-
 }

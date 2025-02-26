@@ -129,7 +129,7 @@ public class ArticleService implements DefaultArticleUseCase {
     public ArticleFeignResponse getArticleBy(String articleId) {
         Article article = articlePersistencePort.getArticleById(articleId)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
-        return ArticleFeignResponse.of(article.getUserId(), article.getImageList());
+        return ArticleFeignResponse.of(article.getUserId(), article.getImageList().get(0));
     }
 
 }
