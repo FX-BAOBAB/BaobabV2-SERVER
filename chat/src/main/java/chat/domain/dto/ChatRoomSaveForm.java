@@ -1,7 +1,5 @@
 package chat.domain.dto;
 
-import chat.adapter.output.client.response.ArticleFeignResponse;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

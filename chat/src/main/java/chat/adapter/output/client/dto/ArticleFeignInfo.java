@@ -1,4 +1,4 @@
-package chat.adapter.output.client.response;
+package chat.adapter.output.client.dto;
 
 import chat.domain.dto.ArticleImage;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleFeignResponse {
+public class ArticleFeignInfo {
 
     private String userId;
 

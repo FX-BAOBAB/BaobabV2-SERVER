@@ -1,6 +1,6 @@
 package chat.adapter.output.client;
 
-import chat.adapter.output.client.response.ArticleFeignResponse;
+import chat.adapter.output.client.dto.ArticleFeignInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface ArticleClient {
 
     @GetMapping("/articleId")
-    ArticleFeignResponse getArticleBy(@RequestParam String articleId);
+    ArticleFeignInfo getArticleBy(@RequestParam String articleId);
 
 }
