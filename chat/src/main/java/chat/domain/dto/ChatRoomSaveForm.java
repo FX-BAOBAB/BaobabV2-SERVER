@@ -1,5 +1,6 @@
 package chat.domain.dto;
 
+import chat.application.chatroom.ChatRoom;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +14,13 @@ public class ChatRoomSaveForm {
 
     private String articleId;
 
-    private ArticleImage thumbnail;
+    private String thumbnailId;
 
-    public static ChatRoomSaveForm of(String title, String articleId, ArticleImage articleImage) {
+    public static ChatRoomSaveForm of(ChatRoom chatRoom) {
         return ChatRoomSaveForm.builder()
-            .title(title)
-            .articleId(articleId)
-            .thumbnail(articleImage)
+            .title(chatRoom.getTitle())
+            .articleId(chatRoom.getArticleId())
+            .thumbnailId(chatRoom.getThumbnailId())
             .build();
     }
 }

@@ -1,4 +1,4 @@
-package chat.application.shin.factory;
+package chat.application.factory;
 
 import java.util.List;
 

@@ -1,9 +1,8 @@
-package chat.application.shin.chatroom;
+package chat.application.chatroom;
 
 import chat.adapter.output.client.ArticleClient;
 import chat.adapter.output.client.UserClient;
-import chat.application.shin.factory.ChatRoomTitleGenerator;
-import lombok.RequiredArgsConstructor;
+import chat.application.factory.ChatRoomTitleGenerator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

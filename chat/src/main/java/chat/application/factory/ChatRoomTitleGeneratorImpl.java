@@ -1,7 +1,5 @@
-package chat.application.shin.factory;
+package chat.application.factory;
 
-import chat.adapter.output.client.ArticleClient;
-import chat.adapter.output.client.UserClient;
 import chat.application.stragety.ChatRoomTitleStrategy;
 import chat.application.stragety.NormalTitleGenerator;
 import chat.application.stragety.TruncatedTitleGenerator;

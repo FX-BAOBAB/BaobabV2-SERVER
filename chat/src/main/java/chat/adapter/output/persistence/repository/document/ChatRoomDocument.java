@@ -23,13 +23,13 @@ public class ChatRoomDocument {
 
     private String articleId;
 
-    private ArticleImage thumbnailId;
+    private String thumbnailId;
 
     public static ChatRoomDocument of(ChatRoomSaveForm chatRoomSaveForm) {
         return ChatRoomDocument.builder()
             .title(chatRoomSaveForm.getTitle())
             .articleId(chatRoomSaveForm.getArticleId())
-            .thumbnailId(chatRoomSaveForm.getThumbnail())
+            .thumbnailId(chatRoomSaveForm.getThumbnailId())
             .build();
     }
 

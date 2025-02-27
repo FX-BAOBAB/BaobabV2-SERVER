@@ -1,6 +1,5 @@
-package chat.application.shin.chatroom;
+package chat.application.chatroom;
 
-import chat.domain.dto.ArticleImage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
