@@ -1,0 +1,35 @@
+package chat.application.shin.factory;
+
+import chat.adapter.output.client.ArticleClient;
+import chat.adapter.output.client.UserClient;
+import chat.application.stragety.ChatRoomTitleStrategy;
+import chat.application.stragety.NormalTitleGenerator;
+import chat.application.stragety.TruncatedTitleGenerator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class ChatRoomTitleGeneratorImpl implements ChatRoomTitleGenerator{
+
+    private static final int OrganizationCount = 2;
+
+    @Override
+    public String getChatRoomTitle(List<String> userNickNameList) {
+        return getTitleStrategy(userNickNameList.size()).generateTitle(userNickNameList);
+    }
+
+    public ChatRoomTitleStrategy getTitleStrategy(int nickNameListSize) {
+        if (isOrganization(nickNameListSize)) {
+            return new TruncatedTitleGenerator();
+        }
+        return new NormalTitleGenerator();
+    }
+
+    private boolean isOrganization(int NickNameListSize) {
+        return NickNameListSize > OrganizationCount;
+    }
+
+}

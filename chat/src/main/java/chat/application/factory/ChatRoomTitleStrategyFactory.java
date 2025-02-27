@@ -3,11 +3,12 @@ package chat.application.factory;
 import chat.application.stragety.ChatRoomTitleStrategy;
 import chat.application.stragety.NormalTitleGenerator;
 import chat.application.stragety.TruncatedTitleGenerator;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+//@Component
 public class ChatRoomTitleStrategyFactory {
 
     private static final int OrganizationCount = 2;
