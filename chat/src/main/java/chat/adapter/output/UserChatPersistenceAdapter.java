@@ -5,6 +5,7 @@ import chat.adapter.output.persistence.repository.document.UserChatDocument;
 import chat.application.port.output.UserChatPersistencePort;
 import chat.domain.dto.UserChatSaveForm;
 import global.annotation.output.PersistenceAdapter;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @PersistenceAdapter
@@ -22,6 +23,11 @@ public class UserChatPersistenceAdapter implements UserChatPersistencePort {
     @Override
     public Boolean existsBy(String chatRoomId, String userId) {
         return userChatMongoRepository.existsByChatRoomIdAndUserId(chatRoomId, userId);
+    }
+
+    @Override
+    public Optional<UserChatDocument> getUserChat(String chatRoomId, String userId) {
+        return userChatMongoRepository.findByChatRoomIdAndUserId(chatRoomId, userId);
     }
 
 }

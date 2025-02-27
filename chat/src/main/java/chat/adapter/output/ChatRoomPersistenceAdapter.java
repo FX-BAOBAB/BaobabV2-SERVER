@@ -5,7 +5,7 @@ import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.domain.dto.ChatRoomSaveForm;
 import global.annotation.output.PersistenceAdapter;
-import java.util.Optional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @PersistenceAdapter
@@ -15,11 +15,6 @@ public class ChatRoomPersistenceAdapter implements ChatRoomPersistencePort {
     private final ChatRoomMongoRepository chatRoomMongoRepository;
 
     @Override
-    public boolean existsChatRoomBy(String chatRoomId) {
-        return chatRoomMongoRepository.existsById(chatRoomId);
-    }
-
-    @Override
     public String saveChatRoom(ChatRoomSaveForm chatRoomSaveForm) {
         ChatRoomDocument savedChatRoom = chatRoomMongoRepository.save(
             ChatRoomDocument.of(chatRoomSaveForm));
@@ -27,9 +22,8 @@ public class ChatRoomPersistenceAdapter implements ChatRoomPersistencePort {
     }
 
     @Override
-    public Optional<String> getChatRoomBy(String articleId) {
-        return Optional.ofNullable(chatRoomMongoRepository.findByArticleId(articleId)).map(
-            ChatRoomDocument::getId);
+    public List<ChatRoomDocument> getChatRoomListBy(String articleId) {
+        return chatRoomMongoRepository.findByArticleId(articleId);
     }
 
 }

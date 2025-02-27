@@ -3,14 +3,18 @@ package chat.application;
 import chat.adapter.output.client.ArticleClient;
 import chat.adapter.output.client.UserClient;
 import chat.adapter.output.client.dto.ArticleFeignInfo;
+import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
+import chat.application.port.input.ChatRoomCheckUseCase;
 import chat.application.port.input.UserChatSaveUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.domain.command.ChatRoomSaveCommand;
 import chat.domain.dto.ChatRoomSaveForm;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -18,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class ChatRoomSaveService {
 
     private final ChatRoomPersistencePort chatRoomPersistencePort;
+
+    private final ChatRoomCheckUseCase chatRoomCheckUseCase;
 
     private final UserChatSaveUseCase userChatSaveUseCase;
 
@@ -27,36 +33,49 @@ public class ChatRoomSaveService {
 
     private final UserClient userClient;
 
-    public String saveChatRoom(ChatRoomSaveCommand chatRoomSaveCommand) {
-        String buyerId = chatRoomSaveCommand.getBuyerId();
-        ArticleFeignInfo articleInfo = getArticleBy(chatRoomSaveCommand.getArticleId());
+    @Transactional
+    public String createChatRoom(ChatRoomSaveCommand chatRoomSaveCommand) {
 
-        // articleId로 ChatRoom 존재 여부 확인, 없으면 생성
-        String chatRoomId = chatRoomPersistencePort.getChatRoomBy(chatRoomSaveCommand.getArticleId())
-            .orElseGet(() ->
-                createChatRoom(buyerId, chatRoomSaveCommand.getArticleId(), articleInfo)
-            );
+        // 1. articleId 로 chatRoomIds 조회
+        List<String> chatRoomIdList = getChatRoomIdList(chatRoomSaveCommand);
 
-        // UserChat 존재 유뮤 확인, 없으면 생성
-        userChatSaveUseCase.saveUserChatIfNotExists(chatRoomId, buyerId);
-        userChatSaveUseCase.saveUserChatIfNotExists(chatRoomId, articleInfo.getUserId());
+        // 2. chatRoomIds 와 buyerId 로 chatRoom 조회
+        Optional<String> chatRoomId = chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList,
+            chatRoomSaveCommand.getBuyerId());
 
-        return chatRoomId;
-    }
+        // 3-1. 존재하면 id 반환
+        if (chatRoomId.isPresent()) {
+            return chatRoomId.get();
+        }
 
-    private ArticleFeignInfo getArticleBy(String articleId) {
-        return articleClient.getArticleBy(articleId);
-    }
+        // 3.2. ChatRoom 생성
+        ArticleFeignInfo articleInfo = articleClient.getArticleBy(
+            chatRoomSaveCommand.getArticleId());
 
-    private String createChatRoom(String buyerId, String articleId, ArticleFeignInfo articleInfo) {
-        String buyerNickName = userClient.getNickname(buyerId);
+        String buyerNickName = userClient.getNickname(chatRoomSaveCommand.getBuyerId());
         String sellerNickName = userClient.getNickname(articleInfo.getUserId());
 
-        String title = chatRoomGenerator.generateDefaultTitle(
+        String defaultTitle = chatRoomGenerator.generateDefaultTitle(
             List.of(buyerNickName, sellerNickName));
 
-        return chatRoomPersistencePort.saveChatRoom(
-            ChatRoomSaveForm.of(title, articleId, articleInfo.getArticleImage()));
+        String newChatRoomId = chatRoomPersistencePort.saveChatRoom(
+            ChatRoomSaveForm.of(defaultTitle, chatRoomSaveCommand.getArticleId(),
+                articleInfo.getArticleImage()));
+
+        // 4. UserChat 생성
+        userChatSaveUseCase.saveUserChatIfNotExists(newChatRoomId, chatRoomSaveCommand.getBuyerId());
+        userChatSaveUseCase.saveUserChatIfNotExists(newChatRoomId, articleInfo.getUserId());
+
+        return newChatRoomId;
+
+    }
+
+    private List<String> getChatRoomIdList(ChatRoomSaveCommand chatRoomSaveCommand) {
+        return chatRoomPersistencePort.getChatRoomListBy(chatRoomSaveCommand.getArticleId()).stream()
+            .map(ChatRoomDocument::getId)
+            .toList();
     }
 
 }
+
+
