@@ -15,12 +15,9 @@ public class UserChatSaveService implements UserChatSaveUseCase {
 
     @Override
     public void saveUserChatIfNotExists(List<UserChatSaveForm> formList) {
-        for (UserChatSaveForm form : formList) {
-            Boolean existsUserChat = userChatPersistencePort.existsBy(form.getChatRoomId(), form.getUserId());
-            if (!existsUserChat) {
-                userChatPersistencePort.saveUserChat(form);
-            }
-        }
+        formList.stream()
+            .filter(form -> !userChatPersistencePort.existsBy(form.getChatRoomId(), form.getUserId()))
+            .forEach(userChatPersistencePort::saveUserChat);
     }
 
 }

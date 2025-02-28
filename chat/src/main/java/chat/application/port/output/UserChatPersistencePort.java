@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface UserChatPersistencePort {
 
-    Boolean saveUserChat(UserChatSaveForm userChatSaveForm);
+    void saveUserChat(UserChatSaveForm userChatSaveForm);
 
     Boolean existsBy(String chatRoomId, String userId);
 

@@ -14,10 +14,8 @@ public class UserChatPersistenceAdapter implements UserChatPersistencePort {
 
     private final UserChatMongoRepository userChatMongoRepository;
 
-    public Boolean saveUserChat(UserChatSaveForm userChatSaveForm) {
-        UserChatDocument savedUserChat = userChatMongoRepository.save(
-            UserChatDocument.of(userChatSaveForm));
-        return savedUserChat.getUserId() != null;
+    public void saveUserChat(UserChatSaveForm userChatSaveForm) {
+        userChatMongoRepository.save(UserChatDocument.of(userChatSaveForm));
     }
 
     @Override
