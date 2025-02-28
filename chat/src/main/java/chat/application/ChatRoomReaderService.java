@@ -4,6 +4,7 @@ import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.chatroom.ChatRoom;
 import chat.application.chatroom.ChatRoomGenerator;
 import chat.application.port.input.ChatRoomCheckUseCase;
+import chat.application.port.input.ChatRoomConnectionUseCase;
 import chat.application.port.input.UserChatSaveUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.application.userchat.UserChat;
@@ -32,6 +33,8 @@ public class ChatRoomReaderService {
 
     private final UserChatGenerator userChatGenerator;
 
+    private final ChatRoomConnectionUseCase chatRoomConnectionUseCase;
+
     @Transactional
     public String getChatRoom(ChatRoomSaveCommand command) {
 
@@ -40,8 +43,12 @@ public class ChatRoomReaderService {
             .stream().map(ChatRoomDocument::getId).toList();
 
         // 2. 기존 채팅방이 존재하는지 확인
-        return chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
+        String chatRoomId = chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
             .orElseGet(() -> createNewChatRoom(command));
+
+        connectUserToChatRoom(command.getBuyerId());
+
+        return chatRoomId;
     }
 
     private String createNewChatRoom(ChatRoomSaveCommand command) {
@@ -54,10 +61,13 @@ public class ChatRoomReaderService {
         List<UserChat> userChatList = userChatGenerator.createUserChat(chatRoomId, command);
         userChatSaveUseCase.saveUserChatIfNotExists(UserChatSaveForm.of(userChatList));
 
+        connectUserToChatRoom(command.getBuyerId());
+
         return chatRoomId;
     }
 
+    private void connectUserToChatRoom(String userId) {
+        chatRoomConnectionUseCase.connectChatRoom(userId);
+    }
 
 }
-
-
