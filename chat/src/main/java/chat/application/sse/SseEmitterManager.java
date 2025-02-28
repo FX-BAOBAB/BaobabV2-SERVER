@@ -12,7 +12,7 @@ public class SseEmitterManager {
     private final SseConnectionPoolPort<String, UserSseConnection> connectionPoolPort;
 
     public UserSseConnection createSseEmitter(String userId) {
-        UserSseConnection userSseConnection = UserSseConnection.connect(userId, connectionPoolPort);
+        UserSseConnection userSseConnection = UserSseConnection.create(userId, connectionPoolPort);
         connectionPoolPort.addSession(userId, userSseConnection);
        return userSseConnection;
     }

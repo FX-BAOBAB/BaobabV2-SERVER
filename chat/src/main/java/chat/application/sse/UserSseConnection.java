@@ -31,7 +31,7 @@ public class UserSseConnection {
         this.sseEmitter.onTimeout(this.sseEmitter::complete);
     }
 
-    public static UserSseConnection connect(
+    public static UserSseConnection create(
         String userId,
         SseConnectionPoolPort<String, UserSseConnection> connectionPoolPort
     ){
