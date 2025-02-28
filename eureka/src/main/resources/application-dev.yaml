@@ -20,3 +20,9 @@ logging:
 log:
   config:
     path: ${LOG_CONFIG_PATH}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
