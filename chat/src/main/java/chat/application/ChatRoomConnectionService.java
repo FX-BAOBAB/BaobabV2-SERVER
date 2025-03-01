@@ -19,9 +19,9 @@ public class ChatRoomConnectionService implements ChatRoomConnectionUseCase {
     private final static String CONNECTED_USER = "connectedUsers";
 
     @Override
-    public UserSseConnection connectChatRoom(String userId) {
+    public void connectChatRoom(String userId) {
         redisTemplate.opsForSet().add(CONNECTED_USER, userId);
-        return sseEmitterManager.createSseEmitter(userId);
+        sseConnectionRegistryPort.saveEmitter(userId, sseEmitterManager.createSseEmitter(userId));
     }
 
     @Override
