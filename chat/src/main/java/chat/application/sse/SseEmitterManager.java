@@ -1,7 +1,7 @@
 package chat.application.sse;
 
 
-import chat.application.port.output.SseConnectionPoolPort;
+import chat.application.port.output.SseConnectionRegistryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SseEmitterManager {
 
-    private final SseConnectionPoolPort<String, UserSseConnection> connectionPoolPort;
+    private final SseConnectionRegistryPort<String, UserSseConnection> connectionPoolPort;
 
     public UserSseConnection createSseEmitter(String userId) {
         UserSseConnection userSseConnection = UserSseConnection.create(userId, connectionPoolPort);
-        connectionPoolPort.addSession(userId, userSseConnection);
+        connectionPoolPort.saveEmitter(userId, userSseConnection);
        return userSseConnection;
     }
 

@@ -1,7 +1,7 @@
 package chat.application;
 
 import chat.application.port.input.ChatRoomConnectionUseCase;
-import chat.application.port.output.SseConnectionPoolPort;
+import chat.application.port.output.SseConnectionRegistryPort;
 import chat.application.sse.SseEmitterManager;
 import chat.application.sse.UserSseConnection;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ChatRoomConnectionService implements ChatRoomConnectionUseCase {
 
-    private final SseConnectionPoolPort<String, UserSseConnection> sseConnectionPoolPort;
+    private final SseConnectionRegistryPort<String, UserSseConnection> sseConnectionRegistryPort;
     private final SseEmitterManager sseEmitterManager;
     private final StringRedisTemplate redisTemplate;
 
@@ -27,7 +27,7 @@ public class ChatRoomConnectionService implements ChatRoomConnectionUseCase {
     @Override
     public void disconnectChatRoom(String userId, UserSseConnection connection) {
         redisTemplate.opsForSet().remove(CONNECTED_USER, userId);
-        sseConnectionPoolPort.removeSession(connection);
+        sseConnectionRegistryPort.deleteEmitter(connection);
     }
 
 }
