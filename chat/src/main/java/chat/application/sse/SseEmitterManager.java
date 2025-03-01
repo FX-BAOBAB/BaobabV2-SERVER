@@ -9,12 +9,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SseEmitterManager {
 
-    private final SseConnectionRegistryPort<String, UserSseConnection> connectionPoolPort;
+    private final SseConnectionRegistryPort<String, UserSseConnection> connectionRegistryPort;
 
     public UserSseConnection createSseEmitter(String userId) {
-        UserSseConnection userSseConnection = UserSseConnection.create(userId, connectionPoolPort);
-        connectionPoolPort.saveEmitter(userId, userSseConnection);
-       return userSseConnection;
+        return UserSseConnection.create(userId, connectionRegistryPort);
     }
 
 }
