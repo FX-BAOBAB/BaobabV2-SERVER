@@ -21,9 +21,9 @@ public class ChatRoomTitleGeneratorImpl implements ChatRoomTitleGenerator{
 
     public ChatRoomTitleStrategy getTitleStrategy(int nickNameListSize) {
         if (isOrganization(nickNameListSize)) {
-            return new TruncatedTitleGenerator();
+            return TruncatedTitleGenerator.getGenerator();
         }
-        return new NormalTitleGenerator();
+        return NormalTitleGenerator.getGenerator();
     }
 
     private boolean isOrganization(int NickNameListSize) {
