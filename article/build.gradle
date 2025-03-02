@@ -59,6 +59,10 @@ dependencies {
     // In-Memory Mongo
     testImplementation 'de.bwaldvogel:mongo-java-server:1.46.0'
 
+    // Prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
     implementation project(":global")
     implementation project(":file")
 }

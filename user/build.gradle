@@ -48,6 +48,10 @@ dependencies {
     //Netflix eureka client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0'
 
+    // Prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
     implementation project(":global")
     implementation project(":file")
 
