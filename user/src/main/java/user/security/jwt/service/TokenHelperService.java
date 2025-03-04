@@ -1,6 +1,7 @@
 package user.security.jwt.service;
 
 import global.errorcode.ErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +18,7 @@ import user.security.jwt.model.TokenDto;
 @RequiredArgsConstructor
 public class TokenHelperService {
 
-    private final String REFRESH_TOKEN = "refreshToken:";
+    private final String REFRESH_TOKEN = "refreshToken";
     private final String USER_ID = "userId";
 
     @Value("${jwt.refresh-token.plus-hour}")
@@ -41,7 +42,7 @@ public class TokenHelperService {
     public TokenDto reIssueAccessToken(String refreshToken) {
         String userId = validationToken(refreshToken);
 
-        String storedToken = (String) httpSession.getAttribute("refreshToken:" + userId);
+        String storedToken = (String) httpSession.getAttribute(REFRESH_TOKEN);
         if (storedToken == null || !storedToken.equals(refreshToken)) {
             throw new TokenException(TokenErrorCode.INVALID_TOKEN);
         }
@@ -59,15 +60,11 @@ public class TokenHelperService {
         return userId.toString();
     }
 
-    public void saveRefreshToken(String userId, String refreshToken) {
+    public void saveRefreshToken(String refreshToken) {
         int expirationInSeconds = refreshTokenPlusHour * 60 * 60; // 시간을 초 단위로 변환
 
-        httpSession.setAttribute(REFRESH_TOKEN + userId, refreshToken);
+        httpSession.setAttribute(REFRESH_TOKEN, refreshToken);
         httpSession.setMaxInactiveInterval(expirationInSeconds); // 세션 만료 시간 설정
-    }
-
-    public void deleteRefreshToken(String userId) {
-        httpSession.removeAttribute(REFRESH_TOKEN + userId);
     }
 
 }
