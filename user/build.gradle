@@ -47,6 +47,8 @@ dependencies {
 
     //Netflix eureka client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.21'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 
     implementation project(":global")
     implementation project(":file")

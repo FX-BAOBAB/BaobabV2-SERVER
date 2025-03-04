@@ -32,9 +32,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // Netflix eureka client
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0'
-
     // Aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
