@@ -31,11 +31,11 @@ public class ArticleInfoResponse {
 
     private ArticleStatus status;
 
-    private String nickname;
+    private String userId;
 
     private List<ArticleImage> imageList;
 
-    public static ArticleInfoResponse of(Article article, String nickname) {
+    public static ArticleInfoResponse of(Article article) {
         return ArticleInfoResponse.builder()
             .id(article.getId())
             .title(article.getTitle())
@@ -44,7 +44,7 @@ public class ArticleInfoResponse {
             .price(article.getPrice())
             .registeredAt(article.getRegisteredAt())
             .status(article.getStatus())
-            .nickname(nickname)
+            .userId(article.getUserId())
             .imageList(article.getImageList())
             .build();
     }
