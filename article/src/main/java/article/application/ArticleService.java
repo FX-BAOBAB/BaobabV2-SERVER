@@ -1,7 +1,6 @@
 package article.application;
 
 import article.adapter.input.web.response.ArticleInfoResponse;
-import article.adapter.output.client.UserClient;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
@@ -33,8 +32,6 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final ArticlePersistencePort articlePersistencePort;
 
-    private final UserClient userClient;
-
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
         List<ImageMetaData> imageMetaDataList = imageMetaDataUseCase.processImageMetaDataList(
@@ -48,14 +45,11 @@ public class ArticleService implements DefaultArticleUseCase {
     @Override
     public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand articleSearchCommand) {
         List<Article> articles = articlePersistencePort.getArticleList(articleSearchCommand);
-        return articles.stream().map(article ->
-            ArticleInfoResponse.of(article, userClient.getNickname(article.getUserId()))
-        ).toList();
+        return articles.stream().map(ArticleInfoResponse::of).toList();
     }
 
     @Override
     public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
-
         Article article = articlePersistencePort.getArticleById(articleUpdateCommand.getId())
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
@@ -64,7 +58,6 @@ public class ArticleService implements DefaultArticleUseCase {
         }
 
         deleteArticleImages(articleUpdateCommand, article);
-
         addArticleImages(articleUpdateCommand, article);
 
         return articlePersistencePort.updateArticle(
@@ -73,7 +66,6 @@ public class ArticleService implements DefaultArticleUseCase {
 
     @Override
     public boolean deleteArticle(String articleId, String userId) {
-
         Article article = articlePersistencePort.getArticleById(articleId)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
@@ -82,12 +74,10 @@ public class ArticleService implements DefaultArticleUseCase {
         }
 
         article.getImageList().forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
-
         return articlePersistencePort.deleteArticle(articleId);
     }
 
     private void deleteArticleImages(ArticleUpdateCommand articleUpdateCommand, Article article) {
-
         // 삭제 요청 이미지 아이디 리스트가 존재하면 이미지 삭제
         Optional.ofNullable(articleUpdateCommand.getDeleteImageIdList())
             .filter(list -> !list.isEmpty())
@@ -101,7 +91,6 @@ public class ArticleService implements DefaultArticleUseCase {
     }
 
     private void addArticleImages(ArticleUpdateCommand articleUpdateCommand, Article article) {
-
         // 추가 이미지 리스트가 존재하면 이미지 추가
         Optional.ofNullable(articleUpdateCommand.getAddImages())
             .filter(list -> !list.isEmpty())
