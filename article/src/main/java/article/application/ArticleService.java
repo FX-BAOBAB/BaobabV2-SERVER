@@ -1,6 +1,7 @@
 package article.application;
 
 import article.adapter.input.web.response.ArticleInfoResponse;
+import article.adapter.output.client.UserClient;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
@@ -32,6 +33,8 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final ArticlePersistencePort articlePersistencePort;
 
+    private final UserClient userClient;
+
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
         List<ImageMetaData> imageMetaDataList = imageMetaDataUseCase.processImageMetaDataList(
@@ -45,7 +48,9 @@ public class ArticleService implements DefaultArticleUseCase {
     @Override
     public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand articleSearchCommand) {
         List<Article> articles = articlePersistencePort.getArticleList(articleSearchCommand);
-        return articles.stream().map(ArticleInfoResponse::of).toList();
+        return articles.stream().map(article ->
+            ArticleInfoResponse.of(article, userClient.getUserSimpleInfo(article.getUserId()))
+        ).toList();
     }
 
     @Override
