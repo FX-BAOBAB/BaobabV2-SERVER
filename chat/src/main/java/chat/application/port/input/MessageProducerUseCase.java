@@ -1,9 +1,9 @@
 package chat.application.port.input;
 
-import chat.domain.ChatMessage;
+import chat.domain.command.ChatMessageCommand;
 
 public interface MessageProducerUseCase {
 
-    void produceMessage(ChatMessage message);
+    boolean produceMessage(ChatMessageCommand command);
 
 }

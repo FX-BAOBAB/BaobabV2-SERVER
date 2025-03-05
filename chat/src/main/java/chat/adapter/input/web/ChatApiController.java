@@ -2,9 +2,9 @@ package chat.adapter.input.web;
 
 import chat.adapter.input.web.request.ChatMessageRequest;
 import chat.adapter.input.web.response.ChatRoomResponse;
-import chat.application.port.input.ChatMessagePublishUseCase;
 import chat.application.port.input.ChatRoomReaderUseCase;
-import chat.domain.command.ChatMessagePublishCommand;
+import chat.application.port.input.MessageProducerUseCase;
+import chat.domain.command.ChatMessageCommand;
 import chat.domain.command.ChatRoomReaderCommand;
 import global.annotation.AuthenticatedUser;
 import global.annotation.input.RestAdapter;
@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ChatApiController {
 
     private final ChatRoomReaderUseCase chatRoomReaderUseCase;
-
-    private final ChatMessagePublishUseCase chatMessagePublishUseCase;
+    private final MessageProducerUseCase messageProducerUseCase;
 
     @GetMapping("/chat-room/{articleId}")
     public Api<ChatRoomResponse> enterChatRoom(
@@ -42,9 +41,8 @@ public class ChatApiController {
         @AuthenticatedUser AuthUser authUser,
         @Valid @RequestBody Api<ChatMessageRequest> request
     ) {
-        log.info("request : {}", request.getBody().getMessage());
-        boolean isSent = chatMessagePublishUseCase.publishMessage(
-            ChatMessagePublishCommand.of(request.getBody(), authUser.getUserId()));
+        boolean isSent = messageProducerUseCase.produceMessage(
+            ChatMessageCommand.of(request.getBody(), authUser.getUserId()));
         return Api.OK(isSent);
     }
 

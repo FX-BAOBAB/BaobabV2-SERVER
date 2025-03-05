@@ -1,10 +1,10 @@
 package chat.application.port.input;
 
 import chat.adapter.output.persistence.repository.document.MessageDocument;
-import chat.domain.command.ChatMessagePublishCommand;
+import chat.domain.command.ChatMessageCommand;
 
 public interface ChatMessageSaveUseCase {
 
-    MessageDocument saveChatMessage(ChatMessagePublishCommand command);
+    MessageDocument saveChatMessage(ChatMessageCommand command);
 
 }

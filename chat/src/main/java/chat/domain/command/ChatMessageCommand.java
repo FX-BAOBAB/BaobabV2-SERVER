@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class ChatMessagePublishCommand {
+public class ChatMessageCommand {
 
     private String message;
 
@@ -19,8 +19,8 @@ public class ChatMessagePublishCommand {
 
     private MessageType messageType;
 
-    public static ChatMessagePublishCommand of(ChatMessageRequest request, String userId) {
-        return ChatMessagePublishCommand.builder()
+    public static ChatMessageCommand of(ChatMessageRequest request, String userId) {
+        return ChatMessageCommand.builder()
             .message(request.getMessage())
             .chatRoomId(request.getChatRoomId())
             .userId(userId)
