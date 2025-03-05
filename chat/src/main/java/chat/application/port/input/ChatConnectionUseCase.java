@@ -6,6 +6,6 @@ public interface ChatConnectionUseCase {
 
     void connectChatRoom(String userId, String chatRoomId);
 
-    void disconnectChatRoom(String userId, String chatRoomId, UserSseConnection connection);
+    void disconnectChatRoom(String userId, UserSseConnection connection);
 
 }

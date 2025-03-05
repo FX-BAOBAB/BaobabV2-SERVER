@@ -6,8 +6,7 @@ import chat.application.sse.SseEmitterManager;
 import chat.application.sse.UserSseConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -27,13 +26,14 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     @Override
     public void connectChatRoom(String userId, String chatRoomId) {
         sseConnectionStore.saveEmitter(userId, sseEmitterManager.createSseEmitter(userId));
-        redisTemplate.opsForSet().add(userId + ":" + chatRoomId, getServerAddress());
+        redisTemplate.opsForSet().add(userId, getServerAddress());
+        redisTemplate.expire(userId, Duration.ofHours(1));
     }
 
 
     @Override
-    public void disconnectChatRoom(String userId, String chatRoomId, UserSseConnection connection) {
-        redisTemplate.delete(userId + ":" + chatRoomId);
+    public void disconnectChatRoom(String userId, UserSseConnection connection) {
+        redisTemplate.delete(userId);
         sseConnectionStore.deleteEmitter(connection);
     }
 
