@@ -16,9 +16,8 @@ public class ChatMessageConsumer implements MessageConsumer<ChatMessage> {
 
     @Override
     @KafkaListener(topics = TOPIC_NAME)
-    public ChatMessage consumeMessage(ChatMessage message) {
+    public void consumeMessage(ChatMessage message) {
         log.info("수신 메시지 : {}", message);
-        return message;
     }
 
 }

@@ -1,5 +1,6 @@
 package chat.domain.command;
 
+import chat.adapter.input.web.request.ChatMessageRequest;
 import chat.adapter.output.persistence.enums.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +18,14 @@ public class ChatMessagePublishCommand {
     private String userId;
 
     private MessageType messageType;
+
+    public static ChatMessagePublishCommand of(ChatMessageRequest request, String userId) {
+        return ChatMessagePublishCommand.builder()
+            .message(request.getMessage())
+            .chatRoomId(request.getChatRoomId())
+            .userId(userId)
+            .messageType(request.getMessageType())
+            .build();
+    }
 
 }

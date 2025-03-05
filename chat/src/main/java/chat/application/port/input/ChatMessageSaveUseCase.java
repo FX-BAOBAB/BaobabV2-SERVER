@@ -1,9 +1,10 @@
 package chat.application.port.input;
 
+import chat.adapter.output.persistence.repository.document.MessageDocument;
 import chat.domain.command.ChatMessagePublishCommand;
 
 public interface ChatMessageSaveUseCase {
 
-    boolean saveChatMessage(ChatMessagePublishCommand command);
+    MessageDocument saveChatMessage(ChatMessagePublishCommand command);
 
 }
