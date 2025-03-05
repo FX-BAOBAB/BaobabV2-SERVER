@@ -36,7 +36,7 @@ public class ArticleInfoResponse {
 
     private String nickname;
 
-    private String profileImage;
+    private String profileImageUrl;
 
     public static ArticleInfoResponse of(Article article, UserSimpleInfo userSimpleInfo) {
         return ArticleInfoResponse.builder()
@@ -48,7 +48,7 @@ public class ArticleInfoResponse {
             .registeredAt(article.getRegisteredAt())
             .status(article.getStatus())
             .nickname(userSimpleInfo.getNickname())
-            .profileImage(userSimpleInfo.getProfileImage())
+            .profileImageUrl(userSimpleInfo.getProfileImageUrl())
             .imageList(article.getImageList())
             .build();
     }

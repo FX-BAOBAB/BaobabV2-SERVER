@@ -11,12 +11,12 @@ public class SimpleUserInfoResponse {
 
     private String nickname;
 
-    private ProfileImage profileImage;
+    private String profileImageUrl;
 
     public static SimpleUserInfoResponse toResponse(UserReaderCommand userReaderCommand) {
         return SimpleUserInfoResponse.builder()
             .nickname(userReaderCommand.getNickName())
-            .profileImage(userReaderCommand.getProfileImage())
+            .profileImageUrl(userReaderCommand.getProfileImage().getImageUrl())
             .build();
     }
 

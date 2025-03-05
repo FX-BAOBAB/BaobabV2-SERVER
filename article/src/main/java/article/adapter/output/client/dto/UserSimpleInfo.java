@@ -9,6 +9,6 @@ public class UserSimpleInfo {
 
     private String nickname;
 
-    private String profileImage;
+    private String profileImageUrl;
 
 }
