@@ -22,12 +22,14 @@ public class UserReaderService implements UserReaderUseCase {
     }
 
     @Override
-    public String getUserNickname(String userId) {
+    public UserReaderCommand getUserInfoWithUnregisteredNickname(String userId) {
         UserReaderCommand user = userPersistencePort.getUserInfo(userId);
+
         if (user.getStatus().equals(UserStatus.UNREGISTERED)) {
-            return UNREGISTERED_USER_NICKNAME;
+            user.setNickName(UNREGISTERED_USER_NICKNAME);
         }
-        return user.getNickName();
+
+        return user;
     }
 
 }
