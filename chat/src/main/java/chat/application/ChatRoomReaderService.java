@@ -3,6 +3,7 @@ package chat.application;
 import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.chatroom.ChatRoom;
 import chat.application.chatroom.ChatRoomGenerator;
+import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.ChatRoomCheckUseCase;
 import chat.application.port.input.ChatRoomReaderUseCase;
 import chat.application.port.input.UserChatSaveUseCase;
@@ -24,13 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomReaderService implements ChatRoomReaderUseCase {
 
     private final ChatRoomCheckUseCase chatRoomCheckUseCase;
-
     private final UserChatSaveUseCase userChatSaveUseCase;
+    private final ChatConnectionUseCase chatConnectionUseCase;
 
     private final ChatRoomPersistencePort chatRoomPersistencePort;
 
     private final ChatRoomGenerator chatRoomGenerator;
-
     private final UserChatGenerator userChatGenerator;
 
     @Transactional
@@ -41,8 +41,12 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
             .stream().map(ChatRoomDocument::getId).toList();
 
         // 2. 기존 채팅방이 존재하는지 확인
-        return chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
+        String chatRoomId = chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
             .orElseGet(() -> createNewChatRoom(command));
+        
+        chatConnectionUseCase.connectChatRoom(command.getBuyerId());
+
+        return chatRoomId;
     }
 
     private String createNewChatRoom(ChatRoomReaderCommand command) {

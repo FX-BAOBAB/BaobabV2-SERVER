@@ -24,7 +24,7 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     private String serverPort;
 
     @Override
-    public void connectChatRoom(String userId, String chatRoomId) {
+    public void connectChatRoom(String userId) {
         sseConnectionStore.saveEmitter(userId, sseEmitterManager.createSseEmitter(userId));
         redisTemplate.opsForSet().add(userId, getServerAddress());
         redisTemplate.expire(userId, Duration.ofHours(1));

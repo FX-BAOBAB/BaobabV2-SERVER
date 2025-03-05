@@ -4,7 +4,7 @@ import chat.application.sse.UserSseConnection;
 
 public interface ChatConnectionUseCase {
 
-    void connectChatRoom(String userId, String chatRoomId);
+    void connectChatRoom(String userId);
 
     void disconnectChatRoom(String userId, UserSseConnection connection);
 
