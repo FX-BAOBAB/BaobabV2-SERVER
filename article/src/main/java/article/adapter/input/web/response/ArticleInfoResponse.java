@@ -1,5 +1,6 @@
 package article.adapter.input.web.response;
 
+import article.adapter.output.client.dto.UserSimpleInfo;
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleStatus;
 import article.adapter.output.persistence.repository.Article;
@@ -31,11 +32,13 @@ public class ArticleInfoResponse {
 
     private ArticleStatus status;
 
-    private String userId;
-
     private List<ArticleImage> imageList;
 
-    public static ArticleInfoResponse of(Article article) {
+    private String nickname;
+
+    private String profileImage;
+
+    public static ArticleInfoResponse of(Article article, UserSimpleInfo userSimpleInfo) {
         return ArticleInfoResponse.builder()
             .id(article.getId())
             .title(article.getTitle())
@@ -44,7 +47,8 @@ public class ArticleInfoResponse {
             .price(article.getPrice())
             .registeredAt(article.getRegisteredAt())
             .status(article.getStatus())
-            .userId(article.getUserId())
+            .nickname(userSimpleInfo.getNickname())
+            .profileImage(userSimpleInfo.getProfileImage())
             .imageList(article.getImageList())
             .build();
     }
