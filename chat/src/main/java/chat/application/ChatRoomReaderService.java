@@ -4,11 +4,12 @@ import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.chatroom.ChatRoom;
 import chat.application.chatroom.ChatRoomGenerator;
 import chat.application.port.input.ChatRoomCheckUseCase;
+import chat.application.port.input.ChatRoomReaderUseCase;
 import chat.application.port.input.UserChatSaveUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.application.userchat.UserChat;
 import chat.application.userchat.UserChatGenerator;
-import chat.domain.command.ChatRoomSaveCommand;
+import chat.domain.command.ChatRoomReaderCommand;
 import chat.domain.dto.ChatRoomSaveForm;
 import chat.domain.dto.UserChatSaveForm;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ChatRoomReaderService {
+public class ChatRoomReaderService implements ChatRoomReaderUseCase {
 
     private final ChatRoomCheckUseCase chatRoomCheckUseCase;
 
@@ -33,7 +34,7 @@ public class ChatRoomReaderService {
     private final UserChatGenerator userChatGenerator;
 
     @Transactional
-    public String getChatRoom(ChatRoomSaveCommand command) {
+    public String getChatRoom(ChatRoomReaderCommand command) {
 
         // 1. articleId 로 기준 채팅방 조회
         List<String> chatRoomIdList = chatRoomPersistencePort.getChatRoomListBy(command.getArticleId())
@@ -44,7 +45,7 @@ public class ChatRoomReaderService {
             .orElseGet(() -> createNewChatRoom(command));
     }
 
-    private String createNewChatRoom(ChatRoomSaveCommand command) {
+    private String createNewChatRoom(ChatRoomReaderCommand command) {
 
         // 3. ChatRoom 생성
         ChatRoom chatRoom = chatRoomGenerator.createChatRoom(command);

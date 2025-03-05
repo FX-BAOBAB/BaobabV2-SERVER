@@ -7,14 +7,14 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class ChatRoomSaveCommand {
+public class ChatRoomReaderCommand {
 
     private String articleId;
 
     private String buyerId;
 
-    public static ChatRoomSaveCommand of(String articleId, String buyerId) {
-        return ChatRoomSaveCommand.builder()
+    public static ChatRoomReaderCommand of(String articleId, String buyerId) {
+        return ChatRoomReaderCommand.builder()
             .articleId(articleId)
             .buyerId(buyerId)
             .build();
