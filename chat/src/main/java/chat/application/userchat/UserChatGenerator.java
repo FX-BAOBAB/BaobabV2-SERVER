@@ -1,7 +1,7 @@
 package chat.application.userchat;
 
 import chat.adapter.output.client.ArticleClient;
-import chat.domain.command.ChatRoomSaveCommand;
+import chat.domain.command.ChatRoomReaderCommand;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ public class UserChatGenerator {
 
     private final ArticleClient articleClient;
 
-    public List<UserChat> createUserChat(String chatRoomId, ChatRoomSaveCommand command) {
+    public List<UserChat> createUserChat(String chatRoomId, ChatRoomReaderCommand command) {
 
         String sellerId = articleClient.getArticleBy(command.getArticleId()).getUserId();
 

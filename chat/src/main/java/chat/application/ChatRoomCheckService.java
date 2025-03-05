@@ -1,6 +1,5 @@
 package chat.application;
 
-import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.port.input.ChatRoomCheckUseCase;
 import chat.application.port.output.UserChatPersistencePort;
 import java.util.List;
@@ -16,12 +15,9 @@ public class ChatRoomCheckService implements ChatRoomCheckUseCase {
 
     @Override
     public Optional<String> existsChatRoomBy(List<String> chatRoomIdList, String userId) {
-        for (String chatRoomId : chatRoomIdList) {
-            if (userChatPersistencePort.getUserChat(chatRoomId, userId).isPresent()) {
-                return Optional.ofNullable(chatRoomId);
-            }
-        }
-        return Optional.empty();
+        return chatRoomIdList.stream()
+            .filter(chatRoomId -> userChatPersistencePort.getUserChat(chatRoomId, userId).isPresent())
+            .findFirst();
     }
 
 }
