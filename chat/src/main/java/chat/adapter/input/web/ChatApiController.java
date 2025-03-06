@@ -50,7 +50,7 @@ public class ChatApiController {
     }
 
     @PostMapping("/feign/message")
-    public void sendMessage(ChatMessage chatMessage) {
+    public void sendMessage(@RequestBody ChatMessage chatMessage) {
         log.info("Feign 메시지 수신 : {}", chatMessage);
         messageDispatchUseCase.dispatchMessage(chatMessage);
     }
