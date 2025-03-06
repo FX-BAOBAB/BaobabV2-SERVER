@@ -1,5 +1,6 @@
 package chat.application.sse;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,11 @@ public class SseConnectionStoreImpl implements SseConnectionStore<String, UserSs
     }
 
     @Override
-    public UserSseConnection findEmitter(String userId) {
-        return connectionStore.get(userId);
+    public List<UserSseConnection> findEmitter(List<String> userIdList) {
+        return userIdList.stream()
+            .map(connectionStore::get)
+            .filter(connection -> connection != null)
+            .toList();
     }
 
     @Override

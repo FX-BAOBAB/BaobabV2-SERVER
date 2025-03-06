@@ -7,6 +7,7 @@ import chat.application.sse.UserSseConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Duration;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,6 +31,10 @@ public class ChatConnectionService implements ChatConnectionUseCase {
         redisTemplate.expire(userId, Duration.ofHours(1));
     }
 
+    @Override
+    public List<UserSseConnection> getConnectedUserSseList(List<String> userIdList) {
+        return sseConnectionStore.findEmitter(userIdList);
+    }
 
     @Override
     public void disconnectChatRoom(String userId, UserSseConnection connection) {

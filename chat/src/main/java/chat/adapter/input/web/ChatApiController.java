@@ -3,7 +3,9 @@ package chat.adapter.input.web;
 import chat.adapter.input.web.request.ChatMessageRequest;
 import chat.adapter.input.web.response.ChatRoomResponse;
 import chat.application.port.input.ChatRoomReaderUseCase;
+import chat.application.port.input.MessageDispatchUseCase;
 import chat.application.port.input.MessageProducerUseCase;
+import chat.domain.ChatMessage;
 import chat.domain.command.ChatMessageCommand;
 import chat.domain.command.ChatRoomReaderCommand;
 import global.annotation.AuthenticatedUser;
@@ -25,6 +27,7 @@ public class ChatApiController {
 
     private final ChatRoomReaderUseCase chatRoomReaderUseCase;
     private final MessageProducerUseCase messageProducerUseCase;
+    private final MessageDispatchUseCase messageDispatchUseCase;
 
     @GetMapping("/chat-room/{articleId}")
     public Api<ChatRoomResponse> enterChatRoom(
@@ -44,6 +47,11 @@ public class ChatApiController {
         boolean isSent = messageProducerUseCase.produceMessage(
             ChatMessageCommand.of(request.getBody(), authUser.getUserId()));
         return Api.OK(isSent);
+    }
+
+    @PostMapping("/feign/message")
+    public void sendMessage(ChatMessage chatMessage) {
+        messageDispatchUseCase.dispatchMessage(chatMessage);
     }
 
 }
