@@ -43,7 +43,7 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
         // 2. 기존 채팅방이 존재하는지 확인
         String chatRoomId = chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
             .orElseGet(() -> createNewChatRoom(command));
-        
+
         chatConnectionUseCase.connectChatRoom(command.getBuyerId());
 
         return chatRoomId;
@@ -62,7 +62,4 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
         return chatRoomId;
     }
 
-
 }
-
-
