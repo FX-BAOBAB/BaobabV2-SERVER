@@ -11,4 +11,6 @@ public interface ChatConnectionUseCase {
 
     List<UserSseConnection> getConnectedUserSseList(List<String> userId);
 
+    String getConnectedServerAddress(String userId);
+
 }

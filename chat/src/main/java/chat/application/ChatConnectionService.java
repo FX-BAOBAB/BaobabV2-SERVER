@@ -27,8 +27,15 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     @Override
     public void connectChatRoom(String userId) {
         sseConnectionStore.saveEmitter(userId, sseEmitterManager.createSseEmitter(userId));
-        redisTemplate.opsForSet().add(userId, getServerAddress());
+        redisTemplate.opsForValue().set(userId, getServerAddress());
         redisTemplate.expire(userId, Duration.ofHours(1));
+    }
+
+
+    @Override
+    public void disconnectChatRoom(String userId, UserSseConnection connection) {
+        redisTemplate.delete(userId);
+        sseConnectionStore.deleteEmitter(connection);
     }
 
     @Override
@@ -37,9 +44,8 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     }
 
     @Override
-    public void disconnectChatRoom(String userId, UserSseConnection connection) {
-        redisTemplate.delete(userId);
-        sseConnectionStore.deleteEmitter(connection);
+    public String getConnectedServerAddress(String userId) {
+        return redisTemplate.opsForValue().get(userId);
     }
 
     private String getServerAddress() {
