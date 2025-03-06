@@ -31,4 +31,5 @@ public interface UserPersistencePort {
 
     boolean unRegisterUser(UserUnRegisterForm userUnRegisterForm);
 
+    UserReaderCommand getUserInfo(String userId);
 }

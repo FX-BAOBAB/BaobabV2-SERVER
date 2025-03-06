@@ -6,4 +6,6 @@ public interface UserReaderUseCase {
 
     UserReaderCommand getUserInfoBy(String userId);
 
+    UserReaderCommand getUserInfoWithUnregisteredNickname(String userId);
+
 }

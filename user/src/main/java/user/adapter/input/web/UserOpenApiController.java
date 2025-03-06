@@ -5,6 +5,7 @@ import global.api.Api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,6 +14,7 @@ import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
 import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
+import user.adapter.input.web.response.SimpleUserInfoResponse;
 import user.adapter.input.web.response.TokenResponse;
 import user.adapter.input.web.response.UserRegisterResponse;
 import user.application.port.input.ReIssueAccessTokenUseCase;
@@ -22,6 +24,7 @@ import user.application.port.input.UserRegisterUseCase;
 import user.core.common.annotation.DupleCheck;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
+import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
 import user.security.jwt.model.TokenDto;
 
@@ -77,9 +80,10 @@ public class UserOpenApiController {
         return Api.OK(true);
     }
 
-    @GetMapping("/nickname")
-    String getNickname(@RequestParam("userId") String userId){
-        return userReaderUseCase.getUserInfoBy(userId).getNickName();
+    @GetMapping("/simple-info")
+    public SimpleUserInfoResponse getSimpleUserInfo(@RequestParam String userId) {
+        UserReaderCommand userInfo = userReaderUseCase.getUserInfoWithUnregisteredNickname(userId);
+        return SimpleUserInfoResponse.toResponse(userInfo);
     }
 
 }

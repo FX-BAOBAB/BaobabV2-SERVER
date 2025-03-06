@@ -22,8 +22,7 @@ public class TokenIssueService {
             TokenDto accessToken = tokenHelperService.issueAccessToken(id);
             TokenDto refreshToken = tokenHelperService.issueRefreshToken(id);
 
-            tokenHelperService.deleteRefreshToken(id);
-            tokenHelperService.saveRefreshToken(id, refreshToken.getToken());
+            tokenHelperService.saveRefreshToken(refreshToken.getToken());
 
             return TokenCommand.of(accessToken, refreshToken);
 
