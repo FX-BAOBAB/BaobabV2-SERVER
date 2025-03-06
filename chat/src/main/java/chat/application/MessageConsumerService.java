@@ -1,7 +1,9 @@
 package chat.application;
 
+import chat.adapter.output.client.ChatClient;
 import chat.application.port.input.MessageConsumerUseCase;
 import chat.domain.ChatMessage;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class MessageConsumerService implements MessageConsumerUseCase {
 
     private final ChatConnectionService chatConnectionService;
+    private final ChatClient chatClient;
 
     @Override
     public void consumeMessage(ChatMessage chatMessage) {
@@ -43,7 +46,8 @@ public class MessageConsumerService implements MessageConsumerUseCase {
                 .receiverIdList(userIdList)
                 .build();
 
-//            FeignClient.send(serverAddress, targetMessage);
+            URI targetServer = URI.create(serverAddress);
+            chatClient.sendMessage(targetServer, targetMessage);
         });
     }
 

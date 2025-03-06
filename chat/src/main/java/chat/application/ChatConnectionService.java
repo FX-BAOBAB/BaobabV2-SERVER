@@ -21,6 +21,8 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     private final SseEmitterManager sseEmitterManager;
     private final StringRedisTemplate redisTemplate;
 
+    private static final String PROTOCOL = "http://";
+
     @Value("${server.port}")
     private String serverPort;
 
@@ -50,7 +52,7 @@ public class ChatConnectionService implements ChatConnectionUseCase {
 
     private String getServerAddress() {
         try {
-            return InetAddress.getLocalHost().getHostAddress() + serverPort;
+            return PROTOCOL + InetAddress.getLocalHost().getHostAddress() + serverPort;
         } catch (UnknownHostException e) {
             throw new RuntimeException("Failed to get server address", e);
         }
