@@ -35,6 +35,7 @@ public class MessageConsumerService implements MessageConsumerUseCase {
         Map<String, List<String>> serverGroup = new HashMap<>();
         receiverIdList.forEach(receiverId -> {
             String serverAddress = chatConnectionService.getConnectedServerAddress(receiverId);
+            // TODO Server Address 가 Null 인 경우 (접속하지 않은 경우) -> FCM 전송 처리
             serverGroup.computeIfAbsent(serverAddress, key -> new ArrayList<>()).add(receiverId);
         });
         return serverGroup;
