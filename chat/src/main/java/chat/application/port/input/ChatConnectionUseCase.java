@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface ChatConnectionUseCase {
 
-    void connectChatRoom(String userId);
+    UserSseConnection connectChatRoom(String userId);
 
     void disconnectChatRoom(String userId, UserSseConnection connection);
 

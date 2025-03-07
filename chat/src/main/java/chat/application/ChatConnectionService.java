@@ -28,10 +28,10 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     private static final String PROTOCOL = "http://";
 
     @Override
-    public void connectChatRoom(String userId) {
-        sseConnectionStore.saveEmitter(userId, sseEmitterManager.createSseEmitter(userId));
+    public UserSseConnection connectChatRoom(String userId) {
         redisTemplate.opsForValue().set(userId, getServerAddress());
         redisTemplate.expire(userId, Duration.ofHours(1));
+        return sseConnectionStore.saveEmitter(userId, sseEmitterManager.createSseEmitter(userId));
     }
 
 

@@ -11,8 +11,8 @@ public class SseConnectionStoreImpl implements SseConnectionStore<String, UserSs
     private static final Map<String, UserSseConnection> connectionStore = new ConcurrentHashMap<>();
 
     @Override
-    public void saveEmitter(String userId, UserSseConnection connection) {
-        connectionStore.put(userId, connection);
+    public UserSseConnection saveEmitter(String userId, UserSseConnection connection) {
+        return connectionStore.put(userId, connection);
     }
 
     @Override
