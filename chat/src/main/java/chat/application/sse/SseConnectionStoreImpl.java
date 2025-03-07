@@ -12,7 +12,8 @@ public class SseConnectionStoreImpl implements SseConnectionStore<String, UserSs
 
     @Override
     public UserSseConnection saveEmitter(String userId, UserSseConnection connection) {
-        return connectionStore.put(userId, connection);
+        connectionStore.put(userId, connection);
+        return connectionStore.get(userId);
     }
 
     @Override
