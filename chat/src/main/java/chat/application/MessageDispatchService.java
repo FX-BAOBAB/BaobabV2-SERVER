@@ -2,6 +2,7 @@ package chat.application;
 
 import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.MessageDispatchUseCase;
+import chat.application.sse.SseEventType;
 import chat.application.sse.SseMessageManager;
 import chat.application.sse.UserSseConnection;
 import chat.domain.ChatMessage;
@@ -29,7 +30,7 @@ public class MessageDispatchService implements MessageDispatchUseCase {
 
         // SSE 로 메시지 전송 - message 수정 필요
         connectedUserSseList.forEach(
-            UserSse -> sseMessageManager.sendMessage(UserSse, chatMessage));
+            UserSse -> sseMessageManager.sendMessage(UserSse, SseEventType.CHAT, chatMessage));
 
         // SSE 에 연결되지 않은 userId 리스트 추출
         List<String> disconnectedUserIdList = chatMessage.getReceiverIdList().stream()
