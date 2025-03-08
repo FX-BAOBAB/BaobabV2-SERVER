@@ -10,6 +10,6 @@ public enum SseEventType {
     CHAT("채팅")
     ;
 
-    private String description;
+    private final String description;
 
 }
