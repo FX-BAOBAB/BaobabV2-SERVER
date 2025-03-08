@@ -65,8 +65,12 @@ public class DupleCheckAdvice {
             boolean isRegisteredNickName = checkNickNameDuplicate(
                 userRegisterRequest.getNickName());
 
-            if (isRegisteredEmail || isRegisteredNickName) {
+            if (isRegisteredEmail && isRegisteredNickName) {
                 throw new UserExistsException(UserErrorCode.USER_EXISTS);
+            } else if (isRegisteredEmail) {
+                throw new EmailExistsException(UserErrorCode.EMAIL_EXISTS);
+            } else if (isRegisteredNickName) {
+                throw new NickNameExistsException(UserErrorCode.NICKNAME_EXISTS);
             }
         }
     }
