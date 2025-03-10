@@ -9,7 +9,6 @@ import chat.application.port.input.ChatRoomCheckUseCase;
 import chat.application.port.input.ChatRoomReaderUseCase;
 import chat.application.port.input.UserChatSaveUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
-import chat.application.sse.UserSseConnection;
 import chat.application.userchat.UserChat;
 import chat.application.userchat.UserChatGenerator;
 import chat.domain.command.ChatRoomReaderCommand;
@@ -20,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Slf4j
 @Service
@@ -46,10 +46,10 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
         String chatRoomId = chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
             .orElseGet(() -> createNewChatRoom(command));
 
-        UserSseConnection userSseConnection = chatConnectionUseCase.connectChatRoom(
+        SseEmitter sseEmitter = chatConnectionUseCase.connectChatRoom(
             command.getBuyerId());
 
-        return ChatRoomResponse.of(chatRoomId, userSseConnection);
+        return ChatRoomResponse.of(chatRoomId, sseEmitter);
     }
 
     private String createNewChatRoom(ChatRoomReaderCommand command) {

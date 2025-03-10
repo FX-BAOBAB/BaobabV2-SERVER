@@ -1,15 +1,15 @@
 package chat.application.port.input;
 
-import chat.application.sse.UserSseConnection;
-import java.util.List;
+import java.util.Optional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public interface ChatConnectionUseCase {
 
-    UserSseConnection connectChatRoom(String userId);
+    SseEmitter connectChatRoom(String userId);
 
-    void disconnectChatRoom(String userId, UserSseConnection connection);
+    void disconnectChatRoom(String userId);
 
-    List<UserSseConnection> getConnectedUserSseList(List<String> userId);
+    Optional<SseEmitter> getConnectedUserSse(String userId);
 
     String getConnectedServerAddress(String userId);
 
