@@ -1,7 +1,7 @@
 package chat.domain.dto;
 
 import chat.adapter.output.persistence.enums.MessageType;
-import chat.domain.command.ChatMessagePublishCommand;
+import chat.domain.command.ChatMessageCommand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +19,7 @@ public class ChatMessageSaveForm {
 
     private MessageType messageType;
 
-    public static ChatMessageSaveForm of(ChatMessagePublishCommand command) {
+    public static ChatMessageSaveForm of(ChatMessageCommand command) {
         return ChatMessageSaveForm.builder()
             .message(command.getMessage())
             .chatRoomId(command.getChatRoomId())

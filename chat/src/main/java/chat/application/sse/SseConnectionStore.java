@@ -1,10 +1,12 @@
 package chat.application.sse;
 
+import java.util.List;
+
 public interface SseConnectionStore<T, R> {
 
-    void saveEmitter(T userId, R connection);
+    UserSseConnection saveEmitter(T userId, R connection);
 
-    R findEmitter(T userId);
+    List<R> findEmitter(List<T> userId);
 
     void deleteEmitter(R connection);
 

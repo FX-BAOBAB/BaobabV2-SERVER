@@ -1,12 +1,15 @@
 package chat.application;
 
+import chat.adapter.input.web.response.ChatRoomResponse;
 import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.chatroom.ChatRoom;
 import chat.application.chatroom.ChatRoomGenerator;
+import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.ChatRoomCheckUseCase;
 import chat.application.port.input.ChatRoomReaderUseCase;
 import chat.application.port.input.UserChatSaveUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
+import chat.application.sse.UserSseConnection;
 import chat.application.userchat.UserChat;
 import chat.application.userchat.UserChatGenerator;
 import chat.domain.command.ChatRoomReaderCommand;
@@ -24,25 +27,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomReaderService implements ChatRoomReaderUseCase {
 
     private final ChatRoomCheckUseCase chatRoomCheckUseCase;
-
     private final UserChatSaveUseCase userChatSaveUseCase;
+    private final ChatConnectionUseCase chatConnectionUseCase;
 
     private final ChatRoomPersistencePort chatRoomPersistencePort;
 
     private final ChatRoomGenerator chatRoomGenerator;
-
     private final UserChatGenerator userChatGenerator;
 
     @Transactional
-    public String getChatRoom(ChatRoomReaderCommand command) {
+    public ChatRoomResponse getChatRoom(ChatRoomReaderCommand command) {
 
         // 1. articleId 로 기준 채팅방 조회
         List<String> chatRoomIdList = chatRoomPersistencePort.getChatRoomListBy(command.getArticleId())
             .stream().map(ChatRoomDocument::getId).toList();
 
         // 2. 기존 채팅방이 존재하는지 확인
-        return chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
+        String chatRoomId = chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
             .orElseGet(() -> createNewChatRoom(command));
+
+        UserSseConnection userSseConnection = chatConnectionUseCase.connectChatRoom(
+            command.getBuyerId());
+
+        return ChatRoomResponse.of(chatRoomId, userSseConnection);
     }
 
     private String createNewChatRoom(ChatRoomReaderCommand command) {
@@ -58,7 +65,4 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
         return chatRoomId;
     }
 
-
 }
-
-

@@ -1,9 +1,10 @@
 package chat.application.port.input;
 
+import chat.adapter.input.web.response.ChatRoomResponse;
 import chat.domain.command.ChatRoomReaderCommand;
 
 public interface ChatRoomReaderUseCase {
 
-    String getChatRoom(ChatRoomReaderCommand command);
+    ChatRoomResponse getChatRoom(ChatRoomReaderCommand command);
 
 }

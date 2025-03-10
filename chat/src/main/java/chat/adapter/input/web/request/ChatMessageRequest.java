@@ -1,21 +1,19 @@
-package chat.domain.command;
+package chat.adapter.input.web.request;
 
 import chat.adapter.output.persistence.enums.MessageType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessagePublishCommand {
+public class ChatMessageRequest { // TODO 유효성 검증
 
     private String message;
 
-    private String chatRoomId;
-
-    private String userId;
-
     private MessageType messageType;
+
+    private String chatRoomId;
 
 }

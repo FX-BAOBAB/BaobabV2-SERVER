@@ -14,10 +14,8 @@ public class ChatMessagePersistenceAdapter implements ChatMessagePersistencePort
     private final MessageMongoRepository messageMongoRepository;
 
     @Override
-    public boolean saveMessage(ChatMessageSaveForm chatMessageSaveForm) {
-        MessageDocument savedMessage = messageMongoRepository.save(
-            MessageDocument.of(chatMessageSaveForm));
-        return savedMessage.getId() != null;
+    public MessageDocument saveMessage(ChatMessageSaveForm chatMessageSaveForm) {
+        return messageMongoRepository.save(MessageDocument.of(chatMessageSaveForm));
     }
 
 }
