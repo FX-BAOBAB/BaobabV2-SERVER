@@ -1,10 +1,10 @@
 package chat.adapter.input.web.response;
 
-import chat.application.sse.UserSseConnection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Data
 @Builder
@@ -14,12 +14,12 @@ public class ChatRoomResponse {
 
     private String chatRoomId;
 
-    private UserSseConnection connection;
+    private SseEmitter sseEmitter;
 
-    public static ChatRoomResponse of(String chatRoomId, UserSseConnection connection) {
+    public static ChatRoomResponse of(String chatRoomId, SseEmitter sseEmitter) {
         return ChatRoomResponse.builder()
             .chatRoomId(chatRoomId)
-            .connection(connection)
+            .sseEmitter(sseEmitter)
             .build();
     }
 
