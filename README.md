@@ -76,7 +76,7 @@
 
 - **중고거래 조회 :**
     - 사용자가 등록한 중고거래를 조회할 수 있습니다.
-      <br>
+<br></br>
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Raising%20Hands%20Light%20Skin%20Tone.png" alt="Raising Hands Light Skin Tone" width="25" height="25" /> &nbsp;향후 이런 것들을 도입할 거에요..!
 - **채팅 기능 :**
