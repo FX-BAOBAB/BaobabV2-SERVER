@@ -8,11 +8,12 @@
   <strong>사용하지 않는 물건들을 가치 있게 보내고, 나의 생활 공간을 되찾기 위해.</strong>
 </p>
 <p>
-  이 프로젝트는 단순한 중고거래 플랫폼을 넘어 창고 보관 서비스를 제공하고자 합니다.<br>
-  집 안 곳곳에 잠들어 있는 물건들, 공간을 차지하지만 버리기엔 아까운, 그렇다고 당장 팔기도 망설여지는 소중한 물품들을 위해 탄생했습니다.
+  이 프로젝트는 집 안 곳곳에 잠들어 있는 물건들,<br>
+  공간을 차지하지만 버리기엔 아까운,<br> 
+  그렇다고 당장 팔기도 망설여지는 <strong>소중한 물품들을 위해 탄생했습니다.</strong>
 </p>
-<br>
 </div>
+<br>
 
 <h3><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Glowing%20Star.png" alt="Glowing Star" width="25" height="25" /> &nbsp;프로젝트 개요</h3>
 프로젝트 이름 : BAOBAB <br>
@@ -76,7 +77,7 @@
 
 - **중고거래 조회 :**
     - 사용자가 등록한 중고거래를 조회할 수 있습니다.
-<br></br>
+      <br></br>
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Raising%20Hands%20Light%20Skin%20Tone.png" alt="Raising Hands Light Skin Tone" width="25" height="25" /> &nbsp;향후 이런 것들을 도입할 거에요..!
 - **채팅 기능 :**
