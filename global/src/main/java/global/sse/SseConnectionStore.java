@@ -4,10 +4,10 @@ import java.util.Optional;
 
 public interface SseConnectionStore<T, R> {
 
-    R saveEmitter(T userId, R connection);
+    R saveEmitter(T uniqueKey, R connection);
 
-    Optional<R> findEmitter(T userId);
+    Optional<R> findEmitter(T uniqueKey);
 
-    void deleteEmitter(T userId);
+    void deleteEmitter(T uniqueKey);
 
 }

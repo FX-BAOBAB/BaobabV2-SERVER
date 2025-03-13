@@ -13,19 +13,19 @@ public class SseConnectionStoresImpl implements SseConnectionStore<String, SseEm
     private static final Map<String, SseEmitter> connectionStore = new ConcurrentHashMap<>();
 
     @Override
-    public SseEmitter saveEmitter(String userId, SseEmitter sseEmitter) {
-        connectionStore.put(userId, sseEmitter);
-        return connectionStore.get(userId);
+    public SseEmitter saveEmitter(String uniqueKey, SseEmitter sseEmitter) {
+        connectionStore.put(uniqueKey, sseEmitter);
+        return connectionStore.get(uniqueKey);
     }
 
     @Override
-    public Optional<SseEmitter> findEmitter(String userId) {
-        return Optional.of(connectionStore.get(userId));
+    public Optional<SseEmitter> findEmitter(String uniqueKey) {
+        return Optional.of(connectionStore.get(uniqueKey));
     }
 
     @Override
-    public void deleteEmitter(String userId) {
-        connectionStore.remove(userId);
+    public void deleteEmitter(String uniqueKey) {
+        connectionStore.remove(uniqueKey);
     }
 
 }

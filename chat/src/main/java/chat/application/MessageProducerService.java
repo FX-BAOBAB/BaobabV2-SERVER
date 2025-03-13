@@ -1,13 +1,14 @@
 package chat.application;
 
 import chat.adapter.output.persistence.repository.document.MessageDocument;
-import chat.application.port.input.ChatMessageSaveUseCase;
 import chat.application.port.input.ChatRoomCheckUseCase;
 import chat.application.port.input.MessageProducerUseCase;
 import chat.application.port.input.UserChatReaderUseCase;
+import chat.application.port.output.ChatMessagePersistencePort;
 import chat.application.port.output.KafkaProducerPort;
 import chat.domain.ChatMessage;
 import chat.domain.command.ChatMessageCommand;
+import chat.domain.dto.ChatMessageSaveForm;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MessageProducerService implements MessageProducerUseCase {
 
-    private final ChatMessageSaveUseCase chatMessageSaveUseCase;
     private final ChatRoomCheckUseCase chatRoomCheckUseCase;
     private final UserChatReaderUseCase userChatReaderUseCase;
 
     private final KafkaProducerPort kafkaProducerPort;
+    private final ChatMessagePersistencePort chatMessagePersistencePort;
 
     private static final String TOPIC_NAME = "chatMessage";
 
@@ -37,7 +38,8 @@ public class MessageProducerService implements MessageProducerUseCase {
             throw new RuntimeException(); // TODO 예외처리
         }
 
-        MessageDocument savedMessage = chatMessageSaveUseCase.saveChatMessage(command);
+        MessageDocument savedMessage = chatMessagePersistencePort.saveMessage(
+            ChatMessageSaveForm.of(command));
 
         // receiverID List 조회
         List<String> receiverIdList = userChatReaderUseCase.getUserChatsExcludingSender(

@@ -26,7 +26,7 @@ public class SseEmitterManager extends AbstractSseEmitterManager {
      */
     @Override
     protected void sendInitialMessage(SseEmitter sseEmitter) {
-        sseMessageManager.sendMessage(sseEmitter, SseEventType.CHAT, "Connected Chat");
+        sseMessageManager.sendMessage(sseEmitter, SseEventType.CHAT, "Chat Connected");
     }
 
 }

@@ -47,7 +47,7 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
             .orElseGet(() -> createNewChatRoom(command));
 
         SseEmitter sseEmitter = chatConnectionUseCase.connectChatRoom(
-            command.getBuyerId());
+            command.getBuyerId(), chatRoomId);
 
         return ChatRoomResponse.of(chatRoomId, sseEmitter);
     }

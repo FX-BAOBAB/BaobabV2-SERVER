@@ -13,11 +13,11 @@ public abstract class AbstractSseEmitterManager {
         this.timeout = timeout;
     }
 
-    public SseEmitter createEmitter(String userId) {
-        SseEmitter sseEmitter = sseConnectionStore.saveEmitter(userId, new SseEmitter(timeout));
+    public SseEmitter createEmitter(String uniqueKey) {
+        SseEmitter sseEmitter = sseConnectionStore.saveEmitter(uniqueKey, new SseEmitter(timeout));
 
         sseEmitter.onCompletion(() -> {
-            this.sseConnectionStore.deleteEmitter(userId);
+            this.sseConnectionStore.deleteEmitter(uniqueKey);
         });
 
         sseEmitter.onTimeout(sseEmitter::complete);
