@@ -1,6 +1,7 @@
 package chat.application;
 
 import chat.application.port.input.ChatConnectionUseCase;
+import chat.application.sse.ChatRedisKeyGenerator;
 import chat.application.sse.SseEmitterManager;
 import global.sse.SseConnectionStore;
 import java.net.InetAddress;
@@ -26,29 +27,33 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     private final ServletWebServerApplicationContext webServerApplicationContext;
 
     private static final String PROTOCOL = "http://";
+    private static final Duration REDIS_TTL = Duration.ofHours(1);
 
     @Override
-    public SseEmitter connectChatRoom(String userId) {
-        redisTemplate.opsForValue().set(userId, getServerAddress());
-        redisTemplate.expire(userId, Duration.ofHours(1));
-        return sseConnectionStore.saveEmitter(userId, sseEmitterManager.createEmitter(userId));
-    }
-
-
-    @Override
-    public void disconnectChatRoom(String userId) {
-        redisTemplate.delete(userId);
-        sseConnectionStore.deleteEmitter(userId);
+    public SseEmitter connectChatRoom(String userId, String chatRoomId) {
+        String uniqueKey = ChatRedisKeyGenerator.getUniqueKey(userId, chatRoomId);
+        redisTemplate.opsForValue().set(uniqueKey, getServerAddress());
+        redisTemplate.expire(uniqueKey, REDIS_TTL);
+        return sseConnectionStore.saveEmitter(uniqueKey, sseEmitterManager.createEmitter(uniqueKey));
     }
 
     @Override
-    public Optional<SseEmitter> getConnectedUserSse(String userId) {
-        return sseConnectionStore.findEmitter(userId);
+    public void disconnectChatRoom(String userId, String chatRoomId) {
+        String uniqueKey = ChatRedisKeyGenerator.getUniqueKey(userId, chatRoomId);
+        redisTemplate.delete(uniqueKey);
+        sseConnectionStore.deleteEmitter(uniqueKey);
     }
 
     @Override
-    public String getConnectedServerAddress(String userId) {
-        return redisTemplate.opsForValue().get(userId);
+    public Optional<SseEmitter> getConnectedUserSse(String userId, String chatRoomId) {
+        String uniqueKey = ChatRedisKeyGenerator.getUniqueKey(userId, chatRoomId);
+        return sseConnectionStore.findEmitter(uniqueKey);
+    }
+
+    @Override
+    public Optional<String> getConnectedServerAddress(String userId, String chatRoomId) {
+        String uniqueKey = ChatRedisKeyGenerator.getUniqueKey(userId, chatRoomId);
+        return Optional.ofNullable(redisTemplate.opsForValue().get(uniqueKey));
     }
 
     private String getServerAddress() {

@@ -24,19 +24,21 @@ public class MessageDispatchService implements MessageDispatchUseCase {
 
         List<String> disconnectedUserIdList = new ArrayList<>();
 
+        // Memory 에 존재하는 SSE 조회 및 전송, 미조회 유저는 FCM 으로 전송
         chatMessage.getReceiverIdList().forEach(receiverId -> {
-            Optional<SseEmitter> connectedUserSse = chatConnectionUseCase.getConnectedUserSse(receiverId);
+            Optional<SseEmitter> connectedUserSse = chatConnectionUseCase.getConnectedUserSse(
+                receiverId, chatMessage.getChatRoomId());
 
-            if (connectedUserSse.isPresent()) { // SSE 가 있는 경우, 메시지 전송
-                sseMessageManager.sendMessage(connectedUserSse.get(), SseEventType.CHAT, chatMessage);
-            } else {
-                // 연결되지 않은 사용자는 FCM 리스트에 추가
-                disconnectedUserIdList.add(receiverId);
-            }
+            connectedUserSse.ifPresentOrElse(sseEmitter ->
+                    sseMessageManager.sendMessage(sseEmitter, SseEventType.CHAT, chatMessage),
+                () ->
+                    disconnectedUserIdList.add(receiverId)
+            );
+
         });
 
         if (!disconnectedUserIdList.isEmpty()) {
-            // FCM 전송
+            // TODO FCM 전송
         }
 
     }

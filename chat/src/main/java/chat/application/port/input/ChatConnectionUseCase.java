@@ -5,12 +5,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public interface ChatConnectionUseCase {
 
-    SseEmitter connectChatRoom(String userId);
+    SseEmitter connectChatRoom(String userId, String chatRoomId);
 
-    void disconnectChatRoom(String userId);
+    void disconnectChatRoom(String userId, String chatRoomId);
 
-    Optional<SseEmitter> getConnectedUserSse(String userId);
+    Optional<SseEmitter> getConnectedUserSse(String userId, String chatRoomId);
 
-    String getConnectedServerAddress(String userId);
+    Optional<String> getConnectedServerAddress(String userId, String chatRoomId);
 
 }

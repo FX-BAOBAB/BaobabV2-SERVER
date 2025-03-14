@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,24 +25,40 @@ public class MessageConsumerService implements MessageConsumerUseCase {
         List<String> receiverIdList = chatMessage.getReceiverIdList();
 
         // IP : userIdList 로 그룹화
-        Map<String, List<String>> serverGroup = groupReceiverByServer(receiverIdList);
+        Map<String, List<String>> serverGroup = groupReceiverByServer(receiverIdList,
+            chatMessage.getChatRoomId());
 
         // 서버 그룹별 receiverId 지정 후 전송
         sendMessageToServer(serverGroup, chatMessage);
 
     }
 
-    private Map<String, List<String>> groupReceiverByServer(List<String> receiverIdList) {
+    private Map<String, List<String>> groupReceiverByServer(List<String> receiverIdList,
+        String chatRoomId) {
+
         Map<String, List<String>> serverGroup = new HashMap<>();
+        List<String> disconnectedUserIdList = new ArrayList<>(); // REDIS 미 조회 사용자 List
+
         receiverIdList.forEach(receiverId -> {
-            String serverAddress = chatConnectionService.getConnectedServerAddress(receiverId);
-            // TODO Server Address 가 Null 인 경우 (접속하지 않은 경우) -> FCM 전송 처리
-            serverGroup.computeIfAbsent(serverAddress, key -> new ArrayList<>()).add(receiverId);
+            Optional<String> connectedServerAddress = chatConnectionService.getConnectedServerAddress(
+                receiverId, chatRoomId); // Redis 에서 접속한 사용자 조회
+
+            connectedServerAddress.ifPresentOrElse(serverAddress ->
+                    serverGroup.computeIfAbsent(serverAddress, key -> new ArrayList<>()).add(receiverId),
+                () ->
+                    disconnectedUserIdList.add(receiverId) // 서버에 연결되지 않은 경우 list 추가
+            );
+
         });
+
+        if (!disconnectedUserIdList.isEmpty()) {
+            // TODO FCM 전송
+        }
         return serverGroup;
     }
 
-    private void sendMessageToServer(Map<String, List<String>> serverGroup, ChatMessage chatMessage) {
+    private void sendMessageToServer(Map<String, List<String>> serverGroup,
+        ChatMessage chatMessage) {
         serverGroup.forEach((serverAddress, userIdList) -> {
             ChatMessage targetMessage = chatMessage.toBuilder()
                 .receiverIdList(userIdList)
