@@ -6,4 +6,5 @@ include 'article'
 include 'file'
 include 'eureka'
 include 'chat'
+include 'message'
 
