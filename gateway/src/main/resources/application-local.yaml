@@ -29,6 +29,13 @@ spring:
           filters:
             - RewritePath=/user-service/(open-api|api)/(?<segment>.*), /$\{segment}
 
+        - id: baobab-chat
+          uri: lb://BAOBAB-CHAT
+          predicates:
+            - Path=/chat-service/**
+          filters:
+            - RewritePath=/chat-service/(open-api|api)/(?<segment>.*), /$\{segment}
+
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -56,3 +63,9 @@ log:
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus

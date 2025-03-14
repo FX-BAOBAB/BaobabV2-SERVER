@@ -1,6 +1,11 @@
 server:
   port: 0 # 랜덤 포트를 사용하기 위함
 
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
+
 spring:
   application:
     name: baobab-chat
@@ -9,10 +14,35 @@ spring:
     show-sql: true
 
   data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      repositories:
+        enabled: true
+
     mongodb:
       uri: ${MONGO_URL}
       database: ${MONGO_DATABASE}
       auto-index-creation: true
+
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_URL}
+      group-id: ${KAFKA_GROUP_ID}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted.packages: "*"
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_URL}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 eureka:
   instance:
@@ -37,6 +67,14 @@ log:
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR}
+  context-path: ${FILE_CONTEXT_PATH}
+
+url:
+  scheme: ${FILE_URL_SCHEME}
+  host: ${FILE_URL_HOST}
+  path:
+    article: ${FILE_PATH_ARTICLE}
+    user: ${FILE_PATH_USER}
 
 cipher:
   key: ${CIPHER_KEY}

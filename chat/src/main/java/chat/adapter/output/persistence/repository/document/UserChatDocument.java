@@ -1,5 +1,6 @@
 package chat.adapter.output.persistence.repository.document;
 
+import chat.domain.dto.UserChatSaveForm;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,10 +25,20 @@ public class UserChatDocument {
 
     private String chatRoomId;
 
-    private Boolean mute;
+    @Builder.Default()
+    private Boolean mute = false;
 
-    private Boolean favorite;
+    @Builder.Default()
+    private Boolean favorite = false;
 
-    private LocalDateTime lastChatAt;
+    @Builder.Default()
+    private LocalDateTime lastChatAt = LocalDateTime.now();
+
+    public static UserChatDocument of(UserChatSaveForm userChatSaveForm) {
+        return  UserChatDocument.builder()
+            .userId(userChatSaveForm.getUserId())
+            .chatRoomId(userChatSaveForm.getChatRoomId())
+            .build();
+    }
 
 }

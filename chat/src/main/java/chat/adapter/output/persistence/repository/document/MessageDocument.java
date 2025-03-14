@@ -1,6 +1,7 @@
 package chat.adapter.output.persistence.repository.document;
 
 import chat.adapter.output.persistence.enums.MessageType;
+import chat.domain.dto.ChatMessageSaveForm;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,10 +24,20 @@ public class MessageDocument {
 
     private MessageType messageType;
 
-    private LocalDateTime sendAt;
+    @Builder.Default
+    private LocalDateTime sendAt = LocalDateTime.now();
 
-    private Boolean isRead;
+    @Builder.Default
+    private Boolean isRead = false;
 
-    private String chatId;
+    private String chatRoomId;
+
+    public static MessageDocument of(ChatMessageSaveForm chatMessageSaveForm) {
+        return MessageDocument.builder()
+            .message(chatMessageSaveForm.getMessage())
+            .messageType(chatMessageSaveForm.getMessageType())
+            .chatRoomId(chatMessageSaveForm.getChatRoomId())
+            .build();
+    }
 
 }

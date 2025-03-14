@@ -27,6 +27,9 @@ dependencies {
     // Mongo
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
@@ -46,9 +49,24 @@ dependencies {
     annotationProcessor 'com.querydsl:querydsl-apt:5.1.0'
     annotationProcessor 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    //Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // Embedded Kafka
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    // OpenFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     implementation project(":global")
     implementation project(":file")
 
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
+    }
 }
 
 tasks.named('test') {

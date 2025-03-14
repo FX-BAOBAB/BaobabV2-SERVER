@@ -16,7 +16,7 @@ public class SimpleUserInfoResponse {
     public static SimpleUserInfoResponse toResponse(UserReaderCommand userReaderCommand) {
         return SimpleUserInfoResponse.builder()
             .nickname(userReaderCommand.getNickName())
-            .profileImageUrl(userReaderCommand.getProfileImage().getImageUrl())
+            .profileImageUrl(userReaderCommand.getProfileImage() != null ? userReaderCommand.getProfileImage().getImageUrl() : null)
             .build();
     }
 
