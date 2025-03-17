@@ -20,7 +20,7 @@ public class SseConnectionStoresImpl implements SseConnectionStore<String, SseEm
 
     @Override
     public Optional<SseEmitter> findEmitter(String uniqueKey) {
-        return Optional.of(connectionStore.get(uniqueKey));
+        return Optional.ofNullable(connectionStore.get(uniqueKey));
     }
 
     @Override

@@ -35,7 +35,7 @@ public class ChatMessage {
             .receiverIdList(receiverIdList)
             .message(document.getMessage())
             .messageType(document.getMessageType())
-            .sentAt(document.getSendAt())
+            .sentAt(document.getSentAt())
             .isRead(document.getIsRead())
             .chatRoomId(document.getChatRoomId())
             .build();

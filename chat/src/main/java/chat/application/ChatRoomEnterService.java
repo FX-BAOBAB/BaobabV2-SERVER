@@ -5,9 +5,7 @@ import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.chatroom.ChatRoom;
 import chat.application.chatroom.ChatRoomGenerator;
 import chat.application.port.input.ChatConnectionUseCase;
-import chat.application.port.input.ChatRoomCheckUseCase;
-import chat.application.port.input.ChatRoomReaderUseCase;
-import chat.application.port.input.UserChatSaveUseCase;
+import chat.application.port.input.ChatRoomEnterUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.application.userchat.UserChat;
 import chat.application.userchat.UserChatGenerator;
@@ -24,11 +22,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ChatRoomReaderService implements ChatRoomReaderUseCase {
+public class ChatRoomEnterService implements ChatRoomEnterUseCase {
 
-    private final ChatRoomCheckUseCase chatRoomCheckUseCase;
-    private final UserChatSaveUseCase userChatSaveUseCase;
-    private final ChatConnectionUseCase chatConnectionUseCase;
+    private final ChatRoomCheckService chatRoomCheckService;
+    private final UserChatSaveService userChatSaveService;
+    private final ChatConnectionService chatConnectionService;
 
     private final ChatRoomPersistencePort chatRoomPersistencePort;
 
@@ -36,17 +34,17 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
     private final UserChatGenerator userChatGenerator;
 
     @Transactional
-    public ChatRoomResponse getChatRoom(ChatRoomReaderCommand command) {
+    public ChatRoomResponse enterChatRoom(ChatRoomReaderCommand command) {
 
         // 1. articleId 로 기준 채팅방 조회
         List<String> chatRoomIdList = chatRoomPersistencePort.getChatRoomListBy(command.getArticleId())
             .stream().map(ChatRoomDocument::getId).toList();
 
         // 2. 기존 채팅방이 존재하는지 확인
-        String chatRoomId = chatRoomCheckUseCase.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
+        String chatRoomId = chatRoomCheckService.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
             .orElseGet(() -> createNewChatRoom(command));
 
-        SseEmitter sseEmitter = chatConnectionUseCase.connectChatRoom(
+        SseEmitter sseEmitter = chatConnectionService.connectChatRoom(
             command.getBuyerId(), chatRoomId);
 
         return ChatRoomResponse.of(chatRoomId, sseEmitter);
@@ -60,7 +58,7 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
 
         // 4. UserChat 생성
         List<UserChat> userChatList = userChatGenerator.createUserChat(chatRoomId, command);
-        userChatSaveUseCase.saveUserChatIfNotExists(UserChatSaveForm.of(userChatList));
+        userChatSaveService.saveUserChatIfNotExists(UserChatSaveForm.of(userChatList));
 
         return chatRoomId;
     }
