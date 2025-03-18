@@ -1,10 +1,9 @@
 package chat.application;
 
-import chat.adapter.input.web.response.ChatRoomResponse;
+import chat.adapter.input.web.response.ChatRoomEnterResponse;
 import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.chatroom.ChatRoom;
 import chat.application.chatroom.ChatRoomGenerator;
-import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.ChatRoomEnterUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.application.userchat.UserChat;
@@ -34,7 +33,7 @@ public class ChatRoomEnterService implements ChatRoomEnterUseCase {
     private final UserChatGenerator userChatGenerator;
 
     @Transactional
-    public ChatRoomResponse enterChatRoom(ChatRoomReaderCommand command) {
+    public ChatRoomEnterResponse enterChatRoom(ChatRoomReaderCommand command) {
 
         // 1. articleId 로 기준 채팅방 조회
         List<String> chatRoomIdList = chatRoomPersistencePort.getChatRoomListBy(command.getArticleId())
@@ -47,7 +46,7 @@ public class ChatRoomEnterService implements ChatRoomEnterUseCase {
         SseEmitter sseEmitter = chatConnectionService.connectChatRoom(
             command.getBuyerId(), chatRoomId);
 
-        return ChatRoomResponse.of(chatRoomId, sseEmitter);
+        return ChatRoomEnterResponse.of(chatRoomId, sseEmitter);
     }
 
     private String createNewChatRoom(ChatRoomReaderCommand command) {

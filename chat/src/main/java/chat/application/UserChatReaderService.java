@@ -2,6 +2,8 @@ package chat.application;
 
 import chat.adapter.output.persistence.repository.document.UserChatDocument;
 import chat.application.port.output.UserChatPersistencePort;
+import chat.domain.command.ChatRoomSearchCommand;
+import chat.domain.dto.ChatRoomSearchForm;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,10 @@ public class UserChatReaderService {
         return userChatPersistencePort.getUserChatsExcludingSender(chatRoomId, senderId).stream()
             .map(UserChatDocument::getUserId)
             .toList();
+    }
+
+    public List<UserChatDocument> getUserChat(ChatRoomSearchCommand command) {
+        return userChatPersistencePort.getUserChats(ChatRoomSearchForm.of(command));
     }
 
 }

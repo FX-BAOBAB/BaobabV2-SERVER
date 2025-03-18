@@ -11,4 +11,6 @@ public interface ChatRoomPersistencePort {
 
     List<ChatRoomDocument> getChatRoomListBy(String articleId);
 
+    List<ChatRoomDocument> getChatRoomList(List<String> chatRoomIdList);
+
 }
