@@ -69,6 +69,13 @@ dependencyManagement {
     }
 }
 
+// 컴파일러 옵션에 annotationProcessor 직접 지정
+compileJava {
+    options.compilerArgs += [
+            "-processor", 'lombok.launch.AnnotationProcessorHider$AnnotationProcessor,org.springframework.data.mongodb.repository.support.MongoAnnotationProcessor'
+    ]
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
