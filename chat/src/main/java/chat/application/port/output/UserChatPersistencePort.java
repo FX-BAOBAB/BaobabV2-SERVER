@@ -1,6 +1,7 @@
 package chat.application.port.output;
 
 import chat.adapter.output.persistence.repository.document.UserChatDocument;
+import chat.domain.dto.ChatRoomSearchForm;
 import chat.domain.dto.UserChatSaveForm;
 import chat.domain.dto.UserChatUpdateForm;
 import java.util.List;
@@ -19,5 +20,7 @@ public interface UserChatPersistencePort {
     List<UserChatDocument> getUserChatList(String chatRoomId, List<String> userIdList);
 
     void updateUserChat(List<UserChatUpdateForm> userChatUpdateFormList);
+
+    List<UserChatDocument> getUserChats(ChatRoomSearchForm chatRoomSearchForm);
 
 }

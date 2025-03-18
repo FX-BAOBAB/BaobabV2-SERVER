@@ -1,11 +1,11 @@
 package chat.application.port.input;
 
-import chat.adapter.input.web.response.ChatRoomResponse;
+import chat.adapter.input.web.response.ChatRoomEnterResponse;
 import chat.domain.command.ChatRoomReaderCommand;
 
 public interface ChatRoomEnterUseCase {
 
-    ChatRoomResponse enterChatRoom(ChatRoomReaderCommand command);
+    ChatRoomEnterResponse enterChatRoom(ChatRoomReaderCommand command);
 
     interface ChatMessageReaderUseCase {
 
