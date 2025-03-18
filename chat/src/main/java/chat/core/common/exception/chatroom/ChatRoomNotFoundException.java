@@ -1,30 +1,30 @@
-package user.core.common.exception.token;
+package chat.core.common.exception.chatroom;
 
 import global.errorcode.ErrorCodeIfs;
 
-public class UserNotFoundException extends RuntimeException{
+public class ChatRoomNotFoundException extends RuntimeException{
 
     private final ErrorCodeIfs errorCodeIfs;
     private final String description;
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs) {
+    public ChatRoomNotFoundException(ErrorCodeIfs errorCodeIfs) {
         super(errorCodeIfs.getDescription());
         this.errorCodeIfs = errorCodeIfs;
         this.description = errorCodeIfs.getDescription();
     }
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs, String errorDescription) {
+    public ChatRoomNotFoundException(ErrorCodeIfs errorCodeIfs, String errorDescription) {
         this.errorCodeIfs = errorCodeIfs;
         this.description = errorDescription;
     }
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs, Throwable throwable) {
+    public ChatRoomNotFoundException(ErrorCodeIfs errorCodeIfs, Throwable throwable) {
         super(throwable);
         this.errorCodeIfs = errorCodeIfs;
         this.description = errorCodeIfs.getDescription();
     }
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs, Throwable throwable,
+    public ChatRoomNotFoundException(ErrorCodeIfs errorCodeIfs, Throwable throwable,
         String errorDescription) {
         super(throwable);
         this.errorCodeIfs = errorCodeIfs;

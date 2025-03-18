@@ -14,7 +14,7 @@ import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
-import user.core.common.exception.token.UserNotFoundException;
+import user.core.common.exception.user.UserNotFoundException;
 import user.core.common.exception.user.PasswordMismatchException;
 
 @Aspect
