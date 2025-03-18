@@ -4,6 +4,7 @@ import chat.adapter.output.persistence.repository.UserChatMongoRepository;
 import chat.adapter.output.persistence.repository.document.UserChatDocument;
 import chat.application.port.output.UserChatPersistencePort;
 import chat.domain.dto.UserChatSaveForm;
+import chat.domain.dto.UserChatUpdateForm;
 import global.annotation.output.PersistenceAdapter;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,18 @@ public class UserChatPersistenceAdapter implements UserChatPersistencePort {
     @Override
     public List<UserChatDocument> getUserChatsExcludingSender(String chatRoomId, String senderId) {
         return userChatMongoRepository.findByChatRoomIdAndUserIdNot(chatRoomId, senderId);
+    }
+
+    @Override
+    public List<UserChatDocument> getUserChatList(String chatRoomId, List<String> userIdList) {
+        return userChatMongoRepository.findByChatRoomIdAndUserIdIn(chatRoomId, userIdList);
+    }
+
+    @Override
+    public void updateUserChat(List<UserChatUpdateForm> userChatUpdateFormList) {
+        userChatUpdateFormList.forEach(userChatUpdateForm ->
+            userChatMongoRepository.save(UserChatDocument.of(userChatUpdateForm))
+        );
     }
 
 }

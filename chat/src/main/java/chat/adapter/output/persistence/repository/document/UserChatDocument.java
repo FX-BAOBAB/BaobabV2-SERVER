@@ -1,6 +1,7 @@
 package chat.adapter.output.persistence.repository.document;
 
 import chat.domain.dto.UserChatSaveForm;
+import chat.domain.dto.UserChatUpdateForm;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,9 +36,20 @@ public class UserChatDocument {
     private LocalDateTime lastChatAt = LocalDateTime.now();
 
     public static UserChatDocument of(UserChatSaveForm userChatSaveForm) {
-        return  UserChatDocument.builder()
+        return UserChatDocument.builder()
             .userId(userChatSaveForm.getUserId())
             .chatRoomId(userChatSaveForm.getChatRoomId())
+            .build();
+    }
+
+    public static UserChatDocument of(UserChatUpdateForm userChatUpdateForm) {
+        return UserChatDocument.builder()
+            .id(userChatUpdateForm.getId())
+            .userId(userChatUpdateForm.getUserId())
+            .chatRoomId(userChatUpdateForm.getChatRoomId())
+            .mute(userChatUpdateForm.getMute())
+            .favorite(userChatUpdateForm.getFavorite())
+            .lastChatAt(userChatUpdateForm.getLastChatAt())
             .build();
     }
 

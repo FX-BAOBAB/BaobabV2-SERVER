@@ -19,8 +19,8 @@ public abstract class AbstractChatRoomGenerator {
 
         ArticleFeignInfo articleBy = articleClient.getArticleBy(command.getArticleId());
 
-        String sellerNickName = userClient.getNickname(command.getBuyerId());
-        String articleOwnerNickName = userClient.getNickname(articleBy.getUserId());
+        String sellerNickName = userClient.getUserSimpleInfo(command.getBuyerId()).getNickname();
+        String articleOwnerNickName = userClient.getUserSimpleInfo(articleBy.getUserId()).getNickname();
 
         // 채팅방 이름 설정
         String chatRoomTitle = buildChatRoomTitle(List.of(sellerNickName, articleOwnerNickName));

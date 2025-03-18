@@ -7,6 +7,7 @@ import chat.application.port.output.KafkaProducerPort;
 import chat.domain.ChatMessage;
 import chat.domain.command.ChatMessageCommand;
 import chat.domain.dto.ChatMessageSaveForm;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class MessageProducerService implements MessageProducerUseCase {
     private final ChatMessagePersistencePort chatMessagePersistencePort;
 
     private static final String TOPIC_NAME = "chatMessage";
+    private final UserChatUpdateService userChatUpdateService;
 
     @Override
     public boolean produceMessage(ChatMessageCommand command) {
@@ -45,6 +47,17 @@ public class MessageProducerService implements MessageProducerUseCase {
 
         kafkaProducerPort.send(TOPIC_NAME,
             ChatMessage.of(savedMessage, command.getUserId(), receiverIdList));
+
+
+
+        // receiverIdList 에 sender 추가
+        List<String> userIdList = new ArrayList<>(receiverIdList);
+        userIdList.add(command.getUserId());
+
+        // 마지막 채팅방 날짜 업데이트
+        userChatUpdateService.updateLastChatAt(
+            chatRoomId.get(), userIdList, savedMessage.getSentAt()
+        );
 
         return true;
     }
