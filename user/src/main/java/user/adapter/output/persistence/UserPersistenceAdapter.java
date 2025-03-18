@@ -8,7 +8,7 @@ import user.adapter.output.persistence.repository.UserDocument;
 import user.adapter.output.persistence.repository.UserMongoRepository;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
-import user.core.common.exception.token.UserNotFoundException;
+import user.core.common.exception.user.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.ProfileImage;
 import user.domain.form.UserRegisterForm;

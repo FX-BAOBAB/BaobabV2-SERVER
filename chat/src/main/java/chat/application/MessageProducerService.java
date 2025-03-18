@@ -4,6 +4,8 @@ import chat.adapter.output.persistence.repository.document.MessageDocument;
 import chat.application.port.input.MessageProducerUseCase;
 import chat.application.port.output.ChatMessagePersistencePort;
 import chat.application.port.output.KafkaProducerPort;
+import chat.core.common.error.ChatErrorCode;
+import chat.core.common.exception.chatroom.ChatRoomNotFoundException;
 import chat.domain.ChatMessage;
 import chat.domain.command.ChatMessageCommand;
 import chat.domain.dto.ChatMessageSaveForm;
@@ -31,12 +33,9 @@ public class MessageProducerService implements MessageProducerUseCase {
     @Override
     public boolean produceMessage(ChatMessageCommand command) {
 
-        Optional<String> chatRoomId = chatRoomCheckService.existsChatRoomBy(
-            List.of(command.getChatRoomId()), command.getUserId());
-
-        if (chatRoomId.isEmpty()) {
-            throw new RuntimeException(); // TODO 예외처리
-        }
+        String chatRoomId = chatRoomCheckService.existsChatRoomBy(List.of(command.getChatRoomId()),
+                command.getUserId())
+            .orElseThrow(() -> new ChatRoomNotFoundException(ChatErrorCode.CHAT_ROOM_NOT_FOUND));
 
         MessageDocument savedMessage = chatMessagePersistencePort.saveMessage(
             ChatMessageSaveForm.of(command));
@@ -48,15 +47,13 @@ public class MessageProducerService implements MessageProducerUseCase {
         kafkaProducerPort.send(TOPIC_NAME,
             ChatMessage.of(savedMessage, command.getUserId(), receiverIdList));
 
-
-
         // receiverIdList 에 sender 추가
         List<String> userIdList = new ArrayList<>(receiverIdList);
         userIdList.add(command.getUserId());
 
         // 마지막 채팅방 날짜 업데이트
         userChatUpdateService.updateLastChatAt(
-            chatRoomId.get(), userIdList, savedMessage.getSentAt()
+            chatRoomId, userIdList, savedMessage.getSentAt()
         );
 
         return true;

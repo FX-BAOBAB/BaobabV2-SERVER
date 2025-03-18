@@ -3,6 +3,8 @@ package chat.application;
 import chat.adapter.output.persistence.repository.document.MessageDocument;
 import chat.application.port.input.ChatMessageReaderUseCase;
 import chat.application.port.output.ChatMessagePersistencePort;
+import chat.core.common.error.ChatErrorCode;
+import chat.core.common.exception.chatroom.ChatRoomNotFoundException;
 import chat.domain.command.ChatMessageSearchCommand;
 import chat.domain.dto.ChatMessageSearchForm;
 import java.util.List;
@@ -18,9 +20,11 @@ public class ChatMessageReaderService implements ChatMessageReaderUseCase {
 
     @Override
     public List<MessageDocument> getChatMessages(ChatMessageSearchCommand command) {
-        chatRoomCheckService.existsChatRoomBy(List.of(command.getChatRoomId()),
-            command.getUserId()); // TODO 예외처리하자!
-
-        return chatMessagePersistencePort.getMessages(ChatMessageSearchForm.of(command));
+        return chatRoomCheckService.existsChatRoomBy(List.of(command.getChatRoomId()),
+                command.getUserId())
+            .map(x -> chatMessagePersistencePort.getMessages(
+                ChatMessageSearchForm.of(command)))
+            .orElseThrow(() -> new ChatRoomNotFoundException(ChatErrorCode.CHAT_ROOM_NOT_FOUND));
     }
+
 }

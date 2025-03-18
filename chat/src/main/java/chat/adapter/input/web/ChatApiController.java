@@ -106,7 +106,6 @@ public class ChatApiController {
         @RequestParam(required = false) LocalDateTime lastChatAt,
         @PageableDefault(sort = "lastChatAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable
     ) {
-        log.info("lastChatAt : {}", lastChatAt);
         return Api.OK(chatRoomReaderUseCase.getChatRooms(
             ChatRoomSearchCommand.of(authUser.getUserId(), lastChatAt, pageable)));
     }
