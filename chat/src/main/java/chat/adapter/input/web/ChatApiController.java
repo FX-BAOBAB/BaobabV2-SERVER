@@ -4,6 +4,7 @@ import chat.adapter.input.web.request.ChatMessageRequest;
 import chat.adapter.input.web.request.ChatMessageSearchCondition;
 import chat.adapter.input.web.response.ChatRoomResponse;
 import chat.adapter.output.persistence.repository.document.MessageDocument;
+import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.ChatMessageReaderUseCase;
 import chat.application.port.input.ChatRoomEnterUseCase;
 import chat.application.port.input.MessageDispatchUseCase;
@@ -41,6 +42,7 @@ public class ChatApiController {
     private final MessageProducerUseCase messageProducerUseCase;
     private final MessageDispatchUseCase messageDispatchUseCase;
     private final ChatMessageReaderUseCase chatMessageReaderUseCase;
+    private final ChatConnectionUseCase chatConnectionUseCase;
 
     private static final String CHAT_ROOM_ID_HEADER = "chatRoomIdHeader";
 
@@ -81,6 +83,15 @@ public class ChatApiController {
     ) {
         return Api.OK(chatMessageReaderUseCase.getChatMessages(
             ChatMessageSearchCommand.of(authUser.getUserId(), condition, pageable)));
+    }
+
+    @GetMapping("/exit/{chatRoomId}")
+    public Api<Boolean> exitChatRoom(
+        @AuthenticatedUser AuthUser authUser,
+        @PathVariable String chatRoomId
+    ) {
+        chatConnectionUseCase.disconnectChatRoom(authUser.getUserId(), chatRoomId);
+        return Api.OK(true);
     }
 
 }
