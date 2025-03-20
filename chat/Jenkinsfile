@@ -1,0 +1,118 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk ("jdk21")
+    }
+
+    triggers {
+        // GitHub push 이벤트로 빌드를 트리거
+        githubPush()
+    }
+
+    environment {
+        MODULE = 'chat'
+        IMAGE_NAME = 'seongeun308/test-hub'
+        FILE_YML = credentials('file_test_yml')
+        CHAT_YML = credentials('chat_test_yml')
+        DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
+        PORT = 'CHAT_PORT'
+        VOLUME_NAME = credentials('VOLUME_NAME')
+        MOUNT_PATH = credentials('MOUNT_PATH')
+    }
+
+    stages {
+        stage("Set File Application Test Yml") {
+            steps {
+                sh """
+                    echo "Set File Application Test Yml"
+                    mkdir -p file/src/test/resources
+                    cp ${FILE_YML} file/src/test/resources/application-test.yml
+                    find file/src/test/resources
+                """
+            }
+        }
+
+        stage('Set Chat Application Test Yml') {
+            steps {
+                sh """
+                    echo "Set Chat Application Test Yml"
+                    mkdir -p ${MODULE}/src/test/resources
+                    cp ${CHAT_YML} ${MODULE}/src/test/resources/application-test.yml
+                    find ${MODULE}/src/test/resources
+                """
+            }
+        }
+
+        stage('Build Gradle') {
+            steps {
+                echo "Build Start ${MODULE}"
+                sh "./gradlew :${MODULE}:build"
+                echo "Build End ${MODULE}"
+            }
+        }
+
+        stage('Remove Container and Images') {
+            steps {
+                sh """
+                    docker stop ${MODULE} && docker rm ${MODULE}
+                    docker images | grep -E "${IMAGE_NAME}.*${MODULE}.*" | awk '{print \$1 ":" \$2}' | xargs docker rmi -f || true
+                """
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Build Docker ${MODULE} image"
+                sh "docker build -t ${IMAGE_NAME}:${MODULE}-latest -t ${IMAGE_NAME}:${MODULE}-${env.GIT_COMMIT} ./${MODULE}"
+            }
+        }
+
+        stage('Log in to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub',
+                usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    echo "Logging in to Docker Hub"
+                    sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+
+                }
+            }
+        }
+
+        stage('Push Docker Hub') {
+            steps {
+                echo "Push Docker ${MODULE} image"
+                sh """
+                    docker push ${IMAGE_NAME}:${MODULE}-latest
+                    docker push ${IMAGE_NAME}:${MODULE}-${env.GIT_COMMIT}
+                """
+            }
+        }
+
+
+        stage('Deploy to Production') {
+            steps {
+                script {
+                    def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
+                    sh """
+                    docker pull ${IMAGE_NAME}:${MODULE}-latest
+                    doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
+                    docker run -d -v ${env.VOLUME_NAME}:${env.MOUNT_PATH} --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()  // 작업 후 작업 공간 정리
+        }
+        success {
+            echo '배포가 성공적으로 완료되었습니다.'
+        }
+        failure {
+            echo '배포가 실패했습니다.'
+        }
+    }
+}
