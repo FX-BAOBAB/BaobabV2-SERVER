@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "baobab-article")
 public interface ArticleClient {
 
-    @GetMapping("/articleId")
-    ArticleFeignInfo getArticleBy(@RequestParam String articleId);
+    @GetMapping("/userId")
+    ArticleFeignInfo getUserIdBy(@RequestParam String articleId);
 
 }
