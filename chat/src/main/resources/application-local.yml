@@ -1,5 +1,5 @@
 server:
-  port: 0 # 랜덤 포트를 사용하기 위함
+  port: ${CHAT_PORT}
 
   servlet:
     session:
