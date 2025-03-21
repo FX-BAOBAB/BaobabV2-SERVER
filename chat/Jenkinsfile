@@ -14,11 +14,12 @@ pipeline {
         MODULE = 'chat'
         IMAGE_NAME = 'seongeun308/test-hub'
         FILE_YML = credentials('file_test_yml')
-        CHAT_YML = credentials('chat_test_yml')
         DOPPLER_TOKEN = credentials('DOPPLER_TOKEN')
         PORT = 'CHAT_PORT'
         VOLUME_NAME = credentials('VOLUME_NAME')
         MOUNT_PATH = credentials('MOUNT_PATH')
+        USERNAME = credentials('ssh_user')
+        HOST = credentials('ssh_host')
     }
 
     stages {
@@ -33,17 +34,6 @@ pipeline {
             }
         }
 
-        stage('Set Chat Application Test Yml') {
-            steps {
-                sh """
-                    echo "Set Chat Application Test Yml"
-                    mkdir -p ${MODULE}/src/test/resources
-                    cp ${CHAT_YML} ${MODULE}/src/test/resources/application-test.yml
-                    find ${MODULE}/src/test/resources
-                """
-            }
-        }
-
         stage('Build Gradle') {
             steps {
                 echo "Build Start ${MODULE}"
@@ -52,10 +42,23 @@ pipeline {
             }
         }
 
-        stage('Remove Container and Images') {
-            steps {
+        stage('Remove Old Container and Image In Remote Server') {
+            steps { // 원격 서버 기존 컨테이너 및 이미지 제거
+                sshagent(credentials: ['baobab']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOST} '
+                            sudo docker stop ${MODULE} || true &&
+                            sudo docker rm ${MODULE} || true &&
+                            sudo docker rmi ${IMAGE_NAME}:${MODULE}-latest || true
+                        '
+                    """
+                }
+            }
+        }
+
+        stage("Remove Old Docker Image") {
+            steps { // 현재 서버 기존 이미지 제거
                 sh """
-                    docker stop ${MODULE} && docker rm ${MODULE}
                     docker images | grep -E "${IMAGE_NAME}.*${MODULE}.*" | awk '{print \$1 ":" \$2}' | xargs docker rmi -f || true
                 """
             }
@@ -89,16 +92,28 @@ pipeline {
             }
         }
 
+        stage('Remove New Docker Images') {
+            steps {
+                sh """
+                    docker images | grep -E "${IMAGE_NAME}.*${MODULE}.*" | awk '{print \$1 ":" \$2}' | xargs docker rmi -f || true
+                """
+            }
+        }
 
-        stage('Deploy to Production') {
+        stage('Deploy') {
             steps {
                 script {
                     def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
-                    sh """
-                    docker pull ${IMAGE_NAME}:${MODULE}-latest
-                    doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
-                    docker run -d -v ${env.VOLUME_NAME}:${env.MOUNT_PATH} --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
-                    """
+                    sshagent(credentials: ['baobab']) {
+                        sh """
+                        ssh ${USERNAME}@${HOST} '
+                            sudo docker pull ${IMAGE_NAME}:${MODULE}-latest &&
+                            doppler secrets download --config dev --no-cache --no-file --format docker > dev.env
+                            sudo docker run -v ${env.VOLUME_NAME}:${env.MOUNT_PATH} --network devops_default --env-file dev.env -d --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
+                            rm -f dev.env
+                        '
+                        """
+                    }
                 }
             }
         }
