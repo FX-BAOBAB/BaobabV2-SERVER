@@ -105,8 +105,8 @@ public class ArticleApiController {
     }
 
     // Chat-Service Feign Client 에서 사용
-    @GetMapping("/articleId")
-    public ArticleFeignResponse getArticleBy(@RequestParam String articleId) {
+    @GetMapping("/userId")
+    public ArticleFeignResponse getUserIdBy(@RequestParam String articleId) {
         return getArticleUseCase.getArticleBy(articleId);
     }
 
