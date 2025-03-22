@@ -79,3 +79,7 @@ url:
 
 cipher:
   key: ${CIPHER_KEY}
+
+feign:
+  article-service:
+    url: ${FEIGN_ARTICLE_SERVICE_URL}
