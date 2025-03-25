@@ -44,6 +44,8 @@ public class MessageProducerService implements MessageProducerUseCase {
         List<String> receiverIdList = userChatReaderService.getUserChatsExcludingSender(
             savedMessage.getChatRoomId(), command.getUserId());
 
+        log.info("수신 대상 ID : {}", receiverIdList);
+
         kafkaProducerPort.send(TOPIC_NAME,
             ChatMessage.of(savedMessage, command.getUserId(), receiverIdList));
 
@@ -51,6 +53,7 @@ public class MessageProducerService implements MessageProducerUseCase {
         List<String> userIdList = new ArrayList<>(receiverIdList);
         userIdList.add(command.getUserId());
 
+        log.info("채팅방 날짜 업데이트");
         // 마지막 채팅방 날짜 업데이트
         userChatUpdateService.updateLastChatAt(
             chatRoomId, userIdList, savedMessage.getSentAt()

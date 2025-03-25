@@ -70,6 +70,7 @@ public class ChatApiController {
         @AuthenticatedUser AuthUser authUser,
         @Valid @RequestBody Api<ChatMessageRequest> request
     ) {
+        log.info("메시지 전송 요청 : {}", request.getBody());
         boolean isSent = messageProducerUseCase.produceMessage(
             ChatMessageCommand.of(request.getBody(), authUser.getUserId()));
         return Api.OK(isSent);
