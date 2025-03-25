@@ -15,6 +15,7 @@ public class ChatMessageProducer<T> implements MessageProducer<T> {
 
     @Override
     public void send(String topic, T message) {
+        log.info("Kafka send : {}", message);
         kafkaTemplate.send(topic, message);
     }
 
