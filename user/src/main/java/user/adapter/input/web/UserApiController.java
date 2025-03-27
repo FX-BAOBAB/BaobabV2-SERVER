@@ -7,6 +7,7 @@ import global.resolver.AuthUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -37,12 +38,12 @@ public class UserApiController {
     @DupleCheck
     @PasswordCheck
     public Api<Boolean> update(
-        @RequestPart("userUpdateRequest") @Valid Api<UserUpdateRequest> userUpdateRequest,
+        @ModelAttribute @Valid UserUpdateRequest userUpdateRequest,
         @RequestPart("profileImage") MultipartFile profileImage,
         @AuthenticatedUser AuthUser authUser
     ) {
         UserUpdateCommand updateCommand = UserUpdateCommand.of(
-            userUpdateRequest.getBody(), profileImage, authUser.getUserId());
+            userUpdateRequest, profileImage, authUser.getUserId());
 
         boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);
         return Api.OK(isUpdated);
