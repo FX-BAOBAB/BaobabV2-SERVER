@@ -26,7 +26,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         "/reissue",
         "/duplication/email",
         "/duplication/nickname",
-        "/validation"
+        "/validation",
+        "/simple-info"
     );
 
     @Override

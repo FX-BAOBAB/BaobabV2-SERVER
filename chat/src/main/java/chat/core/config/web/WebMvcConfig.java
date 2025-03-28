@@ -15,7 +15,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthorizationInterceptor authorizationInterceptor;
 
-    private final List<String> WHITE_LIST = List.of();
+    private final List<String> WHITE_LIST = List.of(
+        "/feign/message"
+    );
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

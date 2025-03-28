@@ -1,6 +1,5 @@
 package global.interceptor;
 
-import global.errorcode.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -31,11 +30,13 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         // Gateway 에서 전달한 Header 추출
         String userId = request.getHeader(X_USER_ID);
 
-        if (userId != null) {
-            RequestAttributes requestContext = Objects.requireNonNull(
-                RequestContextHolder.getRequestAttributes());
-            requestContext.setAttribute(X_USER_ID, userId, RequestAttributes.SCOPE_REQUEST);
+        if (userId == null) {
+            throw new RuntimeException("userId header 가 존재하지 않습니다.");
         }
+
+        RequestAttributes requestContext = Objects.requireNonNull(
+            RequestContextHolder.getRequestAttributes());
+        requestContext.setAttribute(X_USER_ID, userId, RequestAttributes.SCOPE_REQUEST);
 
         return true;
     }
