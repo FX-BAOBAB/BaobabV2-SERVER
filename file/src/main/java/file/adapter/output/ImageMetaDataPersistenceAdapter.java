@@ -2,8 +2,10 @@ package file.adapter.output;
 
 import file.application.port.output.ImageMetaDataPersistencePort;
 import file.adapter.output.repository.MongoDBImageMetaDataRepository;
+import file.domain.ImageKind;
 import file.domain.ImageMetaData;
 import global.annotation.output.PersistenceAdapter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,4 +39,10 @@ public class ImageMetaDataPersistenceAdapter implements ImageMetaDataPersistence
     public void deleteById(String imageId) {
         mongoDBImageMetaDataRepository.deleteById(imageId);
     }
+
+    @Override
+    public Optional<ImageMetaData> findFirstByImageKind(ImageKind imageKind) {
+        return mongoDBImageMetaDataRepository.findFirstByKind(imageKind);
+    }
+
 }

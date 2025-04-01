@@ -89,7 +89,7 @@ public class MongoDBImageMetaDataService {
     }
 
     private String resolvePathForImageKind(ImageKind imageKind) {
-        if (imageKind == ImageKind.USER)
+        if (imageKind == ImageKind.USER || imageKind == ImageKind.USER_DEFAULT)
             return userApiPath;
         return articleApiPath;
     }
