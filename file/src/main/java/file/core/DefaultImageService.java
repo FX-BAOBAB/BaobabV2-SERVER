@@ -38,8 +38,7 @@ public class DefaultImageService implements DefaultImageUseCase {
 
     @Override
     public ImageMetaData getDefaultImage(ImageKind imageKind) {
-        return imageMetaDataPersistencePort.findFirstByImageKind(imageKind)
-            .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_NOT_FOUND));
+        return imageMetaDataPersistencePort.findFirstByImageKind(imageKind).orElse(null);
     }
 
 }
