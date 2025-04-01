@@ -109,7 +109,7 @@ pipeline {
                         ssh ${USERNAME}@${HOST} '
                             sudo docker pull ${IMAGE_NAME}:${MODULE}-latest &&
                             doppler secrets download --config dev --no-cache --no-file --format docker > dev.env
-                            sudo docker run -v ${env.VOLUME_NAME}:${env.MOUNT_PATH} --network devops_default --env-file dev.env -d --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
+                            sudo docker run -v ${env.VOLUME_NAME}:${env.MOUNT_PATH}:cached --network devops_default --env-file dev.env -d --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                             rm -f dev.env
                         '
                         """
