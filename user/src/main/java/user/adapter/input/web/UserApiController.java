@@ -1,5 +1,8 @@
 package user.adapter.input.web;
 
+import file.application.port.input.DefaultImageUseCase;
+import file.domain.ImageKind;
+import file.domain.ImageMetaData;
 import global.annotation.AuthenticatedUser;
 import global.annotation.input.RestAdapter;
 import global.api.Api;
@@ -33,6 +36,7 @@ public class UserApiController {
     private final UserUnRegisterUseCase userUnRegisterUseCase;
     private final UserReaderUseCase userReaderUseCase;
     private final UserRegisterUseCase userRegisterUseCase;
+    private final DefaultImageUseCase defaultImageUseCase;
 
     @PostMapping("/update")
     @DupleCheck
@@ -79,6 +83,24 @@ public class UserApiController {
         Boolean isRegisteredImage = userRegisterUseCase.registerProfileImage(
             authUser.getUserId(), profileImage);
         return Api.OK(isRegisteredImage);
+    }
+
+    @PostMapping("/default-image")
+    //TODO ADMIN AOP 개발
+    public Api<ImageMetaData> saveUserDefaultImage(
+        @AuthenticatedUser AuthUser authUser,
+        @RequestPart("defaultImage") MultipartFile defaultImage
+    ) {
+        return Api.OK(defaultImageUseCase.saveDefaultImage(ImageKind.USER_DEFAULT,
+            authUser.getUserId(), defaultImage));
+    }
+
+    @GetMapping("/default-image")
+    //TODO ADMIN AOP 개발
+    public Api<ImageMetaData> getUserDefaultImage(
+        @AuthenticatedUser AuthUser authUser
+    ) {
+        return Api.OK(defaultImageUseCase.getDefaultImage(ImageKind.USER_DEFAULT));
     }
 
 }
