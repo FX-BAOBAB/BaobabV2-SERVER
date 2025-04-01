@@ -41,6 +41,11 @@ public class UserReaderService implements UserReaderUseCase {
     private void setProfileImageIfAbsent(UserReaderCommand user) {
         if (user.getProfileImage() == null) {
             ImageMetaData defaultImage = defaultImageService.getDefaultImage(ImageKind.USER_DEFAULT);
+
+            if (defaultImage == null) {
+                return; // 기본 이미지가 서버에 설정되지 않은 경우
+            }
+
             user.setProfileImage(ProfileImage.builder()
                 .ImageId(defaultImage.getId())
                 .ImageUrl(defaultImage.getUrl())
