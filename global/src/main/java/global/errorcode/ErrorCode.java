@@ -17,6 +17,7 @@ public enum ErrorCode implements ErrorCodeIfs{
     MISSING_REQUIRED_PARAM(HttpStatus.BAD_REQUEST.value(), 431,"필수 파라미터값이 누락되었습니다."),
     ASYNC_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 500,"비동기 처리 중 에러가 발생했습니다."),
     DB_PROCESS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 500,"DB 처리 중 에러가 발생했습니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), 401, "접근 권한이 없습니다.")
     ;
 
     private final Integer httpCode;

@@ -1,6 +1,7 @@
 package user.security.jwt.service;
 
 import global.errorcode.ErrorCode;
+import global.user.UserRole;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,11 @@ public class TokenIssueService {
 
     private final TokenHelperService tokenHelperService;
 
-    public TokenCommand issueToken(String userId) {
+    public TokenCommand issueToken(String userId, UserRole userRole) {
         return Optional.ofNullable(userId).map(id -> {
 
-            TokenDto accessToken = tokenHelperService.issueAccessToken(id);
-            TokenDto refreshToken = tokenHelperService.issueRefreshToken(id);
+            TokenDto accessToken = tokenHelperService.issueAccessToken(id, userRole);
+            TokenDto refreshToken = tokenHelperService.issueRefreshToken(id, userRole);
 
             tokenHelperService.saveRefreshToken(refreshToken.getToken());
 

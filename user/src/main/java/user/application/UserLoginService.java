@@ -34,7 +34,7 @@ public class UserLoginService implements UserLoginUseCase {
         LocalDateTime lastLoginAt = LocalDateTime.now();
         userPersistencePort.setLastLoginAt(userDocument.getId(), lastLoginAt);
 
-        return tokenIssueService.issueToken(userDocument.getId());
+        return tokenIssueService.issueToken(userDocument.getId(), userDocument.getRole());
     }
 
 }

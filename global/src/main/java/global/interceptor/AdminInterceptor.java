@@ -2,6 +2,7 @@ package global.interceptor;
 
 import global.errorcode.ErrorCode;
 import global.exception.UnauthorizedException;
+import global.user.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -13,9 +14,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 @Component
-public class AuthorizationInterceptor implements HandlerInterceptor {
+public class AdminInterceptor implements HandlerInterceptor {
 
     public static final String X_USER_ID = "x-user-id";
+    public static final String X_USER_ROLE = "x-user-role";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
@@ -29,16 +31,17 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Gateway 에서 전달한 Header 추출
         String userId = request.getHeader(X_USER_ID);
+        String userRole = request.getHeader(X_USER_ROLE);
 
-        if (userId == null) {
+        if (userId == null || !UserRole.MASTER.name().equals(userRole)) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
 
         RequestAttributes requestContext = Objects.requireNonNull(
             RequestContextHolder.getRequestAttributes());
         requestContext.setAttribute(X_USER_ID, userId, RequestAttributes.SCOPE_REQUEST);
+        requestContext.setAttribute(X_USER_ROLE, userRole, RequestAttributes.SCOPE_REQUEST);
 
         return true;
     }
