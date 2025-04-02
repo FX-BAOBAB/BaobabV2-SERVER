@@ -68,10 +68,13 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         GatewayFilterChain chain,
         String accessToken) {
 
-        String userId = validationTokenWithThrow(accessToken).get("userId").toString();
+        Map<String, Object> tokenInfo = validationTokenWithThrow(accessToken);
+        String userId = tokenInfo.get("userId").toString();
+        String userRole = tokenInfo.get("userRole").toString();
 
         ServerHttpRequest request = exchange.getRequest().mutate()
                     .header("x-user-id", userId)
+                    .header("x-user-role", userRole)
                     .build();
 
         return chain.filter(exchange.mutate().request(request).build());

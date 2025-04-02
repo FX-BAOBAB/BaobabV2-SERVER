@@ -86,7 +86,6 @@ public class UserApiController {
     }
 
     @PostMapping("/default-image")
-    //TODO ADMIN AOP 개발
     public Api<ImageMetaData> saveUserDefaultImage(
         @AuthenticatedUser AuthUser authUser,
         @RequestPart("defaultImage") MultipartFile defaultImage
@@ -96,7 +95,6 @@ public class UserApiController {
     }
 
     @GetMapping("/default-image")
-    //TODO ADMIN AOP 개발
     public Api<ImageMetaData> getUserDefaultImage(
         @AuthenticatedUser AuthUser authUser
     ) {

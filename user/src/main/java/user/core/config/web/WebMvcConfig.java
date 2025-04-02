@@ -1,5 +1,6 @@
 package user.core.config.web;
 
+import global.interceptor.AdminInterceptor;
 import global.interceptor.AuthorizationInterceptor;
 import global.resolver.AuthenticatedUserResolver;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthorizationInterceptor authorizationInterceptor;
+    private final AdminInterceptor adminInterceptor;
 
     private final List<String> WHITE_LIST = List.of(
         "/register",
@@ -30,6 +32,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         "/simple-info"
     );
 
+    private final List<String> ADMIN_API_LIST = List.of(
+        "/default-image"
+    );
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new AuthenticatedUserResolver());
@@ -39,7 +45,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor)
             .addPathPatterns("/**")
-            .excludePathPatterns(WHITE_LIST)
-        ;
+            .excludePathPatterns(WHITE_LIST);
+
+        registry.addInterceptor(adminInterceptor)
+            .addPathPatterns(ADMIN_API_LIST);
     }
 }
