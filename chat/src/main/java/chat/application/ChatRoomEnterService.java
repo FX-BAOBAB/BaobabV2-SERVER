@@ -1,6 +1,7 @@
 package chat.application;
 
 import chat.adapter.input.web.response.ChatRoomEnterResponse;
+import chat.adapter.output.client.ArticleClient;
 import chat.adapter.output.persistence.repository.document.ChatRoomDocument;
 import chat.application.chatroom.ChatRoom;
 import chat.application.chatroom.ChatRoomGenerator;
@@ -8,6 +9,8 @@ import chat.application.port.input.ChatRoomEnterUseCase;
 import chat.application.port.output.ChatRoomPersistencePort;
 import chat.application.userchat.UserChat;
 import chat.application.userchat.UserChatGenerator;
+import chat.core.common.error.ChatErrorCode;
+import chat.core.common.exception.chatroom.ChatRoomCreateFailedException;
 import chat.domain.command.ChatRoomReaderCommand;
 import chat.domain.dto.ChatRoomSaveForm;
 import chat.domain.dto.UserChatSaveForm;
@@ -26,6 +29,8 @@ public class ChatRoomEnterService implements ChatRoomEnterUseCase {
     private final ChatRoomCheckService chatRoomCheckService;
     private final UserChatSaveService userChatSaveService;
     private final ChatConnectionService chatConnectionService;
+
+    private final ArticleClient articleClient;
 
     private final ChatRoomPersistencePort chatRoomPersistencePort;
 
@@ -50,6 +55,10 @@ public class ChatRoomEnterService implements ChatRoomEnterUseCase {
     }
 
     private String createNewChatRoom(ChatRoomReaderCommand command) {
+
+        if(command.getBuyerId().equals(articleClient.getArticleSimpleInfo(command.getArticleId()).getUserId())) {
+            throw new ChatRoomCreateFailedException(ChatErrorCode.CHAT_ROOM_CREATION_FAILED);
+        }
 
         // 3. ChatRoom 생성
         ChatRoom chatRoom = chatRoomGenerator.createChatRoom(command);
