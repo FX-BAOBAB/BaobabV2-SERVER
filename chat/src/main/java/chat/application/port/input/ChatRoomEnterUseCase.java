@@ -7,7 +7,4 @@ public interface ChatRoomEnterUseCase {
 
     ChatRoomEnterResponse enterChatRoom(ChatRoomReaderCommand command);
 
-    interface ChatMessageReaderUseCase {
-
-    }
 }
