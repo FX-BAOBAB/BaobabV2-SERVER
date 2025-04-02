@@ -19,7 +19,6 @@ import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.input.web.response.UserInfoResponse;
 import user.application.port.input.UserReaderUseCase;
-import user.application.port.input.UserRegisterUseCase;
 import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.input.UserUpdateUseCase;
 import user.core.common.annotation.DupleCheck;
@@ -35,7 +34,6 @@ public class UserApiController {
     private final UserUpdateUseCase userUpdateUseCase;
     private final UserUnRegisterUseCase userUnRegisterUseCase;
     private final UserReaderUseCase userReaderUseCase;
-    private final UserRegisterUseCase userRegisterUseCase;
     private final DefaultImageUseCase defaultImageUseCase;
 
     @PostMapping("/update")
@@ -43,13 +41,11 @@ public class UserApiController {
     @PasswordCheck
     public Api<Boolean> update(
         @ModelAttribute @Valid UserUpdateRequest userUpdateRequest,
-        @RequestPart("profileImage") MultipartFile profileImage,
+        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
         @AuthenticatedUser AuthUser authUser
     ) {
-        UserUpdateCommand updateCommand = UserUpdateCommand.of(
-            userUpdateRequest, profileImage, authUser.getUserId());
-
-        boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);
+        boolean isUpdated = userUpdateUseCase.updateUserInfo(UserUpdateCommand.of(
+            userUpdateRequest, profileImage, authUser.getUserId()));
         return Api.OK(isUpdated);
     }
 
@@ -73,16 +69,6 @@ public class UserApiController {
         UserReaderCommand userInfo = userReaderUseCase.getUserInfoBy(authUser.getUserId());
         UserInfoResponse userInfoResponse = UserInfoResponse.toResponse(userInfo);
         return Api.OK(userInfoResponse);
-    }
-
-    @PostMapping("/image")
-    public Api<Boolean> registerProfileImage(
-        @RequestPart("profileImage") MultipartFile profileImage,
-        @AuthenticatedUser AuthUser authUser
-    ) {
-        Boolean isRegisteredImage = userRegisterUseCase.registerProfileImage(
-            authUser.getUserId(), profileImage);
-        return Api.OK(isRegisteredImage);
     }
 
     @PostMapping("/default-image")

@@ -56,6 +56,4 @@ public class UserUpdateRequest {
     @NotBlank(message = "필수 입력 사항입니다.")
     private String password;
 
-    private String deleteImageId;
-
 }
