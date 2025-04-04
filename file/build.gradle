@@ -40,6 +40,9 @@ dependencies {
     // Aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    // Micrometer
+    implementation 'io.micrometer:micrometer-core'
+
     implementation project(":global")
 
 }
