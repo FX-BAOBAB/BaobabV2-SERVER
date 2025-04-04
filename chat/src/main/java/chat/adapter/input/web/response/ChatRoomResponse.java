@@ -18,7 +18,7 @@ public class ChatRoomResponse {
 
     private String articleId;
 
-    private String thumbnailId;
+    private String thumbnailUrl;
 
     private LocalDateTime lastChatAt;
 

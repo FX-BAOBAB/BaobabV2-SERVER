@@ -28,7 +28,7 @@ public abstract class AbstractChatRoomGenerator {
         return ChatRoom.builder()
             .title(chatRoomTitle)
             .articleId(command.getArticleId())
-            .thumbnailId(articleBy.getArticleImage().getImageId())
+            .thumbnailUrl(articleBy.getArticleImage().getImageUrl())
             .build();
     }
 

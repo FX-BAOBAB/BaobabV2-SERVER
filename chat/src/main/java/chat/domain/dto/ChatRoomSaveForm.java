@@ -14,13 +14,13 @@ public class ChatRoomSaveForm {
 
     private String articleId;
 
-    private String thumbnailId;
+    private String thumbnailUrl;
 
     public static ChatRoomSaveForm of(ChatRoom chatRoom) {
         return ChatRoomSaveForm.builder()
             .title(chatRoom.getTitle())
             .articleId(chatRoom.getArticleId())
-            .thumbnailId(chatRoom.getThumbnailId())
+            .thumbnailUrl(chatRoom.getThumbnailUrl())
             .build();
     }
 }
