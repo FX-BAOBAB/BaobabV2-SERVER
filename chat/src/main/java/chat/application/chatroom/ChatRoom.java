@@ -17,6 +17,6 @@ public class ChatRoom {
 
     private String articleId;
 
-    private String thumbnailId;
+    private String thumbnailUrl;
 
 }
