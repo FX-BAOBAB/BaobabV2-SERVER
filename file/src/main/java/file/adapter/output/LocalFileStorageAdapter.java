@@ -25,6 +25,7 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
     @Value("${file.upload-dir}")
     private String uploadDir;
+    private static final String OUTPUT_FORMAT = "jpg";
 
     @Override
     public Path store(MultipartFile imageFile) {
@@ -49,7 +50,9 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
         try {
             Thumbnails.of(imageFile.getInputStream())
-                    .size(300, 300)
+                    .size(600, 600)
+                    .outputFormat(OUTPUT_FORMAT)
+                    .outputQuality(0.8)
                     .toFile(new File(filePath.toString()));
         } catch (Exception e) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR, e);
@@ -77,10 +80,10 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
     private Path createFilePath(MultipartFile file) {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        String extension = FileUtils.getExtension(fileName);
+//        String extension = FileUtils.getExtension(fileName);
         String serverName = UUID.randomUUID().toString();
 
-        return Paths.get(uploadDir, serverName + extension);
+        return Paths.get(uploadDir, serverName + "." + OUTPUT_FORMAT);
     }
 
     @Override
