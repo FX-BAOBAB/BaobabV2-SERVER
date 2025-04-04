@@ -40,7 +40,7 @@ public class ChatRoomReaderService implements ChatRoomReaderUseCase {
                 .chatRoomId(chatRoomDocument.getId())
                 .title(chatRoomDocument.getTitle())
                 .articleId(chatRoomDocument.getArticleId())
-                .thumbnailId(chatRoomDocument.getThumbnailId())
+                .thumbnailUrl(chatRoomDocument.getThumbnailUrl())
                 .lastChatAt(lastChatAtMap.get(chatRoomDocument.getId()))
                 .build())
             .toList();
