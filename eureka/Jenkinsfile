@@ -84,7 +84,7 @@ pipeline {
                     sh """
                     docker pull ${IMAGE_NAME}:${MODULE}-latest
                     doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
+                    docker run -d --network service_network --env-file $WORKSPACE/.env -e TZ=Asia/Seoul --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                     """
                 }
             }

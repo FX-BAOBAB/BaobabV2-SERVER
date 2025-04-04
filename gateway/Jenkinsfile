@@ -70,7 +70,7 @@ pipeline {
                     def port = sh(script: "doppler secrets get ${PORT} --plain", returnStdout: true).trim()
                     sh """
                     doppler secrets download --config dev --no-cache --no-file --format docker > $WORKSPACE/.env
-                    docker run -d --network service_network --env-file $WORKSPACE/.env --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
+                    docker run -d --network service_network --env-file $WORKSPACE/.env -e TZ=Asia/Seoul --name ${MODULE} -p ${port}:${port} ${IMAGE_NAME}:${MODULE}-latest
                     """
                 }
             }
