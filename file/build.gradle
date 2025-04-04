@@ -43,6 +43,9 @@ dependencies {
     // Micrometer
     implementation 'io.micrometer:micrometer-core'
 
+    // thumbnailator
+    implementation 'net.coobird:thumbnailator:0.4.20'
+
     implementation project(":global")
 
 }

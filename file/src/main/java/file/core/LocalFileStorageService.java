@@ -16,7 +16,7 @@ public class LocalFileStorageService {
     private final FileDirStoragePort filedirStoragePort;
 
     public Path uploadImage(MultipartFile file) {
-        return filedirStoragePort.store(file);
+        return filedirStoragePort.resizeAndStore(file);
     }
 
     public void deleteImage(Path filePath) {

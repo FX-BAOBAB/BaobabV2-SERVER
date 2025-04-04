@@ -6,6 +6,7 @@ import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
 import global.annotation.output.PersistenceAdapter;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,24 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
         try {
             Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR, e);
+        } finally {
+            logImageUploadStatus(filePath);
+        }
+
+        return filePath;
+    }
+
+    @Override
+    public Path resizeAndStore(MultipartFile imageFile) {
+        createDirectory(uploadDir);
+        Path filePath = createFilePath(imageFile);
+
+        try {
+            Thumbnails.of(imageFile.getInputStream())
+                    .size(300, 300)
+                    .toFile(new File(filePath.toString()));
         } catch (Exception e) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR, e);
         } finally {
