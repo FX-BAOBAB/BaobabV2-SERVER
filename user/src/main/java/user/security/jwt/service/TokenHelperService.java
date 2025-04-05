@@ -51,7 +51,7 @@ public class TokenHelperService {
             throw new TokenException(TokenErrorCode.INVALID_TOKEN);
         }
 
-        return issueRefreshToken(tokenInfoDto.getUserId(), tokenInfoDto.getUserRole());
+        return issueAccessToken(tokenInfoDto.getUserId(), tokenInfoDto.getUserRole());
     }
 
     public TokenInfoDto validationToken(String token) {
