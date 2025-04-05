@@ -40,8 +40,16 @@ public class MessageService implements SendMessageUseCase {
     }
 
     @Override
-    public void send(MulticastMessageCommand command) throws FirebaseMessagingException {
-
+    public void send(MulticastMessageCommand command) {
+        List<String> findTokens = tokenClient.getFcmTokens(command.getUserIds());
+        try {
+            for (String token : findTokens) {
+                Message message = createMessage(command.getTitle(), command.getBody(), token);
+                sendMessage(message);
+            }
+        } catch (FirebaseMessagingException e) {
+            throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE);
+        }
     }
 
     @Async
