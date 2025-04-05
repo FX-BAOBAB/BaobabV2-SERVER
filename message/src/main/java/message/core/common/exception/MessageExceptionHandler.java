@@ -21,5 +21,11 @@ public class MessageExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Api.ERROR(MessageErrorCode.FIREBASE_INITIALIZATION_FAILED));
     }
-    
+
+    @ExceptionHandler(value = FailedToSendMessageException.class)
+    public ResponseEntity<Api<Object>> failedToSendMessageException(FailedToSendMessageException e) {
+        log.error("", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Api.ERROR(MessageErrorCode.FAILED_TO_SEND_MESSAGE));
+    }
 }
