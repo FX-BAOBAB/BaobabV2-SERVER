@@ -23,13 +23,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FcmTokenService implements SaveFcmTokenUseCase{
+public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCase {
 
     private final FcmTokenPersistencePort fcmTokenPersistencePort;
+
+    private final SubscriptionPort subscriptionPort;
 
     @Override
     public boolean saveFcmToken(FcmTokenSaveCommand command) {
         return fcmTokenPersistencePort.saveFcmToken(FcmTokenSaveForm.of(command));
     }
 
+    @Override
+    public SubscriptionResponse subscribeToTopic(TopicSubscriptionCommand command) {
+        try {
+            boolean isSuccess = subscriptionPort.subscribeToTopic(List.of(command.getToken()),
+                command.getTopic());
+            return SubscriptionResponse.of(command.getTopic(), isSuccess);
+        } catch (FirebaseMessagingException e) {
+            log.error("Failed to subscribe to {}: {},", command.getTopic(), e.getMessage());
+            throw new FailedToSubscribeTopicException(FcmTokenErrorCode.FAILED_TO_SUBSCRIBE_TOPIC);
+        }
+    }
 }

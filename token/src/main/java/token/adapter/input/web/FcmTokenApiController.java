@@ -26,6 +26,8 @@ public class FcmTokenApiController {
 
     private final SaveFcmTokenUseCase saveFcmTokenUseCase;
 
+    private final SubscribeTopicUseCase subscribeTopicUseCase;
+
     @PostMapping("/save")
     public Api<Boolean> save(
         @RequestBody FcmTokenSavingRequest request,
@@ -33,6 +35,14 @@ public class FcmTokenApiController {
 
         FcmTokenSaveCommand command = FcmTokenSaveCommand.of(request, authUser.getUserId());
         return Api.OK(saveFcmTokenUseCase.saveFcmToken(command));
+    }
+
+    @PostMapping("/subscribe")
+    public Api<SubscriptionResponse> subscribe(
+        @RequestBody TopicSubscriptionRequest request) {
+
+        TopicSubscriptionCommand command = TopicSubscriptionCommand.of(request);
+        return Api.OK(subscribeTopicUseCase.subscribeToTopic(command));
     }
 
 }
