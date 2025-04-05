@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import user.core.common.exception.token.UserNotFoundException;
+import user.core.common.exception.user.UserNotFoundException;
 import user.core.common.exception.user.PasswordMismatchException;
 import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;

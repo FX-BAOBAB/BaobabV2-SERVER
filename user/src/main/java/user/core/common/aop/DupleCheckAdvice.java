@@ -17,7 +17,7 @@ import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;
-import user.core.common.exception.token.UserNotFoundException;
+import user.core.common.exception.user.UserNotFoundException;
 import user.core.common.exception.user.EmailExistsException;
 import user.core.common.exception.user.NickNameExistsException;
 import user.core.common.exception.user.UserExistsException;

@@ -26,4 +26,9 @@ public class ChatRoomPersistenceAdapter implements ChatRoomPersistencePort {
         return chatRoomMongoRepository.findByArticleId(articleId);
     }
 
+    @Override
+    public List<ChatRoomDocument> getChatRoomList(List<String> chatRoomIdList) {
+        return chatRoomMongoRepository.findByIdIn(chatRoomIdList);
+    }
+
 }

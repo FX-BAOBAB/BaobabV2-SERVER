@@ -17,10 +17,10 @@ public abstract class AbstractChatRoomGenerator {
 
     public final ChatRoom createChatRoom(ChatRoomReaderCommand command) {
 
-        ArticleFeignInfo articleBy = articleClient.getArticleBy(command.getArticleId());
+        ArticleFeignInfo articleBy = articleClient.getArticleSimpleInfo(command.getArticleId());
 
-        String sellerNickName = userClient.getNickname(command.getBuyerId());
-        String articleOwnerNickName = userClient.getNickname(articleBy.getUserId());
+        String sellerNickName = userClient.getUserSimpleInfo(command.getBuyerId()).getNickname();
+        String articleOwnerNickName = userClient.getUserSimpleInfo(articleBy.getUserId()).getNickname();
 
         // 채팅방 이름 설정
         String chatRoomTitle = buildChatRoomTitle(List.of(sellerNickName, articleOwnerNickName));
@@ -28,7 +28,7 @@ public abstract class AbstractChatRoomGenerator {
         return ChatRoom.builder()
             .title(chatRoomTitle)
             .articleId(command.getArticleId())
-            .thumbnailId(articleBy.getArticleImage().getImageId())
+            .thumbnailUrl(articleBy.getArticleImage().getImageUrl())
             .build();
     }
 

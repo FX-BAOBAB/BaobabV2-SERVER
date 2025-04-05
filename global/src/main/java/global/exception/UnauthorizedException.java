@@ -1,30 +1,32 @@
-package user.core.common.exception.token;
+package global.exception;
 
 import global.errorcode.ErrorCodeIfs;
+import lombok.Getter;
 
-public class UserNotFoundException extends RuntimeException{
+@Getter
+public class UnauthorizedException extends RuntimeException {
 
     private final ErrorCodeIfs errorCodeIfs;
     private final String description;
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs) {
+    public UnauthorizedException(ErrorCodeIfs errorCodeIfs) {
         super(errorCodeIfs.getDescription());
         this.errorCodeIfs = errorCodeIfs;
         this.description = errorCodeIfs.getDescription();
     }
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs, String errorDescription) {
+    public UnauthorizedException(ErrorCodeIfs errorCodeIfs, String errorDescription) {
         this.errorCodeIfs = errorCodeIfs;
         this.description = errorDescription;
     }
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs, Throwable throwable) {
+    public UnauthorizedException(ErrorCodeIfs errorCodeIfs, Throwable throwable) {
         super(throwable);
         this.errorCodeIfs = errorCodeIfs;
         this.description = errorCodeIfs.getDescription();
     }
 
-    public UserNotFoundException(ErrorCodeIfs errorCodeIfs, Throwable throwable,
+    public UnauthorizedException(ErrorCodeIfs errorCodeIfs, Throwable throwable,
         String errorDescription) {
         super(throwable);
         this.errorCodeIfs = errorCodeIfs;

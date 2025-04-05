@@ -1,5 +1,8 @@
 package user.adapter.input.web;
 
+import file.application.port.input.DefaultImageUseCase;
+import file.domain.ImageKind;
+import file.domain.ImageMetaData;
 import global.annotation.AuthenticatedUser;
 import global.annotation.input.RestAdapter;
 import global.api.Api;
@@ -7,6 +10,7 @@ import global.resolver.AuthUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -15,7 +19,6 @@ import user.adapter.input.web.request.UserUnRegisterRequest;
 import user.adapter.input.web.request.UserUpdateRequest;
 import user.adapter.input.web.response.UserInfoResponse;
 import user.application.port.input.UserReaderUseCase;
-import user.application.port.input.UserRegisterUseCase;
 import user.application.port.input.UserUnRegisterUseCase;
 import user.application.port.input.UserUpdateUseCase;
 import user.core.common.annotation.DupleCheck;
@@ -31,20 +34,18 @@ public class UserApiController {
     private final UserUpdateUseCase userUpdateUseCase;
     private final UserUnRegisterUseCase userUnRegisterUseCase;
     private final UserReaderUseCase userReaderUseCase;
-    private final UserRegisterUseCase userRegisterUseCase;
+    private final DefaultImageUseCase defaultImageUseCase;
 
     @PostMapping("/update")
     @DupleCheck
     @PasswordCheck
     public Api<Boolean> update(
-        @RequestPart("userUpdateRequest") @Valid Api<UserUpdateRequest> userUpdateRequest,
-        @RequestPart("profileImage") MultipartFile profileImage,
+        @ModelAttribute @Valid UserUpdateRequest userUpdateRequest,
+        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
         @AuthenticatedUser AuthUser authUser
     ) {
-        UserUpdateCommand updateCommand = UserUpdateCommand.of(
-            userUpdateRequest.getBody(), profileImage, authUser.getUserId());
-
-        boolean isUpdated = userUpdateUseCase.updateUserInfo(updateCommand);
+        boolean isUpdated = userUpdateUseCase.updateUserInfo(UserUpdateCommand.of(
+            userUpdateRequest, profileImage, authUser.getUserId()));
         return Api.OK(isUpdated);
     }
 
@@ -70,14 +71,20 @@ public class UserApiController {
         return Api.OK(userInfoResponse);
     }
 
-    @PostMapping("/image")
-    public Api<Boolean> registerProfileImage(
-        @RequestPart("profileImage") MultipartFile profileImage,
+    @PostMapping("/default-image")
+    public Api<ImageMetaData> saveUserDefaultImage(
+        @AuthenticatedUser AuthUser authUser,
+        @RequestPart("defaultImage") MultipartFile defaultImage
+    ) {
+        return Api.OK(defaultImageUseCase.saveDefaultImage(ImageKind.USER_DEFAULT,
+            authUser.getUserId(), defaultImage));
+    }
+
+    @GetMapping("/default-image")
+    public Api<ImageMetaData> getUserDefaultImage(
         @AuthenticatedUser AuthUser authUser
     ) {
-        Boolean isRegisteredImage = userRegisterUseCase.registerProfileImage(
-            authUser.getUserId(), profileImage);
-        return Api.OK(isRegisteredImage);
+        return Api.OK(defaultImageUseCase.getDefaultImage(ImageKind.USER_DEFAULT));
     }
 
 }

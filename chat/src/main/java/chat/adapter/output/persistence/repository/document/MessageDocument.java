@@ -25,7 +25,7 @@ public class MessageDocument {
     private MessageType messageType;
 
     @Builder.Default
-    private LocalDateTime sendAt = LocalDateTime.now();
+    private LocalDateTime sentAt = LocalDateTime.now();
 
     @Builder.Default
     private Boolean isRead = false;

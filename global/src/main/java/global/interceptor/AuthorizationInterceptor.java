@@ -1,6 +1,7 @@
 package global.interceptor;
 
 import global.errorcode.ErrorCode;
+import global.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -31,11 +32,13 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         // Gateway 에서 전달한 Header 추출
         String userId = request.getHeader(X_USER_ID);
 
-        if (userId != null) {
-            RequestAttributes requestContext = Objects.requireNonNull(
-                RequestContextHolder.getRequestAttributes());
-            requestContext.setAttribute(X_USER_ID, userId, RequestAttributes.SCOPE_REQUEST);
+        if (userId == null) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
+
+        RequestAttributes requestContext = Objects.requireNonNull(
+            RequestContextHolder.getRequestAttributes());
+        requestContext.setAttribute(X_USER_ID, userId, RequestAttributes.SCOPE_REQUEST);
 
         return true;
     }

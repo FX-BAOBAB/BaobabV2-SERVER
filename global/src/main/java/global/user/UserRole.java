@@ -1,4 +1,4 @@
-package user.adapter.output.persistence.enums;
+package global.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

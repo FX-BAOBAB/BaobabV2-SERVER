@@ -5,10 +5,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "baobab-article")
+@FeignClient(name = "baobab-article", url = "${feign.article-service.url}")
 public interface ArticleClient {
 
-    @GetMapping("/articleId")
-    ArticleFeignInfo getArticleBy(@RequestParam String articleId);
+    @GetMapping("/simple-info")
+    ArticleFeignInfo getArticleSimpleInfo(@RequestParam String articleId);
 
 }

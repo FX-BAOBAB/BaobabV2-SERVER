@@ -5,6 +5,11 @@ spring:
   application:
     name: baobab-files
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   kafka:
     consumer:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_URL}

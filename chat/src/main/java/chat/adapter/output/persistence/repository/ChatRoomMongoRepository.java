@@ -8,4 +8,6 @@ public interface ChatRoomMongoRepository extends MongoRepository<ChatRoomDocumen
 
     List<ChatRoomDocument> findByArticleId(String articleId);
 
+    List<ChatRoomDocument> findByIdIn(List<String> chatRoomIdList);
+
 }

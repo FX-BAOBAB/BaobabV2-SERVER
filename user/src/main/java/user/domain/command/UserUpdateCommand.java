@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 import user.adapter.input.web.request.UserUpdateRequest;
-import user.adapter.output.persistence.enums.CarrierType;
 import user.domain.dto.UserAddress;
 import user.domain.dto.UserPhoneInfo;
 
@@ -43,7 +42,6 @@ public class UserUpdateCommand {
                 .post(userUpdateRequest.getPost())
                 .build())
             .profileImage(profileImage)
-            .deleteImageId(userUpdateRequest.getDeleteImageId())
             .build();
     }
 

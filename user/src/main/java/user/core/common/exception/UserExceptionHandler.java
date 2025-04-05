@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import user.core.common.error.UserErrorCode;
-import user.core.common.exception.token.UserNotFoundException;
+import user.core.common.exception.user.UserNotFoundException;
 import user.core.common.exception.user.EmailExistsException;
 import user.core.common.exception.user.NickNameExistsException;
 import user.core.common.exception.user.PasswordMismatchException;

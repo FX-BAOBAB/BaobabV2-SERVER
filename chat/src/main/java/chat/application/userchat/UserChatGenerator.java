@@ -14,7 +14,7 @@ public class UserChatGenerator {
 
     public List<UserChat> createUserChat(String chatRoomId, ChatRoomReaderCommand command) {
 
-        String sellerId = articleClient.getArticleBy(command.getArticleId()).getUserId();
+        String sellerId = articleClient.getArticleSimpleInfo(command.getArticleId()).getUserId();
 
         UserChat sellerChat = UserChat.builder()
             .userId(sellerId)

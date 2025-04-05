@@ -13,4 +13,6 @@ public interface UserChatMongoRepository extends MongoRepository<UserChatDocumen
 
     List<UserChatDocument> findByChatRoomIdAndUserIdNot(String chatRoomId, String userId);
 
+    List<UserChatDocument> findByChatRoomIdAndUserIdIn(String chatRoomId, List<String> userIdList);
+
 }

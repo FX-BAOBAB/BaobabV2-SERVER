@@ -1,5 +1,5 @@
 server:
-  port: 0 # 랜덤 포트를 사용하기 위함
+  port: ${CHAT_PORT}
 
   servlet:
     session:
@@ -46,7 +46,8 @@ spring:
 
 eureka:
   instance:
-    prefer-ip-address: true
+    prefer-ip-address: false
+    hostname: ${USER_SERVER_HOST}
     instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
   client:
     register-with-eureka: true
@@ -78,3 +79,7 @@ url:
 
 cipher:
   key: ${CIPHER_KEY}
+
+feign:
+  article-service:
+    url: ${FEIGN_ARTICLE_SERVICE_URL}

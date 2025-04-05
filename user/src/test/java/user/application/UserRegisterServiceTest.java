@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import user.adapter.output.persistence.enums.CarrierType;
 import user.adapter.output.persistence.enums.GenderType;
-import user.adapter.output.persistence.enums.UserRole;
+import global.user.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.command.UserRegisterCommand;
 import user.domain.dto.UserAccount;
