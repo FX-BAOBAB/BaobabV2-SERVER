@@ -29,6 +29,8 @@ public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCa
 
     private final SubscriptionPort subscriptionPort;
 
+    private static final int TOKEN_EXPIRATION_DAYS = 270;
+
     @Override
     public boolean saveFcmToken(FcmTokenSaveCommand command) {
         return fcmTokenPersistencePort.saveFcmToken(FcmTokenSaveForm.of(command));
@@ -55,4 +57,12 @@ public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCa
     public List<String> getFcmTokens(List<String> userIds) {
         return fcmTokenPersistencePort.findByUserIds(userIds);
     }
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *")
+    public void deleteExpiredTokens() {
+        LocalDate threshold = LocalDate.now().minusDays(TOKEN_EXPIRATION_DAYS);
+        fcmTokenPersistencePort.deleteTokensUpTo(threshold);
+    }
+
 }

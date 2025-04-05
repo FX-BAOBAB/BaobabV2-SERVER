@@ -23,7 +23,7 @@ public class FcmTokenPersistenceAdapter implements FcmTokenPersistencePort {
 
     @Override
     public void deleteTokensUpTo(LocalDate threshold) {
-
+        fcmTokenMongoRepository.deleteBySavedAtLessThanEqual(threshold);
     }
 
     @Override
