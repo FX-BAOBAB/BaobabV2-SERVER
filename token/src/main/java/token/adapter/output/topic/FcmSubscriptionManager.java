@@ -1,4 +1,4 @@
-package token.adapter.output.message;
+package token.adapter.output.topic;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
