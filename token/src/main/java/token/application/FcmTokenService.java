@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCase {
+public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCase, GetFcmTokenUseCase {
 
     private final FcmTokenPersistencePort fcmTokenPersistencePort;
 
@@ -44,5 +44,15 @@ public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCa
             log.error("Failed to subscribe to {}: {},", command.getTopic(), e.getMessage());
             throw new FailedToSubscribeTopicException(FcmTokenErrorCode.FAILED_TO_SUBSCRIBE_TOPIC);
         }
+    }
+
+    @Override
+    public String getFcmToken(String userId) {
+        return fcmTokenPersistencePort.findByUserId(userId);
+    }
+
+    @Override
+    public List<String> getFcmTokens(List<String> userIds) {
+        return fcmTokenPersistencePort.findByUserIds(userIds);
     }
 }

@@ -28,6 +28,8 @@ public class FcmTokenApiController {
 
     private final SubscribeTopicUseCase subscribeTopicUseCase;
 
+    private final GetFcmTokenUseCase getFcmTokenUseCase;
+
     @PostMapping("/save")
     public Api<Boolean> save(
         @RequestBody FcmTokenSavingRequest request,
@@ -43,6 +45,17 @@ public class FcmTokenApiController {
 
         TopicSubscriptionCommand command = TopicSubscriptionCommand.of(request);
         return Api.OK(subscribeTopicUseCase.subscribeToTopic(command));
+    }
+
+    // OpenFeign 사용 API
+    @GetMapping("/userId")
+    public String getFcmToken(String userId) {
+        return getFcmTokenUseCase.getFcmToken(userId);
+    }
+
+    @PostMapping("/fcm-tokens")
+    public List<String> getFcmTokens(@RequestBody List<String> userIds) {
+        return getFcmTokenUseCase.getFcmTokens(userIds);
     }
 
 }
