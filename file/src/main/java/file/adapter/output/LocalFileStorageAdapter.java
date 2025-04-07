@@ -48,12 +48,21 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
         createDirectory(uploadDir);
         Path filePath = createFilePath(imageFile);
 
+        // TODO: usdz 확장자 불필요 시 코드 수정 필요
+        // 파일이 usdz 확장자일 시 jpg 포맷 설정 제외
         try {
-            Thumbnails.of(imageFile.getInputStream())
-                    .size(600, 600)
-                    .outputFormat(OUTPUT_FORMAT)
-                    .outputQuality(0.8)
-                    .toFile(new File(filePath.toString()));
+            if (FileUtils.getExtension(filePath.getFileName().toString()).equals(".usdz")) {
+                Thumbnails.of(imageFile.getInputStream())
+                        .size(600, 600)
+                        .outputFormat(OUTPUT_FORMAT)
+                        .outputQuality(0.8)
+                        .toFile(new File(filePath.toString()));
+            } else {
+                Thumbnails.of(imageFile.getInputStream())
+                        .size(600, 600)
+                        .outputQuality(0.8)
+                        .toFile(new File(filePath.toString()));
+            }
         } catch (Exception e) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_UPLOAD_ERROR, e);
         } finally {
@@ -80,10 +89,16 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
     private Path createFilePath(MultipartFile file) {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-//        String extension = FileUtils.getExtension(fileName);
+        // TODO: usdz 확장자 불필요 시 코드 수정 필요
+        String extension = FileUtils.getExtension(fileName);
+
+        // usdz 확장자 압축 포맷 변경 제외
+        if (!extension.equals(".usdz"))
+            extension = "." + OUTPUT_FORMAT;
+
         String serverName = UUID.randomUUID().toString();
 
-        return Paths.get(uploadDir, serverName + "." + OUTPUT_FORMAT);
+        return Paths.get(uploadDir, serverName + "." + extension);
     }
 
     @Override
