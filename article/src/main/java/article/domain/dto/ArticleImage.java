@@ -1,5 +1,6 @@
 package article.domain.dto;
 
+import file.domain.ImageKind;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,10 +16,13 @@ public class ArticleImage {
 
     private String imageUrl;
 
-    public static ArticleImage of(String imageId, String imageUrl) {
+    private ImageKind imageKind;
+
+    public static ArticleImage of(String imageId, String imageUrl, ImageKind imageKind) {
         return ArticleImage.builder()
             .imageId(imageId)
             .imageUrl(imageUrl)
+            .imageKind(imageKind)
             .build();
     }
 

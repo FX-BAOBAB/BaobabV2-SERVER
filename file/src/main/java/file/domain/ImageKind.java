@@ -9,7 +9,8 @@ public enum ImageKind {
 
     ARTICLE("article"),
     USER("profile"),
-    USER_DEFAULT("default user image")
+    USER_DEFAULT("default user image"),
+    AR("ar image")
     ;
 
     private final String description;
