@@ -30,6 +30,10 @@ public class MessageService implements SendMessageUseCase {
 
     private final TokenClient tokenClient;
 
+    /**
+     * Sends a message to a single user using the provided command.
+     * @param command the message command containing user ID, title, and body
+     */
     @Override
     public void send(MessageCommand command) {
         String findToken = tokenClient.getFcmToken(command.getUserId());
@@ -40,6 +44,10 @@ public class MessageService implements SendMessageUseCase {
         }
     }
 
+    /**
+     * Sends a multicast message to multiple users using the provided command.
+     * @param command the multicast message command containing user IDs, title, and body
+     */
     @Override
     public void send(MulticastMessageCommand command) {
         List<String> findTokens = tokenClient.getFcmTokens(command.getUserIds());
@@ -84,6 +92,7 @@ public class MessageService implements SendMessageUseCase {
             .build();
     }
 
+    // iOS 설정
     private ApnsConfig buildApnsPayload() {
         return ApnsConfig.builder()
             .putHeader("apns-priority", "10")  // APNs 우선순위를 10으로 설정 (최고 우선순위)
@@ -92,6 +101,7 @@ public class MessageService implements SendMessageUseCase {
             .build();
     }
 
+    // Web 설정
     private WebpushConfig buildWebPushPayload() {
         return WebpushConfig.builder()
             .putHeader("Urgency", "high") // 알림 우선순위 설정
