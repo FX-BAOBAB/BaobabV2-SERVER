@@ -2,7 +2,6 @@ package message.application.port;
 
 import com.google.firebase.messaging.ApnsConfig;
 import com.google.firebase.messaging.Aps;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.WebpushConfig;
@@ -17,7 +16,6 @@ import message.application.port.output.SendMessagePort;
 import message.core.common.error.MessageErrorCode;
 import message.core.common.exception.message.FailedToSendMessageException;
 import message.domain.command.MessageCommand;
-import message.domain.command.MulticastMessageCommand;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -31,64 +29,48 @@ public class MessageService implements SendMessageUseCase {
     private final TokenClient tokenClient;
 
     /**
-     * Sends a message to a single user using the provided command.
-     * @param command the message command containing user ID, title, and body
+     * Sends messages using provided command.
+     * @param command the message command containing user IDs, title, and body
      */
     @Override
     public void send(MessageCommand command) {
-        String findToken = tokenClient.getFcmToken(command.getUserId());
-        try {
-            sendMessage(createMessage(command.getTitle(), command.getBody(), findToken));
-        } catch (FirebaseMessagingException e) {
-            throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE);
-        }
-    }
+        List<String> fcmTokens = tokenClient.getFcmTokens(command.getUserIds());
 
-    /**
-     * Sends a multicast message to multiple users using the provided command.
-     * @param command the multicast message command containing user IDs, title, and body
-     */
-    @Override
-    public void send(MulticastMessageCommand command) {
-        List<String> findTokens = tokenClient.getFcmTokens(command.getUserIds());
-        try {
-            for (String token : findTokens) {
-                Message message = createMessage(command.getTitle(), command.getBody(), token);
-                sendMessage(message);
-            }
-        } catch (FirebaseMessagingException e) {
-            throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE);
+        if (fcmTokens != null && !fcmTokens.isEmpty()) {
+            createMessages(command, fcmTokens).forEach(this::sendMessage);
         }
     }
 
     @Async
-    void sendMessage(Message message)
-        throws FirebaseMessagingException {
+    void sendMessage(Message message) {
         try {
             sendMessagePort.send(message);
         } catch (ExecutionException e) {
             throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE,
                 e.getCause().getMessage());
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new FailedToSendMessageException(ErrorCode.ASYNC_ERROR, e.getMessage());
         }
     }
 
-    private Message createMessage(String title, String body, String token) {
-        Notification notification = createNotification(title, body);
-        return Message.builder()
-            .setNotification(notification)
-            .setToken(token)
-            .setWebpushConfig(buildWebPushPayload())
-            .setApnsConfig(buildApnsPayload())
-            .build();
+    private List<Message> createMessages(MessageCommand command, List<String> tokens) {
+        Notification notification = createNotification(command);
+        return tokens.stream()
+            .map(token -> Message.builder()
+                .setNotification(notification)
+                .setToken(token)
+                .setWebpushConfig(buildWebPushPayload())
+                .setApnsConfig(buildApnsPayload())
+                .build())
+            .toList();
     }
 
-    private Notification createNotification(String title, String body) {
+    private Notification createNotification(MessageCommand command) {
         return Notification.builder()
-            .setTitle(title)
-            .setBody(body)
+            .setTitle(command.getTitle())
+            .setBody(command.getBody())
             .build();
     }
 
