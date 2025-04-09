@@ -32,11 +32,14 @@ public class MessageDocument {
 
     private String chatRoomId;
 
+    private String userId;
+
     public static MessageDocument of(ChatMessageSaveForm chatMessageSaveForm) {
         return MessageDocument.builder()
             .message(chatMessageSaveForm.getMessage())
             .messageType(chatMessageSaveForm.getMessageType())
             .chatRoomId(chatMessageSaveForm.getChatRoomId())
+            .userId(chatMessageSaveForm.getUserId())
             .build();
     }
 
