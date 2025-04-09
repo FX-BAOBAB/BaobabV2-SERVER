@@ -59,7 +59,7 @@ public class ArticleApiController {
         return Api.OK(saveArticleUseCase.saveArticle(command));
     }
 
-    @GetMapping({"/list","/my-articles","/article/{articleId}"})
+    @GetMapping({"/list","/article/{articleId}", "/auth-list", "/auth-article/{articleId}"})
     public Api<List<ArticleInfoResponse>> getAllArticles(
         @PathVariable(required = false) String articleId,
         @ModelAttribute ArticleSearchCondition condition,
@@ -72,11 +72,19 @@ public class ArticleApiController {
             condition.setArticleId(articleId);
         }
 
-        if(authUser != null) {
-            condition.setUserId(authUser.getUserId());
-        }
+        String userId = authUser != null ? authUser.getUserId() : null;
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition), userId));
+    }
 
-        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition)));
+    @GetMapping("/my-articles")
+    public Api<List<ArticleInfoResponse>> getMyArticles(
+        @ModelAttribute ArticleSearchCondition condition,
+        @AuthenticatedUser AuthUser authUser,
+        Pageable pageable) {
+
+        condition.setPageable(pageable);
+        condition.setUserId(authUser.getUserId());
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition), authUser.getUserId()));
     }
 
     @PostMapping("/update")

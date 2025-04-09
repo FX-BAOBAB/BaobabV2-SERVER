@@ -17,7 +17,7 @@ public interface GetArticleUseCase {
      * @param articleSearchCommand Article Search Condition
      * @return ArticleInfoResponse List
      */
-    List<ArticleInfoResponse> getArticleList(ArticleSearchCommand articleSearchCommand);
+    List<ArticleInfoResponse> getArticleList(ArticleSearchCommand articleSearchCommand, String userId);
 
     ArticleFeignResponse getArticleBy(String articleId);
 

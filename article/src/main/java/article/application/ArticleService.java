@@ -47,11 +47,16 @@ public class ArticleService implements DefaultArticleUseCase {
     }
 
     @Override
-    public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand articleSearchCommand) {
-        List<Article> articles = articlePersistencePort.getArticleList(articleSearchCommand);
-        return articles.stream().map(article ->
-            ArticleInfoResponse.of(article, userClient.getUserSimpleInfo(article.getUserId()))
-        ).toList();
+    public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand command, String userId) {
+        List<Article> articles = articlePersistencePort.getArticleList(command);
+
+        return articles.stream()
+            .map(article -> {
+                boolean isMine = userId != null && userId.equals(article.getUserId());
+                return ArticleInfoResponse.of(article,
+                    userClient.getUserSimpleInfo(article.getUserId()), isMine);
+            })
+            .toList();
     }
 
     @Override
