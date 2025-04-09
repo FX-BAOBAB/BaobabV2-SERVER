@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.WebpushConfig;
+import global.errorcode.ErrorCode;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
@@ -53,15 +54,16 @@ public class MessageService implements SendMessageUseCase {
     }
 
     @Async
-    public void sendMessage(Message message)
+    void sendMessage(Message message)
         throws FirebaseMessagingException {
         try {
             sendMessagePort.send(message);
         } catch (ExecutionException e) {
-            throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE);
+            throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE,
+                e.getCause().getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE);
+            throw new FailedToSendMessageException(ErrorCode.ASYNC_ERROR, e.getMessage());
         }
     }
 
@@ -69,6 +71,7 @@ public class MessageService implements SendMessageUseCase {
         Notification notification = createNotification(title, body);
         return Message.builder()
             .setNotification(notification)
+            .setToken(token)
             .setWebpushConfig(buildWebPushPayload())
             .setApnsConfig(buildApnsPayload())
             .build();

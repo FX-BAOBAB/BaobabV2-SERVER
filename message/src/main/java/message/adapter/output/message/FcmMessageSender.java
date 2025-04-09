@@ -41,7 +41,7 @@ public class FcmMessageSender implements SendMessagePort {
                     retrySendWithBackoff(message);
                 }
                 throw new FailedToSendMessageException(MessageErrorCode.FAILED_TO_SEND_MESSAGE,
-                    e.getMessage());
+                    e.getCause().getMessage());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 log.error("Interrupted during message send: {}", e.getMessage());
@@ -84,7 +84,9 @@ public class FcmMessageSender implements SendMessagePort {
     }
 
     private boolean isRetryErrorCode(MessagingErrorCode errorCode) {
-        return errorCode == MessagingErrorCode.INTERNAL || errorCode == MessagingErrorCode.UNAVAILABLE;
+        log.info("Error code: {}", errorCode);
+        return errorCode == MessagingErrorCode.INTERNAL ||
+               errorCode == MessagingErrorCode.UNAVAILABLE;
     }
 
     private int calculateRetryDelay(int retryAttempt) {
