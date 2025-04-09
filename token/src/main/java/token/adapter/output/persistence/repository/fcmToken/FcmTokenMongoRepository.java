@@ -8,8 +8,6 @@ public interface FcmTokenMongoRepository extends MongoRepository<FcmToken, Strin
 
     void deleteBySavedAtLessThanEqual(LocalDate threshold);
 
-    FcmToken findByUserId(String userId);
-
     List<FcmToken> findByUserIdIn(List<String> userIds);
 
 }

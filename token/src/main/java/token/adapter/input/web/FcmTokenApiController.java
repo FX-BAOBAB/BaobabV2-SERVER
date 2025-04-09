@@ -49,11 +49,6 @@ public class FcmTokenApiController {
     }
 
     // OpenFeign 사용 API
-    @GetMapping("/{userId}")
-    public String getFcmToken(@PathVariable String userId) {
-        return getFcmTokenUseCase.getFcmToken(userId);
-    }
-
     @PostMapping("/fcm-tokens")
     public List<String> getFcmTokens(@RequestBody List<String> userIds) {
         return getFcmTokenUseCase.getFcmTokens(userIds);

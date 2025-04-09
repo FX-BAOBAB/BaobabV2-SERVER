@@ -49,11 +49,6 @@ public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCa
     }
 
     @Override
-    public String getFcmToken(String userId) {
-        return fcmTokenPersistencePort.findByUserId(userId);
-    }
-
-    @Override
     public List<String> getFcmTokens(List<String> userIds) {
         return fcmTokenPersistencePort.findByUserIds(userIds);
     }

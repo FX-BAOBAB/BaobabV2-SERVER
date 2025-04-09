@@ -27,11 +27,6 @@ public class FcmTokenPersistenceAdapter implements FcmTokenPersistencePort {
     }
 
     @Override
-    public String findByUserId(String userId) {
-        return fcmTokenMongoRepository.findByUserId(userId).getToken();
-    }
-
-    @Override
     public List<String> findByUserIds(List<String> userIds) {
         return fcmTokenMongoRepository.findByUserIdIn(userIds).stream()
             .map(FcmToken::getToken)
