@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import token.adapter.output.persistence.enums.DeviceType;
 import token.adapter.output.persistence.repository.fcmToken.FcmToken;
 import token.adapter.output.persistence.repository.fcmToken.FcmTokenMongoRepository;
 import token.application.port.output.FcmTokenPersistencePort;
@@ -37,8 +38,8 @@ public class FcmTokenPersistenceAdapter implements FcmTokenPersistencePort {
     }
 
     @Override
-    public void deleteTokensUpTo(LocalDate threshold) {
-        fcmTokenMongoRepository.deleteBySavedAtLessThanEqual(threshold);
+    public void deleteTokensUpTo(DeviceType deviceType, LocalDate threshold) {
+        fcmTokenMongoRepository.deleteByDeviceTypeAndSavedAtLessThanEqual(deviceType, threshold);
     }
 
 }

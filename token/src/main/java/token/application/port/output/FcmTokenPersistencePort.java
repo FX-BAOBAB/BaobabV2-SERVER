@@ -2,6 +2,7 @@ package token.application.port.output;
 
 import java.time.LocalDate;
 import java.util.List;
+import token.adapter.output.persistence.enums.DeviceType;
 import token.domain.dto.FcmTokenSaveForm;
 
 /**
@@ -35,8 +36,9 @@ public interface FcmTokenPersistencePort {
     /**
      * Delete FCM Tokens older than the specified threshold date
      *
+     * @param deviceType The type of device
      * @param threshold The date threshold for deletion
      */
-    void deleteTokensUpTo(LocalDate threshold);
+    void deleteTokensUpTo(DeviceType deviceType, LocalDate threshold);
 
 }
