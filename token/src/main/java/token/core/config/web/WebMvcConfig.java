@@ -15,9 +15,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthorizationInterceptor authorizationInterceptor;
 
-    private final List<String> WHITE_LIST = List.of(
-        "/save"
-    );
+    private final List<String> WHITE_LIST = List.of();
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

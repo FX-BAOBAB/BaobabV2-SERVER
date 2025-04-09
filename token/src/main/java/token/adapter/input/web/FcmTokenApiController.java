@@ -42,7 +42,8 @@ public class FcmTokenApiController {
 
     @PostMapping("/subscribe")
     public Api<SubscriptionResponse> subscribe(
-        @RequestBody TopicSubscriptionRequest request) {
+        @RequestBody TopicSubscriptionRequest request,
+        @AuthenticatedUser AuthUser authUser) {
 
         TopicSubscriptionCommand command = TopicSubscriptionCommand.of(request);
         return Api.OK(subscribeTopicUseCase.subscribeToTopic(command));
