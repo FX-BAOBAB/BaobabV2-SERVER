@@ -30,7 +30,7 @@ public interface FcmTokenPersistencePort {
      *
      * @param token The FCM Token to delete
      */
-    void deleteFcmToken(String token);
+    boolean deleteFcmToken(String token);
 
     /**
      * Delete FCM Tokens older than the specified threshold date

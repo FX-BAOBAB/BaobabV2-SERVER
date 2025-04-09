@@ -3,8 +3,8 @@ package token.adapter.output.persistence;
 import global.annotation.output.PersistenceAdapter;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 import token.adapter.output.persistence.repository.fcmToken.FcmToken;
 import token.adapter.output.persistence.repository.fcmToken.FcmTokenMongoRepository;
 import token.application.port.output.FcmTokenPersistencePort;
@@ -30,8 +30,10 @@ public class FcmTokenPersistenceAdapter implements FcmTokenPersistencePort {
     }
 
     @Override
-    public void deleteFcmToken(String token) {
+    public boolean deleteFcmToken(String token) {
         fcmTokenMongoRepository.deleteById(token);
+        Optional<FcmToken> article = fcmTokenMongoRepository.findById(token);
+        return article.isEmpty();
     }
 
     @Override

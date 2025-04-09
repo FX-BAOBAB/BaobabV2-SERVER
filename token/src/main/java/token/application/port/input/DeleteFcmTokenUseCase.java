@@ -9,7 +9,8 @@ public interface DeleteFcmTokenUseCase {
      * Delete FCM Token
      *
      * @param token FCM Token
+     * return true if the token was deleted successfully, false otherwise
      */
-    void deleteFcmToken(String token);
+    boolean deleteFcmToken(String token);
 
 }

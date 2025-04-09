@@ -30,6 +30,7 @@ public class FcmTokenService implements DefaultFcmTokenUseCase, SubscribeTopicUs
 
     private static final int TOKEN_EXPIRATION_DAYS = 270;
 
+    @Transactional
     @Override
     public boolean saveFcmToken(FcmTokenSaveCommand command) {
         return fcmTokenPersistencePort.saveFcmToken(FcmTokenSaveForm.of(command));
@@ -40,9 +41,10 @@ public class FcmTokenService implements DefaultFcmTokenUseCase, SubscribeTopicUs
         return fcmTokenPersistencePort.findByUserIds(userIds);
     }
 
+    @Transactional
     @Override
-    public void deleteFcmToken(String token) {
-        fcmTokenPersistencePort.deleteFcmToken(token);
+    public boolean deleteFcmToken(String token) {
+        return fcmTokenPersistencePort.deleteFcmToken(token);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class FcmTokenService implements DefaultFcmTokenUseCase, SubscribeTopicUs
                 command.getTopic());
             return SubscriptionResponse.of(command.getTopic(), isSuccess);
         } catch (FirebaseMessagingException e) {
-            log.error("Failed to subscribe to {}: {},", command.getTopic(), e.getMessage());
+            log.error("Failed to subscribe to {}: {}", command.getTopic(), e.getMessage());
             throw new FailedToSubscribeTopicException(FcmTokenErrorCode.FAILED_TO_SUBSCRIBE_TOPIC);
         }
     }
