@@ -18,17 +18,25 @@ public interface FcmTokenPersistencePort {
     boolean saveFcmToken(FcmTokenSaveForm fcmTokenSaveForm);
 
     /**
-     * Delete FCM Tokens older than the specified threshold date
-     *
-     * @param threshold The date threshold for deletion
-     */
-    void deleteTokensUpTo(LocalDate threshold);
-
-    /**
      * Find FCM Tokens by User IDs
      *
      * @param userIds The list of User IDs
      * @return list of FCM tokens linked to the users
      */
     List<String> findByUserIds(List<String> userIds);
+
+    /**
+     * Delete FCM Token
+     *
+     * @param token The FCM Token to delete
+     */
+    void deleteFcmToken(String token);
+
+    /**
+     * Delete FCM Tokens older than the specified threshold date
+     *
+     * @param threshold The date threshold for deletion
+     */
+    void deleteTokensUpTo(LocalDate threshold);
+
 }

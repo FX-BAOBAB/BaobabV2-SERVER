@@ -6,8 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import token.adapter.input.web.response.SubscriptionResponse;
-import token.application.port.input.GetFcmTokenUseCase;
-import token.application.port.input.SaveFcmTokenUseCase;
+import token.application.port.input.DefaultFcmTokenUseCase;
 import token.application.port.input.SubscribeTopicUseCase;
 import token.application.port.output.FcmTokenPersistencePort;
 import token.application.port.output.SubscriptionPort;
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCase, GetFcmTokenUseCase {
+public class FcmTokenService implements DefaultFcmTokenUseCase, SubscribeTopicUseCase {
 
     private final FcmTokenPersistencePort fcmTokenPersistencePort;
 
@@ -37,6 +36,16 @@ public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCa
     }
 
     @Override
+    public List<String> getFcmTokens(List<String> userIds) {
+        return fcmTokenPersistencePort.findByUserIds(userIds);
+    }
+
+    @Override
+    public void deleteFcmToken(String token) {
+        fcmTokenPersistencePort.deleteFcmToken(token);
+    }
+
+    @Override
     public SubscriptionResponse subscribeToTopic(TopicSubscriptionCommand command) {
         try {
             boolean isSuccess = subscriptionPort.subscribeToTopic(List.of(command.getToken()),
@@ -46,11 +55,6 @@ public class FcmTokenService implements SaveFcmTokenUseCase, SubscribeTopicUseCa
             log.error("Failed to subscribe to {}: {},", command.getTopic(), e.getMessage());
             throw new FailedToSubscribeTopicException(FcmTokenErrorCode.FAILED_TO_SUBSCRIBE_TOPIC);
         }
-    }
-
-    @Override
-    public List<String> getFcmTokens(List<String> userIds) {
-        return fcmTokenPersistencePort.findByUserIds(userIds);
     }
 
     @Transactional

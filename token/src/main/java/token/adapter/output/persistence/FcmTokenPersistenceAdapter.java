@@ -4,6 +4,7 @@ import global.annotation.output.PersistenceAdapter;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import token.adapter.output.persistence.repository.fcmToken.FcmToken;
 import token.adapter.output.persistence.repository.fcmToken.FcmTokenMongoRepository;
 import token.application.port.output.FcmTokenPersistencePort;
@@ -22,15 +23,20 @@ public class FcmTokenPersistenceAdapter implements FcmTokenPersistencePort {
     }
 
     @Override
-    public void deleteTokensUpTo(LocalDate threshold) {
-        fcmTokenMongoRepository.deleteBySavedAtLessThanEqual(threshold);
-    }
-
-    @Override
     public List<String> findByUserIds(List<String> userIds) {
         return fcmTokenMongoRepository.findByUserIdIn(userIds).stream()
             .map(FcmToken::getToken)
             .toList();
+    }
+
+    @Override
+    public void deleteFcmToken(String token) {
+        fcmTokenMongoRepository.deleteById(token);
+    }
+
+    @Override
+    public void deleteTokensUpTo(LocalDate threshold) {
+        fcmTokenMongoRepository.deleteBySavedAtLessThanEqual(threshold);
     }
 
 }
