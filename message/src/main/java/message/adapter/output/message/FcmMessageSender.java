@@ -98,7 +98,7 @@ public class FcmMessageSender implements SendMessagePort {
     }
 
     /**
-     * Calculates the delay for the next retry attempt using exponential backoff with jitter.
+     * Calculates the delay for the next retry using exponential backoff with jitter.
      * @param retryAttempt the current retry attempt number
      * @return the calculated delay in milliseconds
      */
