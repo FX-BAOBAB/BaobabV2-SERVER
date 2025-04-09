@@ -14,6 +14,7 @@ import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
 import article.domain.dto.ArticleImage;
 import config.EnableMongoTestServer;
+import file.domain.ImageKind;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -76,8 +77,8 @@ class ArticleServiceTest {
     void 게시글_수정() {
         articleMongoRepository.findAll().forEach(article -> {
 
-            ArticleImage imageA = ArticleImage.of("A-imageId", "A-imageUrl");
-            ArticleImage imageB = ArticleImage.of("B-imageId", "B-imageUrl");
+            ArticleImage imageA = ArticleImage.of("A-imageId", "A-imageUrl", ImageKind.ARTICLE);
+            ArticleImage imageB = ArticleImage.of("B-imageId", "B-imageUrl", ImageKind.ARTICLE);
             article.setImageList(List.of(imageA, imageB));
 
             articleMongoRepository.save(article);

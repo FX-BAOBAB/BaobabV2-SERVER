@@ -39,9 +39,13 @@ public class ImageMetaDataService implements ImageMetaDataUseCase {
     @Override
     public List<ImageMetaData> processImageMetaDataList(
         ImageKind imageKind, String userId, List<MultipartFile> imageList) {
-
         return imageList.stream()
-            .map(image -> processImageMetaData(imageKind, userId, image))
+            .map(image -> {
+                if (image.getOriginalFilename().endsWith(".usdz")) {
+                    return processImageMetaData(ImageKind.AR, userId, image);
+                }
+                return processImageMetaData(imageKind, userId, image);
+            })
             .toList();
     }
 

@@ -40,6 +40,12 @@ dependencies {
     // Aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    // Micrometer
+    implementation 'io.micrometer:micrometer-core'
+
+    // thumbnailator
+    implementation 'net.coobird:thumbnailator:0.4.20'
+
     implementation project(":global")
 
 }

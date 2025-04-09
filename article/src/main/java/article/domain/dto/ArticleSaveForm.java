@@ -43,7 +43,7 @@ public class ArticleSaveForm {
             .status(command.getStatus())
             .userId(command.getUserId())
             .imageList(imageList.stream().map(imageMetaData ->
-                    ArticleImage.of(imageMetaData.getId(), imageMetaData.getUrl()))
+                    ArticleImage.of(imageMetaData.getId(), imageMetaData.getUrl(), imageMetaData.getKind()))
                 .toList())
             .build();
     }
