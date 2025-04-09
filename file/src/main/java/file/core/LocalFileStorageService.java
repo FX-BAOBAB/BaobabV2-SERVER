@@ -1,6 +1,7 @@
 package file.core;
 
 import file.application.port.output.FileDirStoragePort;
+import file.core.common.annotation.TrackTime;
 import file.core.common.error.ImageErrorCode;
 import file.core.common.exception.image.ImageStorageException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ public class LocalFileStorageService {
 
     private final FileDirStoragePort filedirStoragePort;
 
+    @TrackTime
     public Path uploadImage(MultipartFile file) {
         return filedirStoragePort.resizeAndStore(file);
     }

@@ -15,12 +15,13 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+// aop 수동 활성을 위한 어노테이션
 @ConditionalOnProperty(name = "timing.enabled", havingValue = "true")
 public class ImageUploadMetricsAspect {
 
     private final MeterRegistry meterRegistry;
 
-    @Around("execution(* file.application.port.output.FileDirStoragePort.store(..))")
+    @Around("@annotation(file.core.common.annotation.TrackTime)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             long start = System.currentTimeMillis();

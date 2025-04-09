@@ -62,5 +62,6 @@ url:
 cipher:
   key: ${CIPHER_KEY}
 
+# aop 수동 활성을 위한 옵션
 timing:
   enabled: false
