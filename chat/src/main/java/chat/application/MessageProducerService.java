@@ -44,8 +44,6 @@ public class MessageProducerService implements MessageProducerUseCase {
         // receiverID List 조회
         List<String> receiverIdList = getReceiverIdList(savedMessage, command);
 
-        log.info("수신 대상 ID : {}", receiverIdList);
-
         UserSimpleInfo userSimpleInfo = userClient.getUserSimpleInfo(command.getUserId());
         kafkaProducerPort.send(TOPIC_NAME,
             ChatMessage.of(savedMessage, command.getUserId(), userSimpleInfo, receiverIdList));

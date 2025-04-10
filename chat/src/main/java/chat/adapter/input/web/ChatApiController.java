@@ -5,13 +5,14 @@ import chat.adapter.input.web.request.ChatMessageSearchCondition;
 import chat.adapter.input.web.response.ChatMessageResponse;
 import chat.adapter.input.web.response.ChatRoomEnterResponse;
 import chat.adapter.input.web.response.ChatRoomResponse;
-import chat.adapter.output.persistence.repository.document.MessageDocument;
 import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.ChatMessageReaderUseCase;
 import chat.application.port.input.ChatRoomEnterUseCase;
 import chat.application.port.input.ChatRoomReaderUseCase;
 import chat.application.port.input.MessageDispatchUseCase;
 import chat.application.port.input.MessageProducerUseCase;
+import chat.core.common.error.ChatErrorCode;
+import chat.core.common.exception.chatroom.ChatRoomNotFoundException;
 import chat.domain.ChatMessage;
 import chat.domain.command.ChatMessageCommand;
 import chat.domain.command.ChatMessageSearchCommand;
@@ -53,13 +54,21 @@ public class ChatApiController {
 
     private static final String CHAT_ROOM_ID_HEADER = "chatRoomIdHeader";
 
-    @GetMapping(value = "/chat-room/{articleId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> enterChatRoom(
+    @GetMapping(value = "/chat-room", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> enterChatRoomByParams(
         @AuthenticatedUser AuthUser authUser,
-        @PathVariable String articleId
+        @RequestParam(required = false) String articleId,
+        @RequestParam(required = false) String chatRoomId
     ) {
-        ChatRoomEnterResponse chatRoom = chatRoomEnterUseCase.enterChatRoom(
-            ChatRoomReaderCommand.of(articleId, authUser.getUserId()));
+        if ((articleId == null) == (chatRoomId == null)) // 둘 다 값이 존재하거나 없는 경우 예외
+            throw new ChatRoomNotFoundException(ChatErrorCode.CHAT_ROOM_NOT_FOUND);
+
+        ChatRoomEnterResponse chatRoom = (articleId != null)
+            ? chatRoomEnterUseCase.enterChatRoomByArticleId( // articleId 로 들어온 경우
+            ChatRoomReaderCommand.of(articleId, authUser.getUserId()))
+            : chatRoomEnterUseCase.enterChatRoomByChatRoomId( // chatRoomId 로 들어온 경우
+                authUser.getUserId(), chatRoomId);
+
         return ResponseEntity
             .ok()
             .header(CHAT_ROOM_ID_HEADER, chatRoom.getChatRoomId())
