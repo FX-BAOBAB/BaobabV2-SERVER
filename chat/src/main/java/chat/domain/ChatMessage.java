@@ -2,6 +2,7 @@ package chat.domain;
 
 import chat.adapter.output.persistence.enums.MessageType;
 import chat.adapter.output.persistence.repository.document.MessageDocument;
+import chat.domain.dto.UserSimpleInfo;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {
+
+    // message id
+    private String id;
 
     private String senderId;
 
@@ -29,8 +33,18 @@ public class ChatMessage {
 
     private String chatRoomId;
 
-    public static ChatMessage of(MessageDocument document, String userId, List<String> receiverIdList) {
+    private String nickname;
+
+    private String profileImageUrl;
+
+    public static ChatMessage of(
+        MessageDocument document,
+        String userId,
+        UserSimpleInfo userSimpleInfo,
+        List<String> receiverIdList
+    ) {
         return ChatMessage.builder()
+            .id(document.getId())
             .senderId(userId)
             .receiverIdList(receiverIdList)
             .message(document.getMessage())
@@ -38,6 +52,8 @@ public class ChatMessage {
             .sentAt(document.getSentAt())
             .isRead(document.getIsRead())
             .chatRoomId(document.getChatRoomId())
+            .nickname(userSimpleInfo.getNickname())
+            .profileImageUrl(userSimpleInfo.getProfileImageUrl())
             .build();
     }
 
