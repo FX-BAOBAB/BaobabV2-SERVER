@@ -98,7 +98,7 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
         String serverName = UUID.randomUUID().toString();
 
-        return Paths.get(uploadDir, serverName + "." + extension);
+        return Paths.get(uploadDir, serverName + extension);
     }
 
     @Override
