@@ -41,6 +41,10 @@ public class DupleCheckAdvice {
         var args = joinPoint.getArgs();
 
         for (Object arg : args) {
+            if (arg instanceof UserUpdateRequest) {
+                checkUpdateRequest(arg, joinPoint);
+            }
+
             if (arg instanceof Api) {
                 Api<?> apiRequest = (Api<?>) arg;
                 Object requestBody = apiRequest.getBody();
@@ -49,7 +53,6 @@ public class DupleCheckAdvice {
                 checkEmailRequest(requestBody);
                 checkNickNameRequest(requestBody);
                 checkUserRegisterRequest(requestBody);
-                checkUpdateRequest(requestBody, joinPoint);
             }
             // Api<?> 가 아닌 경우
         }
