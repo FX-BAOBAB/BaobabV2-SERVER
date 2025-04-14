@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'org.fx'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // Mongo
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    // Firebase admin
+    implementation 'com.google.firebase:firebase-admin:9.4.3'
+    implementation 'io.netty:netty-common:4.1.119.Final' // firebase admin 의존성 라이브러리 취약점 대응
+    implementation 'io.netty:netty-handler:4.1.119.Final' // firebase admin 의존성 라이브러리 취약점 대응
+
+    // OpenFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    implementation project(":global")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
