@@ -67,14 +67,13 @@ public class ChatApiController {
     }
 
     @PostMapping("/message")
-    public Api<Boolean> sendMessage(
+    public Api<ChatMessageResponse> sendMessage(
         @AuthenticatedUser AuthUser authUser,
         @Valid @RequestBody Api<ChatMessageRequest> request
     ) {
         log.info("메시지 전송 요청 : {}", request.getBody());
-        boolean isSent = messageProducerUseCase.produceMessage(
-            ChatMessageCommand.of(request.getBody(), authUser.getUserId()));
-        return Api.OK(isSent);
+        return Api.OK(messageProducerUseCase.produceMessage(
+            ChatMessageCommand.of(request.getBody(), authUser.getUserId())));
     }
 
     @PostMapping("/feign/message")
