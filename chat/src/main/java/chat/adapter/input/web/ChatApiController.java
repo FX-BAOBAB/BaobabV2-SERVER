@@ -87,7 +87,7 @@ public class ChatApiController {
     public Api<List<ChatMessageResponse>> getChatMessages(
         @AuthenticatedUser AuthUser authUser,
         @ModelAttribute @Valid ChatMessageSearchCondition condition,
-        @PageableDefault(sort = "sentAt", direction = Sort.Direction.ASC, size = 20) Pageable pageable
+        @PageableDefault(sort = "sentAt", direction = Sort.Direction.DESC, size = 20) Pageable pageable
     ) {
         return Api.OK(chatMessageReaderUseCase.getChatMessages(
             ChatMessageSearchCommand.of(authUser.getUserId(), condition, pageable)));
