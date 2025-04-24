@@ -28,14 +28,15 @@ public class ChatMessageReaderService implements ChatMessageReaderUseCase {
         chatRoomCheckService.existsChatRoomBy(List.of(command.getChatRoomId()), command.getUserId())
             .orElseThrow(() -> new ChatRoomNotFoundException(ChatErrorCode.CHAT_ROOM_NOT_FOUND));
 
-        UserSimpleInfo userSimpleInfo = userClient.getUserSimpleInfo(command.getUserId());
-
         // 조회 요청 userId 와 DB 에서 조회한 메시지 전송 userId 비교
         return chatMessagePersistencePort.getMessages(ChatMessageSearchForm.of(command)).stream()
             .map(messageDocument -> {
                 boolean isMine = command.getUserId().equals(messageDocument.getUserId());
+                UserSimpleInfo userSimpleInfo = userClient.getUserSimpleInfo(
+                    messageDocument.getUserId());
                 return ChatMessageResponse.of(messageDocument, userSimpleInfo, isMine);
             })
             .toList();
     }
+
 }
