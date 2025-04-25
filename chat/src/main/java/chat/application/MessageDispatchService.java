@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageDispatchService implements MessageDispatchUseCase {
@@ -39,6 +41,7 @@ public class MessageDispatchService implements MessageDispatchUseCase {
 
         if (!disconnectedUserIdList.isEmpty()) {
             // TODO FCM 전송
+            log.info("FCM 전송");
         }
 
     }

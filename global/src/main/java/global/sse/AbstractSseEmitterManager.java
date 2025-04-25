@@ -1,7 +1,9 @@
 package global.sse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 public abstract class AbstractSseEmitterManager {
 
     protected final SseConnectionStore<String, SseEmitter> sseConnectionStore;
@@ -17,10 +19,19 @@ public abstract class AbstractSseEmitterManager {
         SseEmitter sseEmitter = sseConnectionStore.saveEmitter(uniqueKey, new SseEmitter(timeout));
 
         sseEmitter.onCompletion(() -> {
+            log.info("onCompletion");
             this.sseConnectionStore.deleteEmitter(uniqueKey);
         });
 
-        sseEmitter.onTimeout(sseEmitter::complete);
+        sseEmitter.onTimeout(() -> {
+            log.info("onTimeout");
+            sseEmitter.complete();
+        });
+
+        sseEmitter.onError(throwable -> {
+                log.info("onError");
+                sseEmitter.complete();
+        });
 
         sendInitialMessage(sseEmitter);
 
