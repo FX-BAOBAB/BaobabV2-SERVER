@@ -1,5 +1,6 @@
 package chat.application;
 
+import chat.adapter.input.web.response.ChatMessageResponse;
 import chat.adapter.output.client.UserClient;
 import chat.adapter.output.persistence.repository.document.MessageDocument;
 import chat.application.port.input.MessageProducerUseCase;
@@ -34,7 +35,7 @@ public class MessageProducerService implements MessageProducerUseCase {
     private static final String TOPIC_NAME = "chatMessage";
 
     @Override
-    public boolean produceMessage(ChatMessageCommand command) {
+    public ChatMessageResponse produceMessage(ChatMessageCommand command) {
 
         String chatRoomId = validateChatRoom(command);
 
@@ -52,7 +53,7 @@ public class MessageProducerService implements MessageProducerUseCase {
 
         updateLastChatAt(chatRoomId, receiverIdList, command, savedMessage);
 
-        return true;
+        return ChatMessageResponse.of(savedMessage, userSimpleInfo, true);
     }
 
     private String validateChatRoom(ChatMessageCommand command) {
