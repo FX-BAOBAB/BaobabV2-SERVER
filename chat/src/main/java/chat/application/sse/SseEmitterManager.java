@@ -4,14 +4,16 @@ import global.sse.SseEventType;
 import global.sse.SseMessageManager;
 import global.sse.AbstractSseEmitterManager;
 import global.sse.SseConnectionStore;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 @Component
 public class SseEmitterManager extends AbstractSseEmitterManager {
 
     private final SseMessageManager sseMessageManager;
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 30L * 1000;
 
     public SseEmitterManager(SseConnectionStore<String, SseEmitter> sseConnectionStore,
         SseMessageManager sseMessageManager) {

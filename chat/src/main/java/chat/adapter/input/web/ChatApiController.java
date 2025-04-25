@@ -5,7 +5,6 @@ import chat.adapter.input.web.request.ChatMessageSearchCondition;
 import chat.adapter.input.web.response.ChatMessageResponse;
 import chat.adapter.input.web.response.ChatRoomEnterResponse;
 import chat.adapter.input.web.response.ChatRoomResponse;
-import chat.adapter.output.persistence.repository.document.MessageDocument;
 import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.ChatMessageReaderUseCase;
 import chat.application.port.input.ChatRoomEnterUseCase;
