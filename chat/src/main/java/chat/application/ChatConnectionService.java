@@ -27,7 +27,7 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     private final ServletWebServerApplicationContext webServerApplicationContext;
 
     private static final String PROTOCOL = "http://";
-    private static final Duration REDIS_TTL = Duration.ofHours(1);
+    private static final Duration REDIS_TTL = Duration.ofSeconds(30);
 
     @Override
     public SseEmitter connectChatRoom(String userId, String chatRoomId) {
@@ -40,7 +40,6 @@ public class ChatConnectionService implements ChatConnectionUseCase {
     @Override
     public void disconnectChatRoom(String userId, String chatRoomId) {
         String uniqueKey = ChatRedisKeyGenerator.getUniqueKey(userId, chatRoomId);
-        redisTemplate.delete(uniqueKey);
         sseConnectionStore.deleteEmitter(uniqueKey);
     }
 

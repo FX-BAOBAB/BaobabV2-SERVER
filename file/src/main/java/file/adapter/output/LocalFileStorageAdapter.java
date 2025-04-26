@@ -49,17 +49,14 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
         Path filePath = createFilePath(imageFile);
 
         // TODO: usdz 확장자 불필요 시 코드 수정 필요
-        // 파일이 usdz 확장자일 시 jpg 포맷 설정 제외
+        // 파일이 usdz 확장자일 시 리사이징 제외 (Thumbnails usdz 확장자 미지원)
         try {
             if (FileUtils.getExtension(filePath.getFileName().toString()).equals(".usdz")) {
-                Thumbnails.of(imageFile.getInputStream())
-                        .size(600, 600)
-                        .outputFormat(OUTPUT_FORMAT)
-                        .outputQuality(0.8)
-                        .toFile(new File(filePath.toString()));
+                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             } else {
                 Thumbnails.of(imageFile.getInputStream())
                         .size(600, 600)
+                        .outputFormat(OUTPUT_FORMAT)
                         .outputQuality(0.8)
                         .toFile(new File(filePath.toString()));
             }
@@ -98,7 +95,7 @@ public class LocalFileStorageAdapter implements FileDirStoragePort {
 
         String serverName = UUID.randomUUID().toString();
 
-        return Paths.get(uploadDir, serverName + "." + extension);
+        return Paths.get(uploadDir, serverName + extension);
     }
 
     @Override

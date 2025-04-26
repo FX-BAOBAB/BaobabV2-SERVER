@@ -1,9 +1,10 @@
 package chat.application.port.input;
 
+import chat.adapter.input.web.response.ChatMessageResponse;
 import chat.domain.command.ChatMessageCommand;
 
 public interface MessageProducerUseCase {
 
-    boolean produceMessage(ChatMessageCommand command);
+    ChatMessageResponse produceMessage(ChatMessageCommand command);
 
 }

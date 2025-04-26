@@ -38,7 +38,13 @@ public class ArticleInfoResponse {
 
     private String profileImageUrl;
 
-    public static ArticleInfoResponse of(Article article, UserSimpleInfo userSimpleInfo) {
+    private Boolean isMine;
+
+    public static ArticleInfoResponse of(
+        Article article,
+        UserSimpleInfo userSimpleInfo,
+        Boolean isMine
+    ) {
         return ArticleInfoResponse.builder()
             .id(article.getId())
             .title(article.getTitle())
@@ -50,6 +56,7 @@ public class ArticleInfoResponse {
             .nickname(userSimpleInfo.getNickname())
             .profileImageUrl(userSimpleInfo.getProfileImageUrl())
             .imageList(article.getImageList())
+            .isMine(isMine)
             .build();
     }
 
