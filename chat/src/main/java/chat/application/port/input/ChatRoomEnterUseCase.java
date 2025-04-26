@@ -5,6 +5,8 @@ import chat.domain.command.ChatRoomReaderCommand;
 
 public interface ChatRoomEnterUseCase {
 
-    ChatRoomEnterResponse enterChatRoom(ChatRoomReaderCommand command);
+    ChatRoomEnterResponse enterChatRoomByArticleId(ChatRoomReaderCommand command);
+
+    ChatRoomEnterResponse enterChatRoomByChatRoomId(String userId, String chatRoomId);
 
 }

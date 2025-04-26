@@ -11,6 +11,7 @@ import chat.application.userchat.UserChat;
 import chat.application.userchat.UserChatGenerator;
 import chat.core.common.error.ChatErrorCode;
 import chat.core.common.exception.chatroom.ChatRoomCreateFailedException;
+import chat.core.common.exception.chatroom.ChatRoomNotFoundException;
 import chat.domain.command.ChatRoomReaderCommand;
 import chat.domain.dto.ChatRoomSaveForm;
 import chat.domain.dto.UserChatSaveForm;
@@ -38,14 +39,17 @@ public class ChatRoomEnterService implements ChatRoomEnterUseCase {
     private final UserChatGenerator userChatGenerator;
 
     @Transactional
-    public ChatRoomEnterResponse enterChatRoom(ChatRoomReaderCommand command) {
+    @Override
+    public ChatRoomEnterResponse enterChatRoomByArticleId(ChatRoomReaderCommand command) {
 
         // 1. articleId 로 기준 채팅방 조회
-        List<String> chatRoomIdList = chatRoomPersistencePort.getChatRoomListBy(command.getArticleId())
+        List<String> chatRoomIdList = chatRoomPersistencePort.getChatRoomListBy(
+                command.getArticleId())
             .stream().map(ChatRoomDocument::getId).toList();
 
         // 2. 기존 채팅방이 존재하는지 확인
-        String chatRoomId = chatRoomCheckService.existsChatRoomBy(chatRoomIdList, command.getBuyerId())
+        String chatRoomId = chatRoomCheckService.existsChatRoomBy(chatRoomIdList,
+                command.getBuyerId())
             .orElseGet(() -> createNewChatRoom(command));
 
         SseEmitter sseEmitter = chatConnectionService.connectChatRoom(
@@ -54,9 +58,22 @@ public class ChatRoomEnterService implements ChatRoomEnterUseCase {
         return ChatRoomEnterResponse.of(chatRoomId, sseEmitter);
     }
 
+    @Transactional
+    @Override
+    public ChatRoomEnterResponse enterChatRoomByChatRoomId(String userId, String chatRoomId) {
+        String existsChatRoomId = chatRoomCheckService.existsChatRoomBy(chatRoomId, userId)
+            .orElseThrow(() -> new ChatRoomNotFoundException(ChatErrorCode.CHAT_ROOM_NOT_FOUND));
+
+        SseEmitter sseEmitter = chatConnectionService.connectChatRoom(
+            userId, chatRoomId);
+
+        return ChatRoomEnterResponse.of(existsChatRoomId, sseEmitter);
+    }
+
     private String createNewChatRoom(ChatRoomReaderCommand command) {
 
-        if(command.getBuyerId().equals(articleClient.getArticleSimpleInfo(command.getArticleId()).getUserId())) {
+        if (command.getBuyerId()
+            .equals(articleClient.getArticleSimpleInfo(command.getArticleId()).getUserId())) {
             throw new ChatRoomCreateFailedException(ChatErrorCode.CHAT_ROOM_CREATION_FAILED);
         }
 
