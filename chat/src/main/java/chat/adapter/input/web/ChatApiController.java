@@ -11,6 +11,7 @@ import chat.application.port.input.ChatRoomEnterUseCase;
 import chat.application.port.input.ChatRoomReaderUseCase;
 import chat.application.port.input.MessageDispatchUseCase;
 import chat.application.port.input.MessageProducerUseCase;
+import chat.application.sse.SseConnectionStoresImpl;
 import chat.core.common.error.ChatErrorCode;
 import chat.core.common.exception.chatroom.ChatRoomNotFoundException;
 import chat.domain.ChatMessage;
@@ -25,6 +26,7 @@ import global.resolver.AuthUser;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -118,6 +120,12 @@ public class ChatApiController {
     ) {
         return Api.OK(chatRoomReaderUseCase.getChatRooms(
             ChatRoomSearchCommand.of(authUser.getUserId(), lastChatAt, pageable)));
+    }
+
+    private final SseConnectionStoresImpl sseConnectionStores;
+    @GetMapping("/get-sse")
+    public Map<String, SseEmitter> getSse() {
+        return sseConnectionStores.getSse();
     }
 
 }

@@ -34,4 +34,8 @@ public class SseConnectionStoresImpl implements SseConnectionStore<String, SseEm
         redisTemplate.delete(uniqueKey);
     }
 
+    public Map<String, SseEmitter> getSse() {
+        return connectionStore;
+    }
+
 }
