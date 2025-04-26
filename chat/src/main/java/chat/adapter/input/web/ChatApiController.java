@@ -59,8 +59,8 @@ public class ChatApiController {
     @GetMapping(value = "/chat-room", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> enterChatRoomByParams(
         @AuthenticatedUser AuthUser authUser,
-        @RequestParam(required = false) String articleId,
-        @RequestParam(required = false) String chatRoomId
+        @RequestParam(value = "articleId", required = false) String articleId,
+        @RequestParam(value = "chatRoomId", required = false) String chatRoomId
     ) {
         if ((articleId == null) == (chatRoomId == null)) // 둘 다 값이 존재하거나 없는 경우 예외
             throw new ChatRoomNotFoundException(ChatErrorCode.CHAT_ROOM_NOT_FOUND);
