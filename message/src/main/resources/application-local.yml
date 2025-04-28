@@ -1,9 +1,9 @@
 server:
-  port: ${TOKEN_PORT}
+  port: ${MESSAGE_PORT}
 
 spring:
   application:
-    name: baobab-fcm-tokens
+    name: baobab-messages
 
   jpa:
     show-sql: true

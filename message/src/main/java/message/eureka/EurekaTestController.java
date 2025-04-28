@@ -1,4 +1,4 @@
-package token.eureka;
+package message.eureka;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

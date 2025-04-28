@@ -7,5 +7,4 @@ include 'file'
 include 'eureka'
 include 'chat'
 include 'message'
-include 'token'
 
