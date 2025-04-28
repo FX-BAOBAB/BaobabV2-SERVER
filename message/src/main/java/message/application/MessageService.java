@@ -1,4 +1,4 @@
-package message.application.port;
+package message.application;
 
 import com.google.firebase.messaging.ApnsConfig;
 import com.google.firebase.messaging.Aps;
@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import message.adapter.output.client.TokenClient;
 import message.application.port.input.SendMessageUseCase;
+import message.application.port.output.FcmTokenPersistencePort;
 import message.application.port.output.SendMessagePort;
 import message.core.common.error.MessageErrorCode;
 import message.core.common.exception.message.FailedToSendMessageException;
@@ -26,7 +26,7 @@ public class MessageService implements SendMessageUseCase {
 
     private final SendMessagePort sendMessagePort;
 
-    private final TokenClient tokenClient;
+    private final FcmTokenPersistencePort fcmTokenPersistencePort;
 
     /**
      * Sends messages using provided command.
@@ -34,7 +34,7 @@ public class MessageService implements SendMessageUseCase {
      */
     @Override
     public void send(MessageCommand command) {
-        List<String> fcmTokens = tokenClient.getFcmTokens(command.getUserIds());
+        List<String> fcmTokens = fcmTokenPersistencePort.findByUserIds(command.getUserIds());
 
         if (fcmTokens != null && !fcmTokens.isEmpty()) {
             createMessages(command, fcmTokens).forEach(this::sendMessage);

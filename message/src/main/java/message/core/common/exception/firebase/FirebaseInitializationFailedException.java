@@ -1,4 +1,4 @@
-package message.core.common.exception.message;
+package message.core.common.exception.firebase;
 
 import global.errorcode.ErrorCodeIfs;
 import lombok.Getter;
