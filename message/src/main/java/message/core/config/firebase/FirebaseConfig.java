@@ -8,7 +8,8 @@ import jakarta.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
 import message.core.common.error.MessageErrorCode;
-import message.core.common.exception.message.FirebaseInitializationFailedException;
+import message.core.common.exception.firebase.FirebaseInitializationFailedException;
+import message.core.config.async.CustomThreadManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,7 @@ public class FirebaseConfig {
 
             FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setThreadManager(new CustomThreadManager())
                 .build();
 
             FirebaseApp.initializeApp(options);

@@ -1,0 +1,47 @@
+server:
+  port: ${MESSAGE_PORT}
+
+spring:
+  application:
+    name: baobab-messages
+
+  jpa:
+    show-sql: true
+
+  data:
+    mongodb:
+      uri: ${MONGO_URL}
+      database: ${MONGO_DATABASE}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+logging:
+  level:
+    org:
+      springframework.web: DEBUG
+      hibernate: ERROR
+
+log:
+  config:
+    path: ${LOG_CONFIG_PATH}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
+fcm:
+  config:
+    path: ${FCM_CONFIG_PATH}
+
+cipher:
+  key: ${CIPHER_KEY}
