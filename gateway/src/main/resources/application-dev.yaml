@@ -36,6 +36,13 @@ spring:
           filters:
             - RewritePath=/chat-service/(open-api|api)/(?<segment>.*), /$\{segment}
 
+        - id: baobab-messages
+          uri: lb://BAOBAB-MESSAGES
+          predicates:
+            - Path=/message-service/**
+          filters:
+            - RewritePath=/message-service/(open-api|api)/(?<segment>.*), /$\{segment}
+
       globalcors:
         corsConfigurations:
           '[/**]':
