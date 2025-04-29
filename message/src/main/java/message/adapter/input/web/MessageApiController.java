@@ -20,7 +20,7 @@ public class MessageApiController {
     private final SendMessageUseCase sendMessageUseCase;
 
     @PostMapping("/messages")
-    public void sendMessage(@RequestBody MessageRequest request, @AuthenticatedUser AuthUser authUser) {
+    public void sendMessage(@RequestBody MessageRequest request) {
         sendMessageUseCase.send(MessageCommand.of(request));
     }
 
