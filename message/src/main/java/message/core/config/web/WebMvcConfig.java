@@ -16,6 +16,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final AuthorizationInterceptor authorizationInterceptor;
 
     private final List<String> WHITE_LIST = List.of(
+        "/messages",
+        "/messages/multicast"
     );
 
     @Override
