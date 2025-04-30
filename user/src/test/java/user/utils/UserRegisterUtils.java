@@ -20,7 +20,7 @@ public class UserRegisterUtils {
     @Autowired
     private UserRegisterService userRegisterService;
 
-    public String registerUser(String email, String password) {
+    public Boolean registerUser(String email, String password) {
 
         UserRegisterCommand userRegisterCommand = UserRegisterCommand.builder()
             .userAccount(UserAccount.builder()

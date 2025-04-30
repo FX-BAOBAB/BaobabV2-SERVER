@@ -5,6 +5,7 @@ import global.api.Api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,7 +16,7 @@ import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.response.SimpleUserInfoResponse;
 import user.adapter.input.web.response.TokenResponse;
-import user.adapter.input.web.response.UserRegisterResponse;
+import user.application.MailService;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.input.UserReaderUseCase;
@@ -38,15 +39,11 @@ public class UserOpenApiController {
 
     @PostMapping("/register")
     @DupleCheck
-    public Api<UserRegisterResponse> register(
+    public Api<Boolean> register(
         @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
-        UserRegisterCommand registerCommand = UserRegisterCommand.of(
-            userRegisterRequest.getBody());
-
-        String userId = userRegisterUseCase.register(registerCommand);
-        UserRegisterResponse response = UserRegisterResponse.toResponse(userId);
-        return Api.OK(response);
+        return Api.OK(userRegisterUseCase.register(UserRegisterCommand.of(
+            userRegisterRequest.getBody())));
     }
 
     @PostMapping("/login")
