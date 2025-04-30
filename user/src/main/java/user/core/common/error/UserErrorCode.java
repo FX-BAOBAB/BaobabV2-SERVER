@@ -12,7 +12,10 @@ public enum UserErrorCode implements ErrorCodeIfs {
     EMAIL_EXISTS(409, 1151, "이미 사용 중인 이메일입니다."),
     NICKNAME_EXISTS(409, 1152, "이미 사용 중인 닉네임입니다."),
     USER_NOT_FOUND(404, 1153, "사용자를 찾을 수 없습니다."),
-    PASSWORD_MISMATCH(401, 1154, "비밀번호가 일치하지 않습니다.")
+    PASSWORD_MISMATCH(401, 1154, "비밀번호가 일치하지 않습니다."),
+
+    EMAIL_VERIFICATION_EXPIRED(410, 1155, "인증 정보가 없거나 만료되었습니다."),
+    EMAIL_VERIFICATION_CODE_MISMATCH(401, 1156, "인증번호가 일치하지 않습니다."),
     ;
 
 

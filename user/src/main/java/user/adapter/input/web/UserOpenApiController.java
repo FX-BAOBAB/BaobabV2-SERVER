@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import user.adapter.input.web.request.DuplicationEmailRequest;
 import user.adapter.input.web.request.DuplicationNickNameRequest;
+import user.adapter.input.web.request.EmailVerificationRequest;
 import user.adapter.input.web.request.UserLoginRequest;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.input.web.response.SimpleUserInfoResponse;
 import user.adapter.input.web.response.TokenResponse;
-import user.adapter.input.web.response.UserRegisterResponse;
+import user.application.port.input.EmailVerificationUseCase;
 import user.application.port.input.ReIssueAccessTokenUseCase;
 import user.application.port.input.UserLoginUseCase;
 import user.application.port.input.UserReaderUseCase;
@@ -25,6 +26,7 @@ import user.domain.command.TokenCommand;
 import user.domain.command.UserLoginCommand;
 import user.domain.command.UserReaderCommand;
 import user.domain.command.UserRegisterCommand;
+import user.domain.form.EmailVerificationForm;
 import user.security.jwt.model.TokenDto;
 
 @RestAdapter
@@ -32,21 +34,26 @@ import user.security.jwt.model.TokenDto;
 public class UserOpenApiController {
 
     private final UserRegisterUseCase userRegisterUseCase;
+    private final EmailVerificationUseCase emailVerificationUseCase;
     private final UserLoginUseCase userLoginUseCase;
     private final ReIssueAccessTokenUseCase reIssueAccessTokenUseCase;
     private final UserReaderUseCase userReaderUseCase;
 
     @PostMapping("/register")
     @DupleCheck
-    public Api<UserRegisterResponse> register(
+    public Api<Boolean> register(
         @RequestBody @Valid Api<UserRegisterRequest> userRegisterRequest
     ) {
-        UserRegisterCommand registerCommand = UserRegisterCommand.of(
-            userRegisterRequest.getBody());
+        return Api.OK(userRegisterUseCase.register(UserRegisterCommand.of(
+            userRegisterRequest.getBody())));
+    }
 
-        String userId = userRegisterUseCase.register(registerCommand);
-        UserRegisterResponse response = UserRegisterResponse.toResponse(userId);
-        return Api.OK(response);
+    @PostMapping("/email-verification")
+    public Api<Boolean> verifyEmail(
+        @RequestBody @Valid Api<EmailVerificationRequest> verificationRequest
+    ) {
+        return Api.OK(emailVerificationUseCase.verifyEmail(
+            EmailVerificationForm.of(verificationRequest.getBody())));
     }
 
     @PostMapping("/login")
