@@ -8,6 +8,8 @@ public interface RedisCachePort {
 
     void save(String uniqueKey, VerificationPayload payload, long ttlMinutes);
 
-    Optional<UserRegisterForm> getVerificationData(String uniqueKey);
+    Optional<VerificationPayload> getVerificationData(String uniqueKey);
+
+    void delete(String uniqueKey);
 
 }

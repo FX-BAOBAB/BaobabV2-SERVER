@@ -29,7 +29,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         "/duplication/email",
         "/duplication/nickname",
         "/validation",
-        "/simple-info"
+        "/simple-info",
+        "/email-verification"
     );
 
     private final List<String> ADMIN_API_LIST = List.of(

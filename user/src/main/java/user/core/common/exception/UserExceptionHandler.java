@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import user.core.common.error.UserErrorCode;
+import user.core.common.exception.user.EmailVerificationExpiredException;
 import user.core.common.exception.user.UserNotFoundException;
 import user.core.common.exception.user.EmailExistsException;
 import user.core.common.exception.user.NickNameExistsException;
 import user.core.common.exception.user.PasswordMismatchException;
 import user.core.common.exception.user.UserExistsException;
+import user.core.common.exception.user.EmailVerificationCodeMismatchException;
 
 @Slf4j
 @RestControllerAdvice
@@ -50,6 +52,21 @@ public class UserExceptionHandler {
         log.error("", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Api.ERROR(UserErrorCode.PASSWORD_MISMATCH));
+    }
+
+    @ExceptionHandler(value = EmailVerificationExpiredException.class)
+    public ResponseEntity<Api<Object>> ExpiredEmailVerificationException(EmailVerificationExpiredException e) {
+        log.error("", e);
+        return ResponseEntity.status(HttpStatus.GONE)
+            .body(Api.ERROR(UserErrorCode.EMAIL_VERIFICATION_EXPIRED));
+    }
+
+    @ExceptionHandler(value = EmailVerificationCodeMismatchException.class)
+    public ResponseEntity<Api<Object>> mismatchEmailVerificationCode(
+        EmailVerificationCodeMismatchException e) {
+        log.error("", e);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(Api.ERROR(UserErrorCode.EMAIL_VERIFICATION_CODE_MISMATCH));
     }
 
 }
