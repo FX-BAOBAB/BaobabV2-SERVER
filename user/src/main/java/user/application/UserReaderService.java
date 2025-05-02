@@ -47,8 +47,8 @@ public class UserReaderService implements UserReaderUseCase {
             }
 
             user.setProfileImage(ProfileImage.builder()
-                .ImageId(defaultImage.getId())
-                .ImageUrl(defaultImage.getUrl())
+                .imageId(defaultImage.getId())
+                .imageUrl(defaultImage.getUrl())
                 .build());
         }
     }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfileImage {
 
-    private String ImageId;
-    private String ImageUrl;
+    private String imageId;
+    private String imageUrl;
 
 }

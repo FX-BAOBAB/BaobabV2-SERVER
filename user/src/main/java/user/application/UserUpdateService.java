@@ -55,8 +55,8 @@ public class UserUpdateService implements UserUpdateUseCase {
                 ImageKind.USER, command.getUserId(), newProfileImage);
 
             return ProfileImage.builder()
-                .ImageId(imageMetaData.getId())
-                .ImageUrl(imageMetaData.getUrl())
+                .imageId(imageMetaData.getId())
+                .imageUrl(imageMetaData.getUrl())
                 .build();
         }
 
