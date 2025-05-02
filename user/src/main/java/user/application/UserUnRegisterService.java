@@ -17,10 +17,8 @@ public class UserUnRegisterService implements UserUnRegisterUseCase {
 
     @Override
     public boolean unRegister(UserUnRegisterCommand userUnRegisterCommand) {
-
-        UserUnRegisterForm unRegisterForm = UserUnRegisterForm.of(
-            userUnRegisterCommand.getUserId());
-
-        return userPersistencePort.unRegisterUser(unRegisterForm);
+        return userPersistencePort.unRegisterUser(UserUnRegisterForm.of(
+            userUnRegisterCommand.getUserId()));
     }
+
 }

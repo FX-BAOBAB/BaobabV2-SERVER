@@ -1,70 +1,99 @@
-//package user.application;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertNotNull;
-//
-//import config.AcceptanceTestWithMongo;
-//import config.EnableMongoTestServer;
-//import java.time.LocalDate;
-//import java.time.LocalDateTime;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import user.adapter.output.persistence.enums.CarrierType;
-//import user.adapter.output.persistence.enums.GenderType;
-//import global.user.UserRole;
-//import user.adapter.output.persistence.enums.UserStatus;
-//import user.adapter.output.persistence.repository.UserDocument;
-//import user.application.port.output.UserPersistencePort;
-//import user.domain.command.TokenCommand;
-//import user.domain.command.UserReaderCommand;
-//import user.utils.UserLoginUtils;
-//import user.utils.UserRegisterUtils;
-//
-//@SpringBootTest
-//@EnableMongoTestServer
-//class UserReaderServiceTest extends AcceptanceTestWithMongo {
-//
-//    @Autowired
-//    private UserReaderService userReaderService;
-//
-//    @Autowired
-//    private UserPersistencePort userPersistencePort;
-//
-//    @Autowired
-//    private UserRegisterUtils userRegisterUtils;
-//
-//    @Test
-//    void 사용자_조회_성공() {
-//
-//        // Given
-//        userRegisterUtils.registerUser("test@example.com", "Password12@");
-//        UserDocument userDocument = userPersistencePort.getUserDocumentBy("test@example.com",
-//            UserStatus.REGISTERED);
-//
-//        // When
-//        UserReaderCommand userInfo = userReaderService.getUserInfoBy(userDocument.getId());
-//
-//        // Then
-//        assertNotNull(userInfo);
-//        assertEquals(userDocument.getId(), userInfo.getUserId());
-//        assertEquals("test@example.com", userInfo.getEmail());
-//        assertEquals("testUser", userInfo.getNickName());
-//        assertEquals("Test User", userInfo.getName());
-//        assertEquals(CarrierType.KT, userInfo.getUserPhoneInfo().getCarrierType());
-//        assertEquals("010-0000-0000", userInfo.getUserPhoneInfo().getPhoneNumber());
-//        assertEquals(GenderType.MALE, userInfo.getGenderType());
-//        assertEquals(false, userInfo.getIsForeigner());
-//        assertEquals(LocalDate.of(2001, 9, 7), userInfo.getBirth());
-//        assertEquals("Seoul", userInfo.getUserAddress().getAddress());
-//        assertEquals("Gangnam", userInfo.getUserAddress().getDetailAddress());
-//        assertEquals(true, userInfo.getUserAddress().getBasicAddress());
-//        assertEquals("12345", userInfo.getUserAddress().getPost());
-//        assertEquals(UserRole.BASIC_USER, userInfo.getRole());
-//        assertEquals(UserStatus.REGISTERED, userInfo.getStatus());
-//        assertThat(userInfo.getRegisteredAt()).isBefore(LocalDateTime.now());
-//
-//    }
-//
-//}
+package user.application;
+
+import file.core.DefaultImageService;
+import file.domain.ImageKind;
+import file.domain.ImageMetaData;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import user.adapter.output.persistence.enums.UserStatus;
+import user.application.port.output.UserPersistencePort;
+import user.domain.command.UserReaderCommand;
+import user.domain.dto.ProfileImage;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class UserReaderServiceTest {
+
+    @Mock
+    private UserPersistencePort userPersistencePort;
+    @Mock
+    private DefaultImageService defaultImageService;
+
+    @InjectMocks
+    private UserReaderService userReaderService;
+
+    @Captor
+    private ArgumentCaptor<String> userIdCaptor;
+
+    @Test
+    void 사용자_조회_프로필이미지없으면_기본이미지설정_성공() {
+
+        // Given
+        String userId = "user123";
+        UserReaderCommand userWithoutProfileImage = UserReaderCommand.builder()
+            .userId(userId)
+            .profileImage(null)
+            .build();
+
+        ImageMetaData defaultImage = ImageMetaData.builder()
+            .id("default-id")
+            .url("http://default-image")
+            .kind(ImageKind.USER_DEFAULT)
+            .build();
+
+        when(userPersistencePort.getUserInfo(userId, UserStatus.REGISTERED)).thenReturn(
+            userWithoutProfileImage);
+        when(defaultImageService.getDefaultImage(ImageKind.USER_DEFAULT)).thenReturn(defaultImage);
+
+        // When
+        UserReaderCommand result = userReaderService.getUserInfoBy(userId);
+
+        // Then
+        verify(userPersistencePort, times(1)).getUserInfo(userIdCaptor.capture(),
+            eq(UserStatus.REGISTERED));
+        verify(defaultImageService, times(1)).getDefaultImage(ImageKind.USER_DEFAULT);
+
+        assertThat(userIdCaptor.getValue()).isEqualTo(userId);
+
+        assertThat(result.getProfileImage()).isNotNull();
+        assertThat(result.getProfileImage().getImageUrl()).isEqualTo("http://default-image");
+    }
+
+    @Test
+    void 사용자_조회_프로필이미지있으면_기본이미지설정안함_성공() {
+
+        // Given
+        String userId = "user123";
+        UserReaderCommand userWithoutProfileImage = UserReaderCommand.builder()
+            .userId(userId)
+            .profileImage(ProfileImage.builder()
+                .imageId("existing-image-id")
+                .imageUrl("http://existing-image")
+                .build())
+            .build();
+
+        when(userPersistencePort.getUserInfo(userId, UserStatus.REGISTERED)).thenReturn(
+            userWithoutProfileImage);
+
+        // When
+        UserReaderCommand result = userReaderService.getUserInfoBy(userId);
+
+        // Then
+        verify(userPersistencePort, times(1)).getUserInfo(userIdCaptor.capture(),
+            eq(UserStatus.REGISTERED));
+        verify(defaultImageService, never()).getDefaultImage(ImageKind.USER_DEFAULT);
+
+        assertThat(userIdCaptor.getValue()).isEqualTo(userId);
+
+        assertThat(result.getProfileImage()).isNotNull();
+        assertThat(result.getProfileImage().getImageUrl()).isEqualTo("http://existing-image");
+    }
+
+}

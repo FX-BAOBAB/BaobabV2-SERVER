@@ -20,10 +20,8 @@ public class UserRegisterService implements UserRegisterUseCase {
         String encryptedPassword = BCrypt.hashpw(userRegisterCommand.getUserAccount().getPassword(),
             BCrypt.gensalt());
 
-        UserRegisterForm registerForm = UserRegisterForm.of(userRegisterCommand,
-            encryptedPassword);
-
-        emailVerificationService.sendVerification(registerForm);
+        emailVerificationService.sendVerification(UserRegisterForm.of(userRegisterCommand,
+            encryptedPassword));
 
         return true;
     }

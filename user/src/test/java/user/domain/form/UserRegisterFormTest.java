@@ -1,13 +1,11 @@
-package user.application;
+package user.domain.form;
+
+import static org.assertj.core.api.Assertions.*;
 
 import global.user.UserRole;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import user.adapter.output.persistence.enums.CarrierType;
 import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserStatus;
@@ -15,23 +13,11 @@ import user.domain.command.UserRegisterCommand;
 import user.domain.dto.UserAccount;
 import user.domain.dto.UserAddress;
 import user.domain.dto.UserPhoneInfo;
-import user.domain.form.UserRegisterForm;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-@ExtendWith(MockitoExtension.class)
-class UserRegisterServiceTest  {
-
-    @Mock
-    private EmailVerificationService emailVerificationService;
-
-    @InjectMocks
-    private UserRegisterService userRegisterService;
+class UserRegisterFormTest {
 
     @Test
-    void 회원가입_성공() {
+    void userRegisterForm_변환_테스트() {
         UserRegisterCommand userRegisterCommand = UserRegisterCommand.builder()
             .userAccount(UserAccount.builder()
                 .email("baobab12@baobab.com")
@@ -57,14 +43,23 @@ class UserRegisterServiceTest  {
             .registeredAt(LocalDateTime.now())
             .build();
 
-        doNothing().when(emailVerificationService).sendVerification(any(UserRegisterForm.class));
+        // When
+        UserRegisterForm userRegisterForm = UserRegisterForm.of(userRegisterCommand,
+            "encryptedPassword");
 
-        // when
-        Boolean result = userRegisterService.register(userRegisterCommand);
-
-        // then
-        verify(emailVerificationService, times(1)).sendVerification(any(UserRegisterForm.class));
-        assertThat(result).isTrue();
+        assertThat(userRegisterForm.getUserAccount().getEmail()).isEqualTo("baobab12@baobab.com");
+        assertThat(userRegisterForm.getUserAccount().getPassword()).isEqualTo("encryptedPassword");
+        assertThat(userRegisterForm.getNickName()).isEqualTo("오밥이");
+        assertThat(userRegisterForm.getUserPhoneInfo().getPhoneNumber()).isEqualTo("010-1234-5678");
+        assertThat(userRegisterForm.getGenderType()).isEqualTo(GenderType.MALE);
+        assertThat(userRegisterForm.getBirth()).isEqualTo(LocalDate.of(2001, 9, 7));
+        assertThat(userRegisterForm.getUserAddress().getAddress()).isEqualTo("Seoul");
+        assertThat(userRegisterForm.getUserAddress().getDetailAddress()).isEqualTo("Gangnam");
+        assertThat(userRegisterForm.getUserAddress().getBasicAddress()).isTrue();
+        assertThat(userRegisterForm.getUserAddress().getPost()).isEqualTo("12345");
+        assertThat(userRegisterForm.getRole()).isEqualTo(UserRole.BASIC_USER);
+        assertThat(userRegisterForm.getStatus()).isEqualTo(UserStatus.REGISTERED);
+        assertThat(userRegisterForm.getRegisteredAt()).isNotNull();
 
     }
 
