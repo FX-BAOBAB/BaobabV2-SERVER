@@ -66,6 +66,12 @@ log:
   config:
     path: ${LOG_CONFIG_PATH}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
 file:
   upload-dir: ${FILE_UPLOAD_DIR}
   context-path: ${FILE_CONTEXT_PATH}
