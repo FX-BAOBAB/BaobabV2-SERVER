@@ -1,5 +1,7 @@
 package chat.application;
 
+import chat.adapter.output.client.MessageClient;
+import chat.adapter.output.client.dto.MulticastMessageRequest;
 import chat.application.port.input.ChatConnectionUseCase;
 import chat.application.port.input.MessageDispatchUseCase;
 import global.sse.SseEventType;
@@ -20,6 +22,7 @@ public class MessageDispatchService implements MessageDispatchUseCase {
 
     private final ChatConnectionUseCase chatConnectionUseCase;
     private final SseMessageManager sseMessageManager;
+    private final MessageClient messageClient;
 
     @Override
     public void dispatchMessage(ChatMessage chatMessage) {
@@ -40,7 +43,9 @@ public class MessageDispatchService implements MessageDispatchUseCase {
         });
 
         if (!disconnectedUserIdList.isEmpty()) {
-            // TODO FCM 전송
+            messageClient.sendMultipleMessages(
+                new MulticastMessageRequest(chatMessage.getNickname() + "님의 메시지",
+                    chatMessage.getMessage(), disconnectedUserIdList));
             log.info("FCM 전송");
         }
 
