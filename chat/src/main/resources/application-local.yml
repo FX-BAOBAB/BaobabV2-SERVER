@@ -83,3 +83,5 @@ cipher:
 feign:
   article-service:
     url: ${FEIGN_ARTICLE_SERVICE_URL}
+  message-service:
+    url: ${FEIGN_MESSAGE_SERVICE_URL}

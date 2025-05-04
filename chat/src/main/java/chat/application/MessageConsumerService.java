@@ -1,6 +1,8 @@
 package chat.application;
 
 import chat.adapter.output.client.ChatClient;
+import chat.adapter.output.client.MessageClient;
+import chat.adapter.output.client.dto.MulticastMessageRequest;
 import chat.application.port.input.MessageConsumerUseCase;
 import chat.domain.ChatMessage;
 import java.net.URI;
@@ -20,47 +22,36 @@ public class MessageConsumerService implements MessageConsumerUseCase {
 
     private final ChatConnectionService chatConnectionService;
     private final ChatClient chatClient;
+    private final MessageClient messageClient;
 
     @Override
     public void consumeMessage(ChatMessage chatMessage) {
-
-        List<String> receiverIdList = chatMessage.getReceiverIdList();
-
-        // IP : userIdList 로 그룹화
-        Map<String, List<String>> serverGroup = groupReceiverByServer(receiverIdList,
-            chatMessage.getChatRoomId());
-
-        // 서버 그룹별 receiverId 지정 후 전송
-        sendMessageToServer(serverGroup, chatMessage);
-
-    }
-
-    private Map<String, List<String>> groupReceiverByServer(List<String> receiverIdList,
-        String chatRoomId) {
-
+        // 서버별 그룹화
         Map<String, List<String>> serverGroup = new HashMap<>();
-        List<String> disconnectedUserIdList = new ArrayList<>(); // REDIS 미 조회 사용자 List
+        List<String> disconnectedUserIdList = new ArrayList<>();
 
-        receiverIdList.forEach(receiverId -> {
-            Optional<String> connectedServerAddress = chatConnectionService.getConnectedServerAddress(
-                receiverId, chatRoomId); // Redis 에서 접속한 사용자 조회
+        for (String receiverId : chatMessage.getReceiverIdList()) {
+            Optional<String> serverAddress = chatConnectionService.getConnectedServerAddress(
+                receiverId, chatMessage.getChatRoomId());
 
-            connectedServerAddress.ifPresentOrElse(serverAddress ->
-                    serverGroup.computeIfAbsent(serverAddress, key -> new ArrayList<>()).add(receiverId),
-                () ->
-                    disconnectedUserIdList.add(receiverId) // 서버에 연결되지 않은 경우 list 추가
-            );
-
-        });
-
-        if (!disconnectedUserIdList.isEmpty()) {
-            // TODO FCM 전송
-            log.info("FCM 전송");
+            if (serverAddress.isPresent()) {
+                serverGroup.computeIfAbsent(serverAddress.get(), key -> new ArrayList<>())
+                    .add(receiverId);
+            } else {
+                disconnectedUserIdList.add(receiverId);
+            }
         }
-        return serverGroup;
+
+        // 서버 그룹으로 메시지 전송
+        sendMessageToConnectedServers(serverGroup, chatMessage);
+
+        // 연결되지 않은 사용자에게 FCM 전송
+        if (!disconnectedUserIdList.isEmpty()) {
+            sendFcmToDisconnectedUsers(disconnectedUserIdList, chatMessage);
+        }
     }
 
-    private void sendMessageToServer(Map<String, List<String>> serverGroup,
+    private void sendMessageToConnectedServers(Map<String, List<String>> serverGroup,
         ChatMessage chatMessage) {
         serverGroup.forEach((serverAddress, userIdList) -> {
             ChatMessage targetMessage = chatMessage.toBuilder()
@@ -72,4 +63,11 @@ public class MessageConsumerService implements MessageConsumerUseCase {
         });
     }
 
+    private void sendFcmToDisconnectedUsers(List<String> disconnectedUserIdList,
+        ChatMessage chatMessage) {
+        messageClient.sendMultipleMessages(
+            new MulticastMessageRequest(chatMessage.getNickname() + "님의 메시지",
+                chatMessage.getMessage(), disconnectedUserIdList));
+        log.info("FCM 전송");
+    }
 }
