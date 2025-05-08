@@ -139,7 +139,7 @@ class EmailVerificationServiceTest {
             any(VerificationPayload.class),
             eq(5L)
         );
-        verify(mailService, times(1)).sendMail(eq("baobab12@baobab.com"), anyString());
+        verify(mailService, times(1)).sendVerificationMail(eq("baobab12@baobab.com"), anyString());
 
     }
 
