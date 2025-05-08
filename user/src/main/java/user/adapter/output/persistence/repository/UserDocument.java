@@ -13,6 +13,7 @@ import user.domain.dto.UserAccount;
 import user.domain.dto.UserAddress;
 import user.domain.dto.ProfileImage;
 import user.domain.dto.UserPhoneInfo;
+import user.domain.form.DormantUserSaveForm;
 import user.domain.form.UserRegisterForm;
 import user.domain.form.UserUpdateForm;
 
@@ -84,4 +85,22 @@ public class UserDocument {
             .build();
     }
 
+    public static UserDocument of(DormantUserSaveForm dormantUserSaveForm) {
+        return UserDocument.builder()
+            .id(dormantUserSaveForm.getId())
+            .userAccount(dormantUserSaveForm.getUserAccount())
+            .nickName(dormantUserSaveForm.getNickName())
+            .userPhoneInfo(dormantUserSaveForm.getUserPhoneInfo())
+            .genderType(dormantUserSaveForm.getGenderType())
+            .isForeigner(dormantUserSaveForm.getIsForeigner())
+            .birth(dormantUserSaveForm.getBirth())
+            .profileImage(dormantUserSaveForm.getProfileImage())
+            .userAddress(dormantUserSaveForm.getUserAddress())
+            .role(dormantUserSaveForm.getRole())
+            .status(dormantUserSaveForm.getStatus())
+            .registeredAt(dormantUserSaveForm.getRegisteredAt())
+            .unRegisteredAt(dormantUserSaveForm.getUnRegisteredAt())
+            .lastLoginAt(dormantUserSaveForm.getLastLoginAt())
+            .build();
+    }
 }
