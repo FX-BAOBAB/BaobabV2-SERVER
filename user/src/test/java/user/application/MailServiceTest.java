@@ -36,7 +36,7 @@ class MailServiceTest {
         when(javaMailSender.createMimeMessage()).thenReturn(mockMessage);
 
         // When
-        mailService.sendMail(email, verificationCode);
+        mailService.sendVerificationMail(email, verificationCode);
 
         // Then
         verify(sendMessagePort, times(1)).sendMail(mimeMessageCaptor.capture());
