@@ -20,6 +20,8 @@ spring:
     console:
       enabled: true
       path: ${H2_PATH}
+      settings:
+        web-allow-others: true
 
   jpa:
     show-sql: true
