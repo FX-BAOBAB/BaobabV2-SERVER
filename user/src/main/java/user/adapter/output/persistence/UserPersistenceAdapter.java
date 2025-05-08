@@ -11,6 +11,7 @@ import user.core.common.error.UserErrorCode;
 import user.core.common.exception.user.UserNotFoundException;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.ProfileImage;
+import user.domain.form.DormantUserSaveForm;
 import user.domain.form.UserRegisterForm;
 import user.domain.form.UserUnRegisterForm;
 import user.domain.form.UserUpdateForm;
@@ -113,6 +114,11 @@ public class UserPersistenceAdapter implements UserPersistencePort {
 
         UserDocument savedUser = userMongoRepository.save(userDocument);
         return savedUser.getId() != null;
+    }
+
+    @Override
+    public void saveDormantUser(DormantUserSaveForm dormantUserSaveForm) {
+        userMongoRepository.save(UserDocument.of(dormantUserSaveForm));
     }
 
 }

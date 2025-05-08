@@ -56,7 +56,7 @@ public class EmailVerificationService implements EmailVerificationUseCase {
         VerificationPayload payload = VerificationPayload.of(verificationCode, registerForm);
 
         redisCachePort.save(uniqueKey, payload, REDIS_TTL);
-        mailService.sendMail(registerForm.getUserAccount().getEmail(), verificationCode);
+        mailService.sendVerificationMail(registerForm.getUserAccount().getEmail(), verificationCode);
     }
 
     private static String generateCode() {
