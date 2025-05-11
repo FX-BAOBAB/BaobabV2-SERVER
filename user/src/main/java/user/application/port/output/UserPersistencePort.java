@@ -36,4 +36,6 @@ public interface UserPersistencePort {
 
     void saveDormantUser(DormantUserSaveForm dormantUserSaveForm);
 
+    void deleteUser(String userId);
+
 }

@@ -121,4 +121,9 @@ public class UserPersistenceAdapter implements UserPersistencePort {
         userMongoRepository.save(UserDocument.of(dormantUserSaveForm));
     }
 
+    @Override
+    public void deleteUser(String userId) {
+        userMongoRepository.deleteById(userId);
+    }
+
 }
