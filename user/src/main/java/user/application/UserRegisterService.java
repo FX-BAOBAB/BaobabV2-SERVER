@@ -3,6 +3,7 @@ package user.application;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import user.application.email.EmailVerificationService;
 import user.application.port.input.UserRegisterUseCase;
 import user.domain.command.UserRegisterCommand;
 import user.domain.form.UserRegisterForm;

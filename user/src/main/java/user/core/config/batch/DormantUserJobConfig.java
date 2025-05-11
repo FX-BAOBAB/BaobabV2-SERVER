@@ -21,7 +21,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.transaction.PlatformTransactionManager;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
-import user.application.MailService;
+import user.application.email.MailService;
+import user.application.email.MailType;
 import user.application.port.output.UserPersistencePort;
 import user.domain.form.DormantUserSaveForm;
 
@@ -40,6 +41,7 @@ public class DormantUserJobConfig {
     public Job dormantUserJob() {
         return new JobBuilder("dormantUserJob", jobRepository)
             .start(dormantUserStep())
+            .next(preDormantUserMailStep())
             .preventRestart()
             .build();
     }
@@ -51,6 +53,15 @@ public class DormantUserJobConfig {
             .reader(dormantUserReader())
             .processor(dormantUserProcessor())
             .writer(dormantUserWriter())
+            .build();
+    }
+
+    @Bean
+    public Step preDormantUserMailStep() {
+        return new StepBuilder("preDormantUserMailStep", jobRepository)
+            .<UserDocument, UserDocument>chunk(10, transactionManager)
+            .reader(preDormantUserReader())
+            .writer(preDormantUserWriter())
             .build();
     }
 
@@ -75,10 +86,33 @@ public class DormantUserJobConfig {
     }
 
     @Bean
+    public MongoCursorItemReader<UserDocument> preDormantUserReader() {
+
+        LocalDateTime now = LocalDateTime.now();
+        Criteria criteria = new Criteria()
+            .andOperator(
+                Criteria.where("lastLoginAt")
+                    // 휴면전환 3일 전 사용자 조회
+                    .gte(now.minusDays(363))
+                    .lt(now.minusDays(362)),
+                Criteria.where("status").is(UserStatus.REGISTERED)
+            );
+        Query query = new Query(criteria);
+
+        MongoCursorItemReader<UserDocument> reader = new MongoCursorItemReader<>();
+        reader.setName("preDormantUserReader");
+        reader.setTemplate(mongoTemplate);
+        reader.setQuery(query);
+        reader.setTargetType(UserDocument.class);
+        reader.setSort(Map.of("_id", Sort.Direction.ASC));
+        reader.setBatchSize(10);
+        return reader;
+    }
+
+    @Bean
     public ItemProcessor<UserDocument, UserDocument> dormantUserProcessor() {
         return userDocument -> {
             userDocument.setStatus(UserStatus.DORMANT);
-            mailService.sendDormantUserMail(userDocument.getUserAccount().getEmail());
             return userDocument;
         };
     }
@@ -87,7 +121,19 @@ public class DormantUserJobConfig {
     public ItemWriter<UserDocument> dormantUserWriter() {
         return userDocumentChunk -> {
             for (UserDocument userDocument : userDocumentChunk) {
+                mailService.sendDormantUserMail(userDocument.getUserAccount().getEmail(),
+                    MailType.DORMANT_NOTICE);
                 userPersistencePort.saveDormantUser(DormantUserSaveForm.of(userDocument));
+            }
+        };
+    }
+
+    @Bean
+    public ItemWriter<UserDocument> preDormantUserWriter() {
+        return userDocumentChunk -> {
+            for (UserDocument userDocument : userDocumentChunk) {
+                mailService.sendDormantUserMail(userDocument.getUserAccount().getEmail(),
+                    MailType.DORMANT_WARNING);
             }
         };
     }
