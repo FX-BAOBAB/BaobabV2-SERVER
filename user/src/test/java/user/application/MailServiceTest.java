@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
+import user.application.email.MailService;
 import user.application.port.output.SendMessagePort;
 
 import static org.assertj.core.api.Assertions.*;

@@ -12,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import user.adapter.output.persistence.enums.CarrierType;
 import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserStatus;
+import user.application.email.EmailVerificationService;
+import user.application.email.MailService;
 import user.application.port.output.RedisCachePort;
 import user.application.port.output.UserPersistencePort;
 import user.core.common.error.UserErrorCode;

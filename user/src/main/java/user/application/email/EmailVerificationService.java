@@ -1,4 +1,4 @@
-package user.application;
+package user.application.email;
 
 import java.text.DecimalFormat;
 import java.util.Optional;
