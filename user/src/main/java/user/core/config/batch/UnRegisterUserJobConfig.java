@@ -1,6 +1,5 @@
 package user.core.config.batch;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +8,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.MongoCursorItemReader;
 import org.springframework.context.annotation.Bean;
@@ -21,51 +19,45 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.transaction.PlatformTransactionManager;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
-import user.application.MailService;
 import user.application.port.output.UserPersistencePort;
-import user.domain.form.DormantUserSaveForm;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class DormantUserJobConfig {
+public class UnRegisterUserJobConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final UserPersistencePort userPersistencePort;
-    private final MailService mailService;
     private final MongoTemplate mongoTemplate;
 
-    @Bean(name = "dormantUserJob")
-    public Job dormantUserJob() {
-        return new JobBuilder("dormantUserJob", jobRepository)
-            .start(dormantUserStep())
+    @Bean(name = "unRegisterUserJob")
+    public Job unRegisterUesrJob() {
+        return new JobBuilder("unRegisterUserJob", jobRepository)
+            .start(unRegisterUserStep())
             .preventRestart()
             .build();
     }
 
     @Bean
-    public Step dormantUserStep() {
-        return new StepBuilder("dormantUserStep", jobRepository)
+    public Step unRegisterUserStep() {
+        return new StepBuilder("unRegisterUserStep", jobRepository)
             .<UserDocument, UserDocument>chunk(10, transactionManager)
-            .reader(dormantUserReader())
-            .processor(dormantUserProcessor())
-            .writer(dormantUserWriter())
+            .reader(unRegisterUserReader())
+            .writer(unRegisterUserWriter())
             .build();
     }
 
-    @Bean
-    public MongoCursorItemReader<UserDocument> dormantUserReader() {
-
+    @Bean 
+    public MongoCursorItemReader<UserDocument> unRegisterUserReader() {
         Criteria criteria = new Criteria()
             .andOperator(
-                Criteria.where("lastLoginAt").lt(LocalDateTime.now().minusYears(1)),
-                Criteria.where("status").is(UserStatus.REGISTERED)
+                Criteria.where("status").is(UserStatus.UNREGISTERED)
             );
         Query query = new Query(criteria);
 
         MongoCursorItemReader<UserDocument> reader = new MongoCursorItemReader<>();
-        reader.setName("dormantUserReader");
+        reader.setName("unRegisterUserReader");
         reader.setTemplate(mongoTemplate);
         reader.setQuery(query);
         reader.setTargetType(UserDocument.class);
@@ -75,19 +67,10 @@ public class DormantUserJobConfig {
     }
 
     @Bean
-    public ItemProcessor<UserDocument, UserDocument> dormantUserProcessor() {
-        return userDocument -> {
-            userDocument.setStatus(UserStatus.DORMANT);
-            mailService.sendDormantUserMail(userDocument.getUserAccount().getEmail());
-            return userDocument;
-        };
-    }
-
-    @Bean
-    public ItemWriter<UserDocument> dormantUserWriter() {
+    public ItemWriter<UserDocument> unRegisterUserWriter() {
         return userDocumentChunk -> {
             for (UserDocument userDocument : userDocumentChunk) {
-                userPersistencePort.saveDormantUser(DormantUserSaveForm.of(userDocument));
+                userPersistencePort.deleteUser(userDocument.getId());
             }
         };
     }
