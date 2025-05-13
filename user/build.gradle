@@ -44,6 +44,7 @@ dependencies {
 
     // Spring Batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
+    testImplementation 'org.springframework.batch:spring-batch-test'
 
     // H2 Database
     runtimeOnly 'com.h2database:h2'
