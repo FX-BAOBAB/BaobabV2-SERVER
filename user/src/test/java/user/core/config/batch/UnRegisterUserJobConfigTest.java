@@ -12,6 +12,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.adapter.output.persistence.repository.UserDocument;
@@ -32,6 +33,7 @@ class UnRegisterUserJobConfigTest extends AcceptanceTestWithMongo {
     private UserMongoRepository userMongoRepository;
 
     @Autowired
+    @Qualifier("unRegisterUserJob")
     private Job unRegisterUserJob;
 
     @BeforeEach

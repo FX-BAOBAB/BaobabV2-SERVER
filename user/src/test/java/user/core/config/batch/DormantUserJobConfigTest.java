@@ -17,6 +17,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import user.adapter.output.persistence.enums.CarrierType;
@@ -43,6 +44,7 @@ class DormantUserJobConfigTest extends AcceptanceTestWithMongo {
     private UserMongoRepository userMongoRepository;
 
     @Autowired
+    @Qualifier("dormantUserJob")
     private Job dormantUserJob;
 
     @MockitoBean

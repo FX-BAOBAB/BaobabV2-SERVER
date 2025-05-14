@@ -32,7 +32,7 @@ public class UnRegisterUserJobConfig {
     private final MongoTemplate mongoTemplate;
 
     @Bean(name = "unRegisterUserJob")
-    public Job unRegisterUesrJob() {
+    public Job unRegisterUserJob() {
         return new JobBuilder("unRegisterUserJob", jobRepository)
             .start(unRegisterUserStep())
             .preventRestart()
