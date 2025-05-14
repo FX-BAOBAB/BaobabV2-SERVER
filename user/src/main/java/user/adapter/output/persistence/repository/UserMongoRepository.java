@@ -1,5 +1,6 @@
 package user.adapter.output.persistence.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import user.adapter.output.persistence.enums.UserStatus;
@@ -13,5 +14,7 @@ public interface UserMongoRepository extends MongoRepository<UserDocument, Strin
     Optional<UserDocument> findFirstByIdAndStatusOrderByIdDesc(String userId, UserStatus status);
 
     Optional<UserDocument> findFirstByUserAccount_EmailAndStatusOrderByIdDesc(String email, UserStatus status);
+
+    List<UserDocument> findByStatus(UserStatus status);
 
 }

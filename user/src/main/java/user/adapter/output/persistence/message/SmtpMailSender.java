@@ -44,7 +44,8 @@ public class SmtpMailSender implements SendMessagePort {
         } catch (Exception e) {
 
             if (e.getMessage() != null && e.getMessage().contains("553")) {
-                log.error("유효하지 않은 이메일 형식입니다. : {}", mimeMessage.getRecipients(RecipientType.TO));
+                log.error("유효하지 않은 이메일 형식입니다. : {}",
+                    (Object) mimeMessage.getRecipients(RecipientType.TO));
                 return;
             }
 
