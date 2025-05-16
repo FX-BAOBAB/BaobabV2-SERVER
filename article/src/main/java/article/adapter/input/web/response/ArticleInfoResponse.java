@@ -40,6 +40,8 @@ public class ArticleInfoResponse {
 
     private Boolean isMine;
 
+    private Long viewCount;
+
     public static ArticleInfoResponse of(
         Article article,
         UserSimpleInfo userSimpleInfo,
@@ -57,6 +59,7 @@ public class ArticleInfoResponse {
             .profileImageUrl(userSimpleInfo.getProfileImageUrl())
             .imageList(article.getImageList())
             .isMine(isMine)
+            .viewCount(article.getViewCount())
             .build();
     }
 

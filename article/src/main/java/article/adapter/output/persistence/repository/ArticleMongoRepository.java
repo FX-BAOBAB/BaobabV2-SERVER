@@ -8,4 +8,6 @@ public interface ArticleMongoRepository extends MongoRepository<Article, String>
 
     List<Article> findAllByUserId(String userId, Pageable pageable);
 
+    List<Article> findByIdIn(List<String> articleIds);
+
 }
