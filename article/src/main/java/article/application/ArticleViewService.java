@@ -74,7 +74,7 @@ public class ArticleViewService {
             return;
         }
 
-        Map<String, Long> viewCountMap = extractViewCountsFromRedis();
+        Map<String, Long> viewCountMap = extractViewCountsFromRedis(viewCountKeys);
 
         // 성능저하 우려
         List<Article> articleList = articlePersistencePort.getArticlesBy(
@@ -88,9 +88,7 @@ public class ArticleViewService {
 
     }
 
-    private Map<String, Long> extractViewCountsFromRedis() {
-        List<String> viewCountKeys = redisCachePort.getKeysByPrefix(ARTICLE_VIEW_COUNT_KEY_PREFIX);
-
+    private Map<String, Long> extractViewCountsFromRedis(List<String> viewCountKeys) {
         return viewCountKeys.stream()
             .map(key -> {
                 String articleId = key.replace(ARTICLE_VIEW_COUNT_KEY_PREFIX, "");
