@@ -10,6 +10,7 @@ import java.util.List;
 import com.querydsl.core.annotations.QueryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -42,6 +43,9 @@ public class Article {
 
     private List<ArticleImage> imageList;
 
+    @Builder.Default
+    private Long viewCount = 0L;
+
     public static Article of(ArticleSaveForm form) {
         return Article.builder()
             .title(form.getTitle())
@@ -66,6 +70,25 @@ public class Article {
             .status(form.getStatus())
             .userId(form.getUserId())
             .imageList(form.getImageList())
+            .viewCount(form.getViewCount())
             .build();
     }
+
+    public static List<Article> of(List<ArticleUpdateForm> forms) {
+        return forms.stream()
+            .map(form -> Article.builder()
+                .id(form.getId())
+                .title(form.getTitle())
+                .content(form.getContent())
+                .category(form.getCategory())
+                .price(form.getPrice())
+                .registeredAt(form.getRegisteredAt())
+                .status(form.getStatus())
+                .userId(form.getUserId())
+                .imageList(form.getImageList())
+                .viewCount(form.getViewCount())
+                .build()
+            ).toList();
+    }
+
 }

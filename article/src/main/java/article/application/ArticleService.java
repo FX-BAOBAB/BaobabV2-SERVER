@@ -32,6 +32,8 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final ImageMetaDataUseCase imageMetaDataUseCase;
 
+    private final ArticleViewService articleViewService;
+
     private final ArticlePersistencePort articlePersistencePort;
 
     private final UserClient userClient;
@@ -48,8 +50,11 @@ public class ArticleService implements DefaultArticleUseCase {
 
     @Override
     public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand command, String userId) {
-        List<Article> articles = articlePersistencePort.getArticleList(command);
+        if (command.getArticleId() != null) {
+            articleViewService.increaseViewCount(command.getArticleId(), userId);
+        }
 
+        List<Article> articles = articlePersistencePort.getArticleList(command);
         return articles.stream()
             .map(article -> {
                 boolean isMine = userId != null && userId.equals(article.getUserId());

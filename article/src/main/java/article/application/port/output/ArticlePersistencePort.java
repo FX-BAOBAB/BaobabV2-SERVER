@@ -46,4 +46,10 @@ public interface ArticlePersistencePort {
      * @return is Article Deleted?
      */
     boolean deleteArticle(String articleId);
+
+    List<Article> getArticlesBy(List<String> articleIds);
+
+    void updateArticles(List<ArticleUpdateForm> articleUpdateForms);
+
+
 }

@@ -31,6 +31,8 @@ public class ArticleUpdateForm {
 
     private List<ArticleImage> imageList;
 
+    private Long viewCount;
+
     public static ArticleUpdateForm of(ArticleUpdateCommand command, Article article) {
         return ArticleUpdateForm.builder()
             .id(command.getId())
@@ -42,7 +44,25 @@ public class ArticleUpdateForm {
             .status(command.getStatus())
             .userId(article.getUserId())
             .imageList(article.getImageList())
+            .viewCount(article.getViewCount())
             .build();
+    }
+
+    public static List<ArticleUpdateForm> of(List<Article> articleList) {
+        return articleList.stream()
+            .map(article -> ArticleUpdateForm.builder()
+                .id(article.getId())
+                .title(article.getTitle())
+                .content(article.getContent())
+                .category(article.getCategory())
+                .price(article.getPrice())
+                .registeredAt(article.getRegisteredAt())
+                .status(article.getStatus())
+                .userId(article.getUserId())
+                .imageList(article.getImageList())
+                .viewCount(article.getViewCount())
+                .build())
+            .toList();
     }
 
 }

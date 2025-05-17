@@ -49,4 +49,13 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
         return article.isEmpty();
     }
 
+    @Override
+    public List<Article> getArticlesBy(List<String> articleIds) {
+        return articleMongoRepository.findByIdIn(articleIds);
+    }
+
+    @Override
+    public void updateArticles(List<ArticleUpdateForm> articleUpdateForms) {
+        articleMongoRepository.saveAll(Article.of(articleUpdateForms));
+    }
 }
