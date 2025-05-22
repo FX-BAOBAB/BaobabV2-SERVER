@@ -32,7 +32,7 @@ public class FcmTokenApiController {
     private final SubscribeTopicUseCase subscribeTopicUseCase;
 
 
-    @PostMapping("/save")
+    @PostMapping("/tokens")
     public Api<Boolean> save(
         @Valid @RequestBody FcmTokenSavingRequest request,
         @AuthenticatedUser AuthUser authUser) {
