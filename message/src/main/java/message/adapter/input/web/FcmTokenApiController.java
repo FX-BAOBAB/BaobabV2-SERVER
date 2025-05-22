@@ -3,6 +3,7 @@ package message.adapter.input.web;
 import global.annotation.AuthenticatedUser;
 import global.api.Api;
 import global.resolver.AuthUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import message.adapter.input.web.request.FcmTokenSavingRequest;
@@ -33,7 +34,7 @@ public class FcmTokenApiController {
 
     @PostMapping("/save")
     public Api<Boolean> save(
-        @RequestBody FcmTokenSavingRequest request,
+        @Valid @RequestBody FcmTokenSavingRequest request,
         @AuthenticatedUser AuthUser authUser) {
 
         FcmTokenSaveCommand command = FcmTokenSaveCommand.of(request, authUser.getUserId());
@@ -42,7 +43,7 @@ public class FcmTokenApiController {
 
     @PostMapping("/subscribe")
     public Api<SubscriptionResponse> subscribe(
-        @RequestBody TopicSubscriptionRequest request,
+        @Valid @RequestBody TopicSubscriptionRequest request,
         @AuthenticatedUser AuthUser authUser) {
 
         TopicSubscriptionCommand command = TopicSubscriptionCommand.of(request);
