@@ -61,19 +61,22 @@ public class FcmTokenService implements DefaultFcmTokenUseCase, SubscribeTopicUs
      * Scheduled task that deletes expired FCM (Firebase Cloud Messaging) tokens.
      * This method runs daily at midnight (00:00:00) based on the cron schedule.
      * It removes tokens that exceed their expiration period:
-     * 2 days for WEB devices and 270 days for iOS devices.
+     * 270 days for iOS devices and 2 days for web devices.
      */
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 24 19 * * *")
     void deleteExpiredTokens() {
-        log.info("Deleting expired FCM tokens...");
+        deleteExpiredTokens(DeviceType.iOS, IOS_FCM_TOKEN_EXPIRATION_DAYS, "iOS");
+        deleteExpiredTokens(DeviceType.WEB, WEB_FCM_TOKEN_EXPIRATION_DAYS, "WEB");
+    }
 
+    private void deleteExpiredTokens(DeviceType deviceType, int expirationDays, String deviceName) {
         LocalDate now = LocalDate.now();
-        LocalDate webThreshold = now.minusDays(WEB_FCM_TOKEN_EXPIRATION_DAYS); // WEB: 2일 전 날짜 계산
-        LocalDate iosThreshold = now.minusDays(IOS_FCM_TOKEN_EXPIRATION_DAYS); // IOS: 270일 전 날짜 계산
+        LocalDate threshold = now.minusDays(expirationDays);
 
-        fcmTokenPersistencePort.deleteTokensUpTo(DeviceType.WEB, webThreshold); // WEB 기기에서 2일 이상 경과한 토큰 삭제
-        fcmTokenPersistencePort.deleteTokensUpTo(DeviceType.iOS, iosThreshold); // IOS 기기에서 270일 이상 경과한 토큰 삭제
+        log.info("Deleting expired FCM tokens for {} devices...", deviceName);
+        long deletedCount = fcmTokenPersistencePort.deleteTokensUpTo(deviceType, threshold);
+        log.info("Deleted {} expired FCM tokens for {} devices", deletedCount, deviceName);
     }
 
 }

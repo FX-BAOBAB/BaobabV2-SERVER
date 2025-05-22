@@ -14,7 +14,7 @@ public class FcmTokenSavingRequest {
     @NotBlank(message = "null 값 또는 공백이 포함될 수 없습니다.")
     private String token;
 
-    @NotBlank(message = "null 값 또는 공백이 포함될 수 없습니다.")
+    @NotNull(message = "null 값일 수 없습니다.")
     private DeviceType deviceType;
 
 }
