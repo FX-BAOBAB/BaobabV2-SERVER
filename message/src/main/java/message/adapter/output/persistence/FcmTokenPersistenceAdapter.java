@@ -1,5 +1,6 @@
 package message.adapter.output.persistence;
 
+import com.mongodb.client.result.DeleteResult;
 import global.annotation.output.PersistenceAdapter;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,13 +34,12 @@ public class FcmTokenPersistenceAdapter implements FcmTokenPersistencePort {
     @Override
     public boolean deleteFcmToken(String token) {
         fcmTokenMongoRepository.deleteById(token);
-        Optional<FcmToken> article = fcmTokenMongoRepository.findById(token);
-        return article.isEmpty();
+        Optional<FcmToken> deletedToken = fcmTokenMongoRepository.findById(token);
+        return deletedToken.isEmpty();
     }
 
-    @Override
-    public void deleteTokensUpTo(DeviceType deviceType, LocalDate threshold) {
-        fcmTokenMongoRepository.deleteByDeviceTypeAndSavedAtLessThanEqual(deviceType, threshold);
+    public long deleteTokensUpTo(DeviceType deviceType, LocalDate threshold) {
+        return fcmTokenMongoRepository.deleteByDeviceTypeAndSavedAtLessThanEqual(deviceType, threshold);
     }
 
 }

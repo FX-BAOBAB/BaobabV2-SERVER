@@ -1,7 +1,6 @@
 package message.adapter.input.web;
 
-import global.annotation.AuthenticatedUser;
-import global.resolver.AuthUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import message.adapter.input.web.request.MessageRequest;
@@ -20,12 +19,12 @@ public class MessageApiController {
     private final SendMessageUseCase sendMessageUseCase;
 
     @PostMapping("/messages")
-    public void sendMessage(@RequestBody MessageRequest request) {
+    public void sendMessage(@Valid @RequestBody MessageRequest request) {
         sendMessageUseCase.send(MessageCommand.of(request));
     }
 
     @PostMapping("/messages/multicast")
-    public void sendMultipleMessages(@RequestBody MulticastMessageRequest request) {
+    public void sendMultipleMessages(@Valid @RequestBody MulticastMessageRequest request) {
         sendMessageUseCase.send(MessageCommand.of(request));
     }
 

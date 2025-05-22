@@ -1,5 +1,6 @@
 package message.application.port.output;
 
+import com.mongodb.client.result.DeleteResult;
 import java.time.LocalDate;
 import java.util.List;
 import message.adapter.output.persistence.enums.DeviceType;
@@ -38,7 +39,8 @@ public interface FcmTokenPersistencePort {
      *
      * @param deviceType The type of device
      * @param threshold The date threshold for deletion
+     * @return deleted FCM Tokens count
      */
-    void deleteTokensUpTo(DeviceType deviceType, LocalDate threshold);
+    long deleteTokensUpTo(DeviceType deviceType, LocalDate threshold);
 
 }
