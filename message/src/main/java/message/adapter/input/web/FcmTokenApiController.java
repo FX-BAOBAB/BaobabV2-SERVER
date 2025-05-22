@@ -41,7 +41,7 @@ public class FcmTokenApiController {
         return Api.OK(saveFcmTokenUseCase.saveFcmToken(command));
     }
 
-    @PostMapping("/subscribe")
+    @PostMapping("/subscriptions")
     public Api<SubscriptionResponse> subscribe(
         @Valid @RequestBody TopicSubscriptionRequest request,
         @AuthenticatedUser AuthUser authUser) {
