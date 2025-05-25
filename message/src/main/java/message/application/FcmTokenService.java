@@ -64,19 +64,19 @@ public class FcmTokenService implements DefaultFcmTokenUseCase, SubscribeTopicUs
      * 270 days for iOS devices and 2 days for web devices.
      */
     @Transactional
-    @Scheduled(cron = "0 24 19 * * *")
+    @Scheduled(cron = "0 31 17 * * *")
     void deleteExpiredTokens() {
-        deleteExpiredTokens(DeviceType.iOS, IOS_FCM_TOKEN_EXPIRATION_DAYS, "iOS");
-        deleteExpiredTokens(DeviceType.WEB, WEB_FCM_TOKEN_EXPIRATION_DAYS, "WEB");
+        deleteTokensByDeviceType(DeviceType.iOS, IOS_FCM_TOKEN_EXPIRATION_DAYS);
+        deleteTokensByDeviceType(DeviceType.WEB, WEB_FCM_TOKEN_EXPIRATION_DAYS);
     }
 
-    private void deleteExpiredTokens(DeviceType deviceType, int expirationDays, String deviceName) {
+    private void deleteTokensByDeviceType(DeviceType deviceType, int expirationDays) {
         LocalDate now = LocalDate.now();
         LocalDate threshold = now.minusDays(expirationDays);
 
-        log.info("Deleting expired FCM tokens for {} devices...", deviceName);
+        log.info("Deleting expired FCM tokens for {} devices...", deviceType.name());
         long deletedCount = fcmTokenPersistencePort.deleteTokensUpTo(deviceType, threshold);
-        log.info("Deleted {} expired FCM tokens for {} devices", deletedCount, deviceName);
+        log.info("Deleted {} expired FCM tokens for {} devices", deletedCount, deviceType.name());
     }
 
 }

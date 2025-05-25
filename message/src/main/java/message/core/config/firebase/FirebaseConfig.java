@@ -26,13 +26,13 @@ public class FirebaseConfig {
      * FirebaseApp 초기화
      */
     @PostConstruct
-    public void initializeFirebaseApp() {
+    public void init() {
         if (FirebaseApp.getApps().isEmpty()) {
-            initializeFirebase();
+            initFirebase();
         }
     }
 
-    private void initializeFirebase() {
+    private void initFirebase() {
         InputStream serviceAccount = getServiceAccountStream();
         try {
             FirebaseApp.initializeApp(buildFirebaseOptions(serviceAccount));
