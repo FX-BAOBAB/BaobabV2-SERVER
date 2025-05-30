@@ -11,6 +11,6 @@ public interface DeleteArticleUseCase {
      * @param userId User ID
      * @return is Article Delete?
      */
-    boolean deleteArticle(String articleId, String userId);
+    boolean softDeleteArticle(String articleId, String userId);
 
 }

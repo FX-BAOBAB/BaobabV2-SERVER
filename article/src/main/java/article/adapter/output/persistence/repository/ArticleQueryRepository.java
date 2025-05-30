@@ -1,7 +1,7 @@
 package article.adapter.output.persistence.repository;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import article.domain.command.ArticleSearchCommand;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
@@ -110,7 +110,7 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
 
     private boolean isUserIdEmpty(String userId) { return StringUtils.isEmpty(userId); }
 
-    private boolean isStatusEmpty(ArticleStatus status) { return status == null; }
+    private boolean isStatusEmpty(ArticleSaleStatus status) { return status == null; }
 
     private boolean isArticleIdEmpty(String articleId) { return StringUtils.isEmpty(articleId); }
 

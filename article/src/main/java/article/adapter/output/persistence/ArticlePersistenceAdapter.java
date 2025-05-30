@@ -58,4 +58,5 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     public void updateArticles(List<ArticleUpdateForm> articleUpdateForms) {
         articleMongoRepository.saveAll(Article.of(articleUpdateForms));
     }
+
 }

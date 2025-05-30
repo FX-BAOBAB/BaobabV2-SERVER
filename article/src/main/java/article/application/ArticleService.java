@@ -3,6 +3,8 @@ package article.application;
 import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
 import article.adapter.output.client.UserClient;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
+import article.adapter.output.persistence.enums.ArticleVisibilityStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
@@ -81,7 +83,7 @@ public class ArticleService implements DefaultArticleUseCase {
     }
 
     @Override
-    public boolean deleteArticle(String articleId, String userId) {
+    public boolean softDeleteArticle(String articleId, String userId) {
         Article article = articlePersistencePort.getArticleById(articleId)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
@@ -89,8 +91,12 @@ public class ArticleService implements DefaultArticleUseCase {
             throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
         }
 
-        article.getImageList().forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
-        return articlePersistencePort.deleteArticle(articleId);
+//        article.getImageList().forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
+//        return articlePersistencePort.deleteArticle(articleId);
+
+        article.setVisibilityStatus(ArticleVisibilityStatus.DELETED);
+        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
+
     }
 
     private void deleteArticleImages(ArticleUpdateCommand articleUpdateCommand, Article article) {
