@@ -1,5 +1,6 @@
 package article.application.port.output;
 
+import article.adapter.output.persistence.enums.ArticleVisibilityStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.dto.ArticleSaveForm;
@@ -24,14 +25,14 @@ public interface ArticlePersistencePort {
      * @param articleSearchCommand Article Search Condition
      * @return Article
      */
-    List<Article> getArticleList(ArticleSearchCommand articleSearchCommand);
+    List<Article> getArticleList(ArticleSearchCommand articleSearchCommand, ArticleVisibilityStatus visibilityStatus);
 
     /**
      * Get Article By Article Id
      * @param articleId articleId
      * @return Article
      */
-    Optional<Article> getArticleById(String articleId);
+    Optional<Article> getArticleById(String articleId, ArticleVisibilityStatus visibilityStatus);
 
     /**
      * Update Article Data

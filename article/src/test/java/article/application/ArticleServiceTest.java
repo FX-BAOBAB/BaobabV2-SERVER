@@ -7,6 +7,7 @@ import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.output.persistence.ArticlePersistenceAdapter;
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleSaleStatus;
+import article.adapter.output.persistence.enums.ArticleVisibilityStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.adapter.output.persistence.repository.ArticleMongoRepository;
 import article.domain.command.ArticleSaveCommand;
@@ -60,7 +61,7 @@ class ArticleServiceTest {
             .pageable(Pageable.ofSize(10))
             .build();
 
-        List<Article> articleList = articlePersistenceAdapter.getArticleList(command);
+        List<Article> articleList = articlePersistenceAdapter.getArticleList(command, ArticleVisibilityStatus.VISIBILITY);
 
         assertFalse(articleList.isEmpty());
 

@@ -37,7 +37,7 @@ public class Article {
 
     private LocalDateTime registeredAt;
 
-    private ArticleSaleStatus status;
+    private ArticleSaleStatus saleStatus;
 
     private String userId;
 
@@ -56,7 +56,7 @@ public class Article {
             .category(form.getCategory())
             .price(form.getPrice())
             .registeredAt(form.getRegisteredAt())
-            .status(form.getStatus())
+            .saleStatus(form.getStatus())
             .userId(form.getUserId())
             .imageList(form.getImageList())
             .build();
@@ -70,7 +70,7 @@ public class Article {
             .category(form.getCategory())
             .price(form.getPrice())
             .registeredAt(form.getRegisteredAt())
-            .status(form.getStatus())
+            .saleStatus(form.getStatus())
             .userId(form.getUserId())
             .imageList(form.getImageList())
             .viewCount(form.getViewCount())
@@ -87,7 +87,7 @@ public class Article {
                 .category(form.getCategory())
                 .price(form.getPrice())
                 .registeredAt(form.getRegisteredAt())
-                .status(form.getStatus())
+                .saleStatus(form.getStatus())
                 .userId(form.getUserId())
                 .imageList(form.getImageList())
                 .viewCount(form.getViewCount())

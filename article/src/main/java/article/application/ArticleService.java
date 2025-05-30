@@ -3,7 +3,6 @@ package article.application;
 import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
 import article.adapter.output.client.UserClient;
-import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import article.adapter.output.persistence.enums.ArticleVisibilityStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.application.port.input.DefaultArticleUseCase;
@@ -56,7 +55,7 @@ public class ArticleService implements DefaultArticleUseCase {
             articleViewService.increaseViewCount(command.getArticleId(), userId);
         }
 
-        List<Article> articles = articlePersistencePort.getArticleList(command);
+        List<Article> articles = articlePersistencePort.getArticleList(command, ArticleVisibilityStatus.VISIBILITY);
         return articles.stream()
             .map(article -> {
                 boolean isMine = userId != null && userId.equals(article.getUserId());
@@ -68,7 +67,8 @@ public class ArticleService implements DefaultArticleUseCase {
 
     @Override
     public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
-        Article article = articlePersistencePort.getArticleById(articleUpdateCommand.getId())
+        Article article = articlePersistencePort.getArticleById(articleUpdateCommand.getId(),
+                ArticleVisibilityStatus.VISIBILITY)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
         if (!articleUpdateCommand.getUserId().equals(article.getUserId())) {
@@ -84,7 +84,8 @@ public class ArticleService implements DefaultArticleUseCase {
 
     @Override
     public boolean softDeleteArticle(String articleId, String userId) {
-        Article article = articlePersistencePort.getArticleById(articleId)
+        Article article = articlePersistencePort.getArticleById(articleId,
+                ArticleVisibilityStatus.VISIBILITY)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
         if (!userId.equals(article.getUserId())) {
@@ -137,7 +138,8 @@ public class ArticleService implements DefaultArticleUseCase {
 
     @Override
     public ArticleFeignResponse getArticleBy(String articleId) {
-        Article article = articlePersistencePort.getArticleById(articleId)
+        Article article = articlePersistencePort.getArticleById(articleId,
+                ArticleVisibilityStatus.VISIBILITY)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
         return ArticleFeignResponse.of(article.getUserId(), article.getImageList().get(0));
     }

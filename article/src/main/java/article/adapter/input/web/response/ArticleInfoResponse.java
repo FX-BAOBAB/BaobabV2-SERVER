@@ -54,7 +54,7 @@ public class ArticleInfoResponse {
             .category(article.getCategory())
             .price(article.getPrice())
             .registeredAt(article.getRegisteredAt())
-            .status(article.getStatus())
+            .status(article.getSaleStatus())
             .nickname(userSimpleInfo.getNickname())
             .profileImageUrl(userSimpleInfo.getProfileImageUrl())
             .imageList(article.getImageList())
