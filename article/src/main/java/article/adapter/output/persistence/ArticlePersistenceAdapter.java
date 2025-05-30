@@ -1,5 +1,6 @@
 package article.adapter.output.persistence;
 
+import article.adapter.output.persistence.enums.ArticleVisibilityStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.adapter.output.persistence.repository.ArticleMongoRepository;
 import article.adapter.output.persistence.repository.ArticleQueryRepository;
@@ -27,13 +28,15 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
     }
 
     @Override
-    public List<Article> getArticleList(ArticleSearchCommand articleSearchCommand) {
-        return articleQueryRepository.getArticlesBy(articleSearchCommand);
+    public List<Article> getArticleList(ArticleSearchCommand articleSearchCommand,
+        ArticleVisibilityStatus visibilityStatus) {
+        return articleQueryRepository.getArticlesBy(articleSearchCommand, visibilityStatus);
     }
 
     @Override
-    public Optional<Article> getArticleById(String articleId) {
-        return articleMongoRepository.findById(articleId);
+    public Optional<Article> getArticleById(String articleId,
+        ArticleVisibilityStatus visibilityStatus) {
+        return articleMongoRepository.findByIdAndVisibilityStatus(articleId, visibilityStatus);
     }
 
     @Override
@@ -51,11 +54,13 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
 
     @Override
     public List<Article> getArticlesBy(List<String> articleIds) {
-        return articleMongoRepository.findByIdIn(articleIds);
+        return articleMongoRepository.findByIdInAndVisibilityStatus(articleIds,
+            ArticleVisibilityStatus.VISIBILITY);
     }
 
     @Override
     public void updateArticles(List<ArticleUpdateForm> articleUpdateForms) {
         articleMongoRepository.saveAll(Article.of(articleUpdateForms));
     }
+
 }

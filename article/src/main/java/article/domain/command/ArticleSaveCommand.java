@@ -2,7 +2,7 @@ package article.domain.command;
 
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class ArticleSaveCommand {
 
     private LocalDateTime registeredAt;
 
-    private ArticleStatus status;
+    private ArticleSaleStatus status;
 
     private String userId;
 
@@ -43,7 +43,7 @@ public class ArticleSaveCommand {
                 .category(request.getCategory())
                 .price(request.getPrice())
                 .imageList(imageList)
-                .status(ArticleStatus.ON_SALE)
+                .status(ArticleSaleStatus.ON_SALE)
                 .registeredAt(LocalDateTime.now())
                 .userId(userId)
                 .build();

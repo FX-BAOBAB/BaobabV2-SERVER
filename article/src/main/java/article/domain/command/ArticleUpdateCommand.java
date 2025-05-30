@@ -2,7 +2,7 @@ package article.domain.command;
 
 import article.adapter.input.web.request.ArticleUpdateRequest;
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class ArticleUpdateCommand {
 
     private int price;
 
-    private ArticleStatus status;
+    private ArticleSaleStatus status;
 
     private List<MultipartFile> addImages;
 

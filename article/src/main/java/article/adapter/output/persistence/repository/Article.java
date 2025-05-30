@@ -1,7 +1,8 @@
 package article.adapter.output.persistence.repository;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
+import article.adapter.output.persistence.enums.ArticleVisibilityStatus;
 import article.domain.dto.ArticleImage;
 import article.domain.dto.ArticleSaveForm;
 import article.domain.dto.ArticleUpdateForm;
@@ -10,7 +11,6 @@ import java.util.List;
 import com.querydsl.core.annotations.QueryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -37,7 +37,7 @@ public class Article {
 
     private LocalDateTime registeredAt;
 
-    private ArticleStatus status;
+    private ArticleSaleStatus saleStatus;
 
     private String userId;
 
@@ -46,6 +46,9 @@ public class Article {
     @Builder.Default
     private Long viewCount = 0L;
 
+    @Builder.Default
+    private ArticleVisibilityStatus visibilityStatus = ArticleVisibilityStatus.VISIBILITY;
+
     public static Article of(ArticleSaveForm form) {
         return Article.builder()
             .title(form.getTitle())
@@ -53,7 +56,7 @@ public class Article {
             .category(form.getCategory())
             .price(form.getPrice())
             .registeredAt(form.getRegisteredAt())
-            .status(form.getStatus())
+            .saleStatus(form.getStatus())
             .userId(form.getUserId())
             .imageList(form.getImageList())
             .build();
@@ -67,10 +70,11 @@ public class Article {
             .category(form.getCategory())
             .price(form.getPrice())
             .registeredAt(form.getRegisteredAt())
-            .status(form.getStatus())
+            .saleStatus(form.getStatus())
             .userId(form.getUserId())
             .imageList(form.getImageList())
             .viewCount(form.getViewCount())
+            .visibilityStatus(form.getVisibilityStatus())
             .build();
     }
 
@@ -83,10 +87,11 @@ public class Article {
                 .category(form.getCategory())
                 .price(form.getPrice())
                 .registeredAt(form.getRegisteredAt())
-                .status(form.getStatus())
+                .saleStatus(form.getStatus())
                 .userId(form.getUserId())
                 .imageList(form.getImageList())
                 .viewCount(form.getViewCount())
+                .visibilityStatus(form.getVisibilityStatus())
                 .build()
             ).toList();
     }

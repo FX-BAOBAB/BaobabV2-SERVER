@@ -1,7 +1,7 @@
 package article.domain.command;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import file.domain.ImageMetaData;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ArticleCommand {
 
     private LocalDateTime registeredAt;
 
-    private ArticleStatus status;
+    private ArticleSaleStatus status;
 
     private String userId;
 

@@ -2,7 +2,7 @@ package article.adapter.input.web.response;
 
 import article.adapter.output.client.dto.UserSimpleInfo;
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import article.adapter.output.persistence.repository.Article;
 import article.domain.dto.ArticleImage;
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public class ArticleInfoResponse {
 
     private LocalDateTime registeredAt;
 
-    private ArticleStatus status;
+    private ArticleSaleStatus status;
 
     private List<ArticleImage> imageList;
 
@@ -54,7 +54,7 @@ public class ArticleInfoResponse {
             .category(article.getCategory())
             .price(article.getPrice())
             .registeredAt(article.getRegisteredAt())
-            .status(article.getStatus())
+            .status(article.getSaleStatus())
             .nickname(userSimpleInfo.getNickname())
             .profileImageUrl(userSimpleInfo.getProfileImageUrl())
             .imageList(article.getImageList())

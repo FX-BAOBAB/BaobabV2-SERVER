@@ -5,11 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ArticleStatus {
-
-    ON_SALE("판매 중"),
-    RESERVED("예약 중"),
-    SOLD_OUT("판매 완료")
+public enum ArticleVisibilityStatus {
+    VISIBILITY("노출"),
+    DELETED("삭제"),
+    HIDDEN("숨김"),
     ;
 
     private final String description;

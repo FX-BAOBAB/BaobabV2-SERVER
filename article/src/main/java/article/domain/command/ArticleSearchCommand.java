@@ -2,7 +2,7 @@ package article.domain.command;
 
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class ArticleSearchCommand {
 
     private String articleId;
 
-    private ArticleStatus status;
+    private ArticleSaleStatus status;
 
     // static factory Method
     public static ArticleSearchCommand of(ArticleSearchCondition condition){

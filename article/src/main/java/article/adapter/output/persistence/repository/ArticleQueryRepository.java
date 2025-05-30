@@ -1,7 +1,8 @@
 package article.adapter.output.persistence.repository;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleStatus;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
+import article.adapter.output.persistence.enums.ArticleVisibilityStatus;
 import article.domain.command.ArticleSearchCommand;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+
 import static article.adapter.output.persistence.repository.QArticle.*;
 
 @Slf4j
@@ -30,9 +32,10 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
         super(operations);
     }
 
-    public List<Article> getArticlesBy(ArticleSearchCommand articleSearchCommand) {
+    public List<Article> getArticlesBy(ArticleSearchCommand articleSearchCommand,
+        ArticleVisibilityStatus visibilityStatus) {
 
-        BooleanBuilder builder = buildQueryConditions(articleSearchCommand);
+        BooleanBuilder builder = buildQueryConditions(articleSearchCommand, visibilityStatus);
 
         Pageable pageable = articleSearchCommand.getPageable();
 
@@ -44,7 +47,9 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
             .fetch();
     }
 
-    private BooleanBuilder buildQueryConditions(ArticleSearchCommand command) {
+    private BooleanBuilder buildQueryConditions(ArticleSearchCommand command,
+        ArticleVisibilityStatus visibilityStatus) {
+
         BooleanBuilder builder = new BooleanBuilder();
 
         if (!isTitleEmpty(command.getTitle())) {
@@ -64,12 +69,14 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
         }
 
         if(!isStatusEmpty(command.getStatus())) {
-            builder.and(article.status.eq(command.getStatus()));
+            builder.and(article.saleStatus.eq(command.getStatus()));
         }
 
         if(!isArticleIdEmpty(command.getArticleId())) {
             builder.and(article.id.eq(command.getArticleId()));
         }
+
+        builder.and(article.visibilityStatus.eq(visibilityStatus));
 
         return builder;
     }
@@ -110,7 +117,7 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
 
     private boolean isUserIdEmpty(String userId) { return StringUtils.isEmpty(userId); }
 
-    private boolean isStatusEmpty(ArticleStatus status) { return status == null; }
+    private boolean isStatusEmpty(ArticleSaleStatus status) { return status == null; }
 
     private boolean isArticleIdEmpty(String articleId) { return StringUtils.isEmpty(articleId); }
 
