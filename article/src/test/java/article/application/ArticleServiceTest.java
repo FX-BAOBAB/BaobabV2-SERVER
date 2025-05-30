@@ -70,7 +70,8 @@ class ArticleServiceTest {
         assertEquals(article.getContent(), "Test Content");
         assertEquals(article.getCategory(), ArticleCategory.CLOTHING);
         assertEquals(article.getPrice(), 10000);
-        assertEquals(article.getStatus(), ArticleSaleStatus.ON_SALE);
+        assertEquals(article.getSaleStatus(), ArticleSaleStatus.ON_SALE);
+        assertEquals(article.getVisibilityStatus(), ArticleVisibilityStatus.VISIBILITY);
         assertEquals(article.getUserId(), "userId");
     }
 
@@ -101,7 +102,8 @@ class ArticleServiceTest {
             assertEquals(updatedArticle.getTitle(), "Updated Article");
             assertEquals(updatedArticle.getContent(), "Updated Content");
             assertEquals(updatedArticle.getPrice(), 20000);
-            assertEquals(updatedArticle.getStatus(), ArticleSaleStatus.RESERVED);
+            assertEquals(updatedArticle.getSaleStatus(), ArticleSaleStatus.RESERVED);
+            assertEquals(updatedArticle.getVisibilityStatus(), ArticleVisibilityStatus.VISIBILITY);
             assertFalse(updatedArticle.getImageList().contains(imageA));
         });
     }
