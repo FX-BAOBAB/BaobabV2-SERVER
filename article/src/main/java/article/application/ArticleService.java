@@ -92,12 +92,14 @@ public class ArticleService implements DefaultArticleUseCase {
             throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
         }
 
-//        article.getImageList().forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
-//        return articlePersistencePort.deleteArticle(articleId);
-
         article.setVisibilityStatus(ArticleVisibilityStatus.DELETED);
         return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
+    }
 
+    @Override
+    public void hardDeleteArticle(String articleId, List<ArticleImage> articleImageList) {
+        articleImageList.forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
+        articlePersistencePort.deleteArticle(articleId);
     }
 
     private void deleteArticleImages(ArticleUpdateCommand articleUpdateCommand, Article article) {

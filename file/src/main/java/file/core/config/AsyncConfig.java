@@ -37,10 +37,13 @@ class ContextCopyingTaskDecorator implements TaskDecorator {
 
     @Override
     public Runnable decorate(Runnable runnable) {
-        RequestAttributes context = RequestContextHolder.currentRequestAttributes();
+        RequestAttributes context = RequestContextHolder.getRequestAttributes();
         return () -> {
             try {
-                RequestContextHolder.setRequestAttributes(context);
+                // @Scheduled, Spring Batch 등에서 실행되는 쓰레드는 HTTP 요청이 존재하지 않으므로 분기처리함
+                if (context != null) {
+                    RequestContextHolder.setRequestAttributes(context);
+                }
                 runnable.run();
             } finally {
                 RequestContextHolder.resetRequestAttributes();

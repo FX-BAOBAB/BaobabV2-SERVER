@@ -5,8 +5,31 @@ spring:
   application:
     name: baobab-article
 
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: ${H2_URL}
+    username: ${H2_USERNAME}
+    password: ${H2_PASSWORD}
+
+  h2:
+    console:
+      enabled: true
+      path: ${H2_PATH}
+      settings:
+        web-allow-others: true
+
   jpa:
     show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  batch:
+    job:
+      enabled: false # 부팅 시 자동실행 방지
 
   data:
     mongodb:
