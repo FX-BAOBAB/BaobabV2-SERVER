@@ -6,7 +6,10 @@ import article.application.port.input.SaveArticleReportUseCase;
 import article.application.port.output.ArticlePersistencePort;
 import article.application.port.output.ArticleReportPersistencePort;
 import article.core.common.error.article.ArticleErrorCode;
+import article.core.common.error.report.ArticleReportErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
+import article.core.common.exception.report.ArticleReportDuplicationException;
+import article.core.common.exception.report.SelfArticleReportNotAllowedException;
 import article.domain.command.ArticleReportSaveCommand;
 import article.domain.dto.ArticleReportSaveForm;
 import article.domain.dto.ArticleUpdateForm;
@@ -35,12 +38,14 @@ public class ArticleReportService implements SaveArticleReportUseCase {
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
         if (article.getUserId().equals(userId)) {
-            throw new RuntimeException();
+            throw new SelfArticleReportNotAllowedException(
+                ArticleReportErrorCode.SELF_ARTICLE_REPORT_NOT_ALLOWED);
         }
 
         if (articleReportPersistencePort.existsByArticleIdAndUserId(saveCommand.getArticleId(),
             userId)) {
-            throw new RuntimeException();
+            throw new ArticleReportDuplicationException(
+                ArticleReportErrorCode.DUPLICATE_ARTICLE_REPORT);
         }
 
         Long updatedReportCount = article.getReportCount() + 1;
