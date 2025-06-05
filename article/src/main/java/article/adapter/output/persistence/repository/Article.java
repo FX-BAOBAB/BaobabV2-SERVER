@@ -47,6 +47,9 @@ public class Article {
     private Long viewCount = 0L;
 
     @Builder.Default
+    private Long reportCount = 0L;
+
+    @Builder.Default
     private ArticleVisibilityStatus visibilityStatus = ArticleVisibilityStatus.VISIBILITY;
 
     public static Article of(ArticleSaveForm form) {
@@ -74,6 +77,7 @@ public class Article {
             .userId(form.getUserId())
             .imageList(form.getImageList())
             .viewCount(form.getViewCount())
+            .reportCount(form.getReportCount())
             .visibilityStatus(form.getVisibilityStatus())
             .build();
     }
