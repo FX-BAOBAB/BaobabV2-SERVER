@@ -34,6 +34,8 @@ public class ArticleUpdateForm {
 
     private Long viewCount;
 
+    private Long reportCount;
+
     private ArticleVisibilityStatus visibilityStatus;
 
     public static ArticleUpdateForm of(ArticleUpdateCommand command, Article article) {
@@ -48,6 +50,7 @@ public class ArticleUpdateForm {
             .userId(article.getUserId())
             .imageList(article.getImageList())
             .viewCount(article.getViewCount())
+            .reportCount(article.getReportCount())
             .visibilityStatus(article.getVisibilityStatus())
             .build();
     }
@@ -66,6 +69,7 @@ public class ArticleUpdateForm {
                 .imageList(article.getImageList())
                 .viewCount(article.getViewCount())
                 .visibilityStatus(article.getVisibilityStatus())
+                .reportCount(article.getReportCount())
                 .build())
             .toList();
     }
@@ -82,6 +86,7 @@ public class ArticleUpdateForm {
             .userId(article.getUserId())
             .imageList(article.getImageList())
             .viewCount(article.getViewCount())
+            .reportCount(article.getReportCount())
             .visibilityStatus(article.getVisibilityStatus())
             .build();
     }

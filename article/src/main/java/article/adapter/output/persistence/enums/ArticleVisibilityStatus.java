@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum ArticleVisibilityStatus {
     VISIBILITY("노출"),
     DELETED("삭제"),
-    HIDDEN("숨김"),
+    REPORTED("신고")
     ;
 
     private final String description;
