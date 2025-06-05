@@ -35,13 +35,19 @@ class FcmTokenTest {
 
     @Test
     void 토큰_삭제() {
-
-        FcmTokenDeleteCommand command = FcmTokenDeleteCommand.builder()
+        FcmTokenSaveCommand command = FcmTokenSaveCommand.builder()
             .token("test-token")
             .userId("test-user-id")
             .build();
 
-        fcmTokenService.deleteFcmToken(command);
+        fcmTokenService.saveFcmToken(command);
+
+        FcmTokenDeleteCommand fcmTokenDeleteCommand = FcmTokenDeleteCommand.builder()
+            .token("test-token")
+            .userId("test-user-id")
+            .build();
+
+        fcmTokenService.deleteFcmToken(fcmTokenDeleteCommand);
         List<String> tokens = fcmTokenPersistenceAdapter.findByUserIds(List.of("test-user-id"));
         assertTrue(tokens.isEmpty());
     }

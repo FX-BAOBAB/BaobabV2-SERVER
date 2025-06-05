@@ -4,6 +4,7 @@ import global.api.Api;
 import lombok.extern.slf4j.Slf4j;
 import message.core.common.error.MessageErrorCode;
 import message.core.common.exception.firebase.FirebaseInitializationFailedException;
+import message.core.common.exception.firebase.NotFoundFcmTokenException;
 import message.core.common.exception.message.FailedToSendMessageException;
 import message.core.common.exception.topic.FailedToSubscribeTopicException;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,13 @@ public class MessageExceptionHandler {
         log.error("", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Api.ERROR(MessageErrorCode.FIREBASE_INITIALIZATION_FAILED));
+    }
+
+    @ExceptionHandler(value = NotFoundFcmTokenException.class)
+    public ResponseEntity<Api<Object>> notFoundFcmTokenException(NotFoundFcmTokenException e) {
+        log.error("", e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Api.ERROR(MessageErrorCode.NOT_FOUND_FCM_TOKEN));
     }
 
     @ExceptionHandler(value = FailedToSendMessageException.class)
