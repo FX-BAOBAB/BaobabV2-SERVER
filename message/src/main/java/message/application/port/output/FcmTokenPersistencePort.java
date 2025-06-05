@@ -1,9 +1,10 @@
 package message.application.port.output;
 
-import com.mongodb.client.result.DeleteResult;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import message.adapter.output.persistence.enums.DeviceType;
+import message.adapter.output.persistence.repository.fcmToken.FcmToken;
 import message.domain.dto.FcmTokenSaveForm;
 
 /**
@@ -18,6 +19,14 @@ public interface FcmTokenPersistencePort {
      * @return true if the token was saved successfully, false otherwise
      */
     boolean saveFcmToken(FcmTokenSaveForm fcmTokenSaveForm);
+
+    /**
+     * Find FCM Token by Token Value
+     * @param token FCM Token value
+     * @return the FCM Token if found, null otherwise
+     */
+    Optional<FcmToken> findBy(String token);
+
 
     /**
      * Find FCM Tokens by User IDs
