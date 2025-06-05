@@ -1,18 +1,23 @@
 package message.application;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import global.errorcode.ErrorCode;
+import global.exception.UnauthorizedException;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import message.adapter.input.web.response.SubscriptionResponse;
 import message.adapter.output.persistence.enums.DeviceType;
+import message.adapter.output.persistence.repository.fcmToken.FcmToken;
 import message.application.port.input.DefaultFcmTokenUseCase;
 import message.application.port.input.SubscribeTopicUseCase;
 import message.application.port.output.FcmTokenPersistencePort;
 import message.application.port.output.SubscriptionPort;
 import message.core.common.error.MessageErrorCode;
+import message.core.common.exception.firebase.NotFoundFcmTokenException;
 import message.core.common.exception.topic.FailedToSubscribeTopicException;
+import message.domain.command.FcmTokenDeleteCommand;
 import message.domain.command.FcmTokenSaveCommand;
 import message.domain.command.TopicSubscriptionCommand;
 import message.domain.dto.FcmTokenSaveForm;
@@ -41,8 +46,23 @@ public class FcmTokenService implements DefaultFcmTokenUseCase, SubscribeTopicUs
 
     @Transactional
     @Override
-    public boolean deleteFcmToken(String token) {
-        return fcmTokenPersistencePort.deleteFcmToken(token);
+    public boolean deleteFcmToken(FcmTokenDeleteCommand command) {
+        FcmToken fcmToken = getValidFcmToken(command.getToken(), command.getUserId());
+        return fcmTokenPersistencePort.deleteFcmToken(fcmToken.getToken());
+    }
+
+    private FcmToken getValidFcmToken(String token, String userId) {
+        FcmToken fcmToken = fcmTokenPersistencePort.findBy(token)
+            .orElseThrow(() -> new NotFoundFcmTokenException(MessageErrorCode.NOT_FOUND_FCM_TOKEN));
+
+        validateUser(fcmToken, userId);
+        return fcmToken;
+    }
+
+    private void validateUser(FcmToken fcmToken, String userId) {
+        if (!fcmToken.getUserId().equals(userId)) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
+        }
     }
 
     @Override

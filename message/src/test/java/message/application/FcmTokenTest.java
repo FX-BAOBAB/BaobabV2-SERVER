@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import message.adapter.output.persistence.FcmTokenPersistenceAdapter;
 import message.config.EnableMongoTestServer;
+import message.domain.command.FcmTokenDeleteCommand;
 import message.domain.command.FcmTokenSaveCommand;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,13 @@ class FcmTokenTest {
 
     @Test
     void 토큰_삭제() {
-        fcmTokenService.deleteFcmToken("test-token");
+
+        FcmTokenDeleteCommand command = FcmTokenDeleteCommand.builder()
+            .token("test-token")
+            .userId("test-user-id")
+            .build();
+
+        fcmTokenService.deleteFcmToken(command);
         List<String> tokens = fcmTokenPersistenceAdapter.findByUserIds(List.of("test-user-id"));
         assertTrue(tokens.isEmpty());
     }

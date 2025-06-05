@@ -6,16 +6,17 @@ import global.resolver.AuthUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import message.adapter.input.web.request.FcmTokenDeletionRequest;
 import message.adapter.input.web.request.FcmTokenSavingRequest;
 import message.adapter.input.web.request.TopicSubscriptionRequest;
 import message.adapter.input.web.response.SubscriptionResponse;
 import message.application.port.input.DeleteFcmTokenUseCase;
 import message.application.port.input.SaveFcmTokenUseCase;
 import message.application.port.input.SubscribeTopicUseCase;
+import message.domain.command.FcmTokenDeleteCommand;
 import message.domain.command.FcmTokenSaveCommand;
 import message.domain.command.TopicSubscriptionCommand;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,9 +51,13 @@ public class FcmTokenApiController {
         return Api.OK(subscribeTopicUseCase.subscribeToTopic(command));
     }
 
-    @DeleteMapping("/{token}")
-    public Api<Boolean> deleteFcmToken(@PathVariable String token) {
-        return Api.OK(deleteFcmTokenUseCase.deleteFcmToken(token));
+    @DeleteMapping("/tokens")
+    public Api<Boolean> deleteFcmToken(
+        @Valid @RequestBody FcmTokenDeletionRequest request,
+        @AuthenticatedUser AuthUser authUser) {
+
+        FcmTokenDeleteCommand command = FcmTokenDeleteCommand.of(request, authUser.getUserId());
+        return Api.OK(deleteFcmTokenUseCase.deleteFcmToken(command));
     }
 
 }

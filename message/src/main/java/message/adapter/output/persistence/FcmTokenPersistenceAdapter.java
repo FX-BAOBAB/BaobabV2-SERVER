@@ -1,6 +1,5 @@
 package message.adapter.output.persistence;
 
-import com.mongodb.client.result.DeleteResult;
 import global.annotation.output.PersistenceAdapter;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,6 +21,11 @@ public class FcmTokenPersistenceAdapter implements FcmTokenPersistencePort {
     public boolean saveFcmToken(FcmTokenSaveForm fcmTokenSaveForm) {
         FcmToken savedFcmToken = fcmTokenMongoRepository.save(FcmToken.of(fcmTokenSaveForm));
         return savedFcmToken.getToken() != null;
+    }
+
+    @Override
+    public Optional<FcmToken> findBy(String token) {
+        return fcmTokenMongoRepository.findById(token);
     }
 
     @Override
