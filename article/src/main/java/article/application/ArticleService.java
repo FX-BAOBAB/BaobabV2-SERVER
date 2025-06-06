@@ -10,6 +10,7 @@ import article.application.port.output.ArticlePersistencePort;
 import article.core.common.error.article.ArticleErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
 import article.core.common.exception.article.NotPermittedException;
+import article.domain.command.ArticleSaleStatusUpdateCommand;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
@@ -80,6 +81,20 @@ public class ArticleService implements DefaultArticleUseCase {
 
         return articlePersistencePort.updateArticle(
             ArticleUpdateForm.of(articleUpdateCommand, article));
+    }
+
+    public boolean updateArticleSaleStatus(ArticleSaleStatusUpdateCommand command) {
+        Article article = articlePersistencePort.getArticleById(command.getArticleId(),
+                ArticleVisibilityStatus.VISIBILITY)
+            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+
+        if (!command.getUserId().equals(article.getUserId())) {
+            throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
+        }
+
+        article.setSaleStatus(command.getStatus());
+
+        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
     }
 
     @Override

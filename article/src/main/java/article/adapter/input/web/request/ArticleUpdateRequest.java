@@ -1,7 +1,6 @@
 package article.adapter.input.web.request;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
-import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,9 +29,6 @@ public class ArticleUpdateRequest {
 
     @NotNull(message = "가격을 입력하세요")
     private Integer price;
-
-    @NotNull(message = "상태를 확인하세요")
-    private ArticleSaleStatus status;
 
     private List<String> deleteImageIdList;
 
