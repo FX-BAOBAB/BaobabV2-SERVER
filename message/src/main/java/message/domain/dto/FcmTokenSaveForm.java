@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import message.adapter.output.persistence.enums.DeviceType;
+import global.enums.DeviceType;
 import message.domain.command.FcmTokenSaveCommand;
 
 @Data

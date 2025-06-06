@@ -1,5 +1,6 @@
 package user.adapter.input.web.request;
 
+import global.enums.DeviceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -24,5 +25,7 @@ public class UserLoginRequest {
     )
     @NotBlank(message = "필수 입력 사항입니다.")
     private String password;
+
+    private DeviceType deviceType;
 
 }

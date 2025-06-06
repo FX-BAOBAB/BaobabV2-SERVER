@@ -1,6 +1,6 @@
 package user.application;
 
-import global.user.UserRole;
+import global.enums.UserRole;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;

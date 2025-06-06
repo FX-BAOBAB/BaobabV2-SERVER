@@ -1,6 +1,6 @@
 package user.domain.form;
 
-import global.user.UserRole;
+import global.enums.UserRole;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

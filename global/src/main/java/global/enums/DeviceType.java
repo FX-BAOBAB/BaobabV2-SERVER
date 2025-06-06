@@ -1,4 +1,4 @@
-package message.adapter.output.persistence.enums;
+package global.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

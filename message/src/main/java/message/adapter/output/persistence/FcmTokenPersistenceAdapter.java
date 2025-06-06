@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import message.adapter.output.persistence.enums.DeviceType;
+import global.enums.DeviceType;
 import message.adapter.output.persistence.repository.fcmToken.FcmToken;
 import message.adapter.output.persistence.repository.fcmToken.FcmTokenMongoRepository;
 import message.application.port.output.FcmTokenPersistencePort;

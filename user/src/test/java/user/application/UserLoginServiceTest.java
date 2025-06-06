@@ -1,6 +1,7 @@
 package user.application;
 
-import global.user.UserRole;
+import global.enums.DeviceType;
+import global.enums.UserRole;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,12 +63,12 @@ class UserLoginServiceTest {
             .refreshToken("refreshToken")
             .build();
 
-        UserLoginRequest userLoginRequest = new UserLoginRequest(email, password);
+        UserLoginRequest userLoginRequest = new UserLoginRequest(email, password, DeviceType.WEB);
 
         when(userPersistencePort.getUserDocumentBy(userLoginCommand.getEmail(),
             UserStatus.REGISTERED)).thenReturn(userDocument);
 
-        when(tokenIssueService.issueToken(userDocument.getId(), userDocument.getRole())).thenReturn(tokenCommand);
+        when(tokenIssueService.issueToken(userDocument, DeviceType.WEB)).thenReturn(tokenCommand);
 
 
         // When
@@ -76,7 +77,7 @@ class UserLoginServiceTest {
 
         // Then
         verify(userPersistencePort, times(1)).setLastLoginAt(eq("login-user-id"), any(LocalDateTime.class));
-        verify(tokenIssueService, times(1)).issueToken("login-user-id", UserRole.BASIC_USER);
+        verify(tokenIssueService, times(1)).issueToken(userDocument, DeviceType.WEB);
 
 
         assertThat(result.getAccessToken()).isEqualTo("accessToken");

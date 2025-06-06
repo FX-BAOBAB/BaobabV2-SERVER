@@ -31,10 +31,9 @@ public class UserLoginService implements UserLoginUseCase {
             throw new PasswordMismatchException(UserErrorCode.PASSWORD_MISMATCH);
         }
 
-        LocalDateTime lastLoginAt = LocalDateTime.now();
-        userPersistencePort.setLastLoginAt(userDocument.getId(), lastLoginAt);
+        userPersistencePort.setLastLoginAt(userDocument.getId(), LocalDateTime.now());
 
-        return tokenIssueService.issueToken(userDocument.getId(), userDocument.getRole());
+        return tokenIssueService.issueToken(userDocument, userLoginCommand.getDeviceType());
     }
 
 }
