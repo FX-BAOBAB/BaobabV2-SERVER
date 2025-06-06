@@ -47,7 +47,6 @@ public class ArticleUpdateCommand {
             .price(articleUpdateRequest.getPrice())
             .addImages(addImages)
             .deleteImageIdList(articleUpdateRequest.getDeleteImageIdList())
-            .status(articleUpdateRequest.getStatus())
             .userId(userId)
             .build();
     }

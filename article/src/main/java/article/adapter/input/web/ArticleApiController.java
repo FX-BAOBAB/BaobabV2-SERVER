@@ -1,5 +1,6 @@
 package article.adapter.input.web;
 
+import article.adapter.input.web.request.ArticleSaleStatusUpdateRequest;
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.input.web.request.ArticleUpdateRequest;
@@ -9,13 +10,16 @@ import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
 import article.application.port.input.UpdateArticleUseCase;
+import article.domain.command.ArticleSaleStatusUpdateCommand;
 import article.domain.command.ArticleSaveCommand;
 import article.domain.command.ArticleSearchCommand;
 import article.domain.command.ArticleUpdateCommand;
 import global.annotation.AuthenticatedUser;
 import global.api.Api;
 import global.resolver.AuthUser;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -105,6 +110,24 @@ public class ArticleApiController {
         return ResponseEntity.status(HttpStatus.FOUND)
             .location(URI.create(redirectUrl))
             .build();
+    }
+
+    @PostMapping("/articles/sale-status")
+    public void updateSaleStatus(
+        @Valid @RequestBody ArticleSaleStatusUpdateRequest request,
+        @AuthenticatedUser AuthUser authUser,
+        HttpServletResponse response) throws IOException {
+
+        ArticleSaleStatusUpdateCommand command = ArticleSaleStatusUpdateCommand.of(
+            request, authUser.getUserId());
+
+        updateArticleUseCase.updateArticleSaleStatus(command);
+
+        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/article/" + request.getArticleId())
+            .toUriString();
+
+        response.sendRedirect(redirectUrl);
     }
 
     @DeleteMapping("/{articleId}")

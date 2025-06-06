@@ -1,5 +1,6 @@
 package article.application.port.input;
 
+import article.domain.command.ArticleSaleStatusUpdateCommand;
 import article.domain.command.ArticleUpdateCommand;
 
 /**
@@ -13,5 +14,7 @@ public interface UpdateArticleUseCase {
      * @return is Article Update?
      */
     boolean updateArticle(ArticleUpdateCommand articleUpdateCommand);
+
+    boolean updateArticleSaleStatus(ArticleSaleStatusUpdateCommand command);
 
 }
