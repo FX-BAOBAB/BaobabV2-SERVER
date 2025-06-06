@@ -86,7 +86,10 @@ jwt:
   access-token:
     plus-hour: ${JWT_ACCESS_PLUS_HOUR}
   refresh-token:
-    plus-hour: ${JWT_REFRESH_PLUS_HOUR}
+    web:
+      plus-hour: ${JWT_WEB_REFRESH_PLUS_HOUR}
+    app:
+      plus-hour: ${JWT_APP_REFRESH_PLUS_HOUR}
 
 eureka:
   instance:

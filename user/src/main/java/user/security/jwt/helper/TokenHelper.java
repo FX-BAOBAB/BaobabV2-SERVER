@@ -1,5 +1,6 @@
 package user.security.jwt.helper;
 
+import global.enums.DeviceType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -23,7 +24,6 @@ import user.core.common.exception.token.TokenSignatureException;
 import user.security.jwt.ifs.TokenHelperIfs;
 import user.security.jwt.model.TokenDto;
 
-
 @Slf4j
 @Component
 public class TokenHelper implements TokenHelperIfs {
@@ -34,9 +34,11 @@ public class TokenHelper implements TokenHelperIfs {
     @Value("${jwt.access-token.plus-hour}")
     private Long accessTokenPlusHour;
 
-    @Value("${jwt.refresh-token.plus-hour}")
-    private Long refreshTokenPlusHour;
+    @Value("${jwt.refresh-token.web.plus-hour}")
+    private Long webRefreshTokenPlusHour;
 
+    @Value("${jwt.refresh-token.app.plus-hour}")
+    private Long appRefreshTokenPlusHour;
 
     @Override
     public TokenDto issueAccessToken(Map<String, Object> data) {
@@ -44,8 +46,11 @@ public class TokenHelper implements TokenHelperIfs {
     }
 
     @Override
-    public TokenDto issueRefreshToken(Map<String, Object> data) {
-        return getTokenDto(data, refreshTokenPlusHour);
+    public TokenDto issueRefreshToken(Map<String, Object> data, DeviceType deviceType) {
+        if (deviceType == null || deviceType == DeviceType.WEB) {
+            return getTokenDto(data, webRefreshTokenPlusHour);
+        }
+        return getTokenDto(data, appRefreshTokenPlusHour);
     }
 
     @Override

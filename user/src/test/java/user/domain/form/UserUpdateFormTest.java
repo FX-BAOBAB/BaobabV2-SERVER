@@ -9,7 +9,7 @@ import user.adapter.output.persistence.repository.UserDocument;
 import user.adapter.output.persistence.enums.CarrierType;
 import user.adapter.output.persistence.enums.GenderType;
 import user.adapter.output.persistence.enums.UserStatus;
-import global.user.UserRole;
+import global.enums.UserRole;
 
 import static org.assertj.core.api.Assertions.*;
 

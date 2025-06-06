@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import user.adapter.output.persistence.enums.GenderType;
-import global.user.UserRole;
+import global.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.command.UserReaderCommand;
 import user.domain.dto.ProfileImage;

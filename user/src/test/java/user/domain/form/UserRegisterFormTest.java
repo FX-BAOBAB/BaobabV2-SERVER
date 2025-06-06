@@ -2,7 +2,7 @@ package user.domain.form;
 
 import static org.assertj.core.api.Assertions.*;
 
-import global.user.UserRole;
+import global.enums.UserRole;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;

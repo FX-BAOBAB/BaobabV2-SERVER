@@ -1,6 +1,6 @@
 package user.security.jwt.model;
 
-import global.user.UserRole;
+import global.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

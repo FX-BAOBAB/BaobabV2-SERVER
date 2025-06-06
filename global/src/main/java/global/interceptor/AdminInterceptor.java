@@ -2,7 +2,7 @@ package global.interceptor;
 
 import global.errorcode.ErrorCode;
 import global.exception.UnauthorizedException;
-import global.user.UserRole;
+import global.enums.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
