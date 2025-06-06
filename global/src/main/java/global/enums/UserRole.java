@@ -1,4 +1,4 @@
-package global.user;
+package global.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

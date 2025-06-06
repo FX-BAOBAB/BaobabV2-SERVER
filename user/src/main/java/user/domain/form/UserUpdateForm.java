@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 import user.adapter.output.persistence.enums.GenderType;
-import global.user.UserRole;
+import global.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.dto.UserAccount;
 import user.domain.dto.UserAddress;

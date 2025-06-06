@@ -7,7 +7,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import user.adapter.output.persistence.enums.GenderType;
-import global.user.UserRole;
+import global.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.dto.UserAccount;
 import user.domain.dto.UserAddress;

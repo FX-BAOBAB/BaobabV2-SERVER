@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import message.adapter.output.persistence.enums.DeviceType;
+import global.enums.DeviceType;
 
 @Getter
 @NoArgsConstructor

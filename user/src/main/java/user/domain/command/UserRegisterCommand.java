@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import user.adapter.input.web.request.UserRegisterRequest;
 import user.adapter.output.persistence.enums.GenderType;
-import global.user.UserRole;
+import global.enums.UserRole;
 import user.adapter.output.persistence.enums.UserStatus;
 import user.domain.dto.UserAccount;
 import user.domain.dto.UserAddress;

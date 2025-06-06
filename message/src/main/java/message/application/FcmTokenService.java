@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import message.adapter.input.web.response.SubscriptionResponse;
-import message.adapter.output.persistence.enums.DeviceType;
+import global.enums.DeviceType;
 import message.adapter.output.persistence.repository.fcmToken.FcmToken;
 import message.application.port.input.DefaultFcmTokenUseCase;
 import message.application.port.input.SubscribeTopicUseCase;

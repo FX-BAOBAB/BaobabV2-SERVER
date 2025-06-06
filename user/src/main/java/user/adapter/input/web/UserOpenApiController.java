@@ -58,10 +58,8 @@ public class UserOpenApiController {
 
     @PostMapping("/login")
     public Api<TokenResponse> login(@RequestBody @Valid Api<UserLoginRequest> userLoginRequest) {
-        UserLoginCommand loginCommand = UserLoginCommand.of(userLoginRequest.getBody());
-        TokenCommand tokenCommand = userLoginUseCase.login(loginCommand);
-        TokenResponse response = TokenResponse.toResponse(tokenCommand);
-        return Api.OK(response);
+        return Api.OK(TokenResponse.toResponse(
+            userLoginUseCase.login(UserLoginCommand.of(userLoginRequest.getBody()))));
     }
 
     @PostMapping("/reissue")

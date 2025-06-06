@@ -1,9 +1,8 @@
 package message.adapter.output.persistence.repository.fcmToken;
 
-import com.mongodb.client.result.DeleteResult;
 import java.time.LocalDate;
 import java.util.List;
-import message.adapter.output.persistence.enums.DeviceType;
+import global.enums.DeviceType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
