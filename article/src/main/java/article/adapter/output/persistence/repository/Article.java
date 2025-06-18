@@ -44,6 +44,9 @@ public class Article {
     private List<ArticleImage> imageList;
 
     @Builder.Default
+    private List<String> bookmarkUserIdList = List.of();
+
+    @Builder.Default
     private Long viewCount = 0L;
 
     @Builder.Default
@@ -79,6 +82,7 @@ public class Article {
             .viewCount(form.getViewCount())
             .reportCount(form.getReportCount())
             .visibilityStatus(form.getVisibilityStatus())
+            .bookmarkUserIdList(form.getBookmarkUserIdList())
             .build();
     }
 
@@ -96,6 +100,7 @@ public class Article {
                 .imageList(form.getImageList())
                 .viewCount(form.getViewCount())
                 .visibilityStatus(form.getVisibilityStatus())
+                .bookmarkUserIdList(form.getBookmarkUserIdList())
                 .build()
             ).toList();
     }

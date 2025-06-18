@@ -161,4 +161,20 @@ public class ArticleService implements DefaultArticleUseCase {
         return ArticleFeignResponse.of(article.getUserId(), article.getImageList().get(0));
     }
 
+    @Override
+    public boolean bookmarkArticle(String articleId, String userId) {
+        Article article = articlePersistencePort.getArticleById(articleId,
+                ArticleVisibilityStatus.VISIBILITY)
+            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+
+        List<String> bookmarkUserIdList = article.getBookmarkUserIdList();
+        if (bookmarkUserIdList.contains(userId)) {
+            return true;
+        }
+
+        bookmarkUserIdList.add(userId);
+        article.setBookmarkUserIdList(bookmarkUserIdList);
+        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
+    }
+
 }
