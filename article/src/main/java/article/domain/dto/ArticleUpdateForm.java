@@ -38,6 +38,8 @@ public class ArticleUpdateForm {
 
     private ArticleVisibilityStatus visibilityStatus;
 
+    private List<String> bookmarkUserIdList;
+
     public static ArticleUpdateForm of(ArticleUpdateCommand command, Article article) {
         return ArticleUpdateForm.builder()
             .id(command.getId())
@@ -52,6 +54,7 @@ public class ArticleUpdateForm {
             .viewCount(article.getViewCount())
             .reportCount(article.getReportCount())
             .visibilityStatus(article.getVisibilityStatus())
+            .bookmarkUserIdList(article.getBookmarkUserIdList())
             .build();
     }
 
@@ -70,6 +73,7 @@ public class ArticleUpdateForm {
                 .viewCount(article.getViewCount())
                 .visibilityStatus(article.getVisibilityStatus())
                 .reportCount(article.getReportCount())
+                .bookmarkUserIdList(article.getBookmarkUserIdList())
                 .build())
             .toList();
     }
@@ -88,6 +92,7 @@ public class ArticleUpdateForm {
             .viewCount(article.getViewCount())
             .reportCount(article.getReportCount())
             .visibilityStatus(article.getVisibilityStatus())
+            .bookmarkUserIdList(article.getBookmarkUserIdList())
             .build();
     }
 

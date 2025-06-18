@@ -6,6 +6,7 @@ import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.input.web.request.ArticleUpdateRequest;
 import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
+import article.application.port.input.BookmarkArticleUseCase;
 import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
 import article.application.port.input.SaveArticleUseCase;
@@ -52,6 +53,8 @@ public class ArticleApiController {
     private final UpdateArticleUseCase updateArticleUseCase;
 
     private final DeleteArticleUseCase deleteArticleUseCase;
+
+    private final BookmarkArticleUseCase bookmarkArticleUseCase;
 
     @PostMapping("/save")
     public Api<Boolean> save(
@@ -133,6 +136,25 @@ public class ArticleApiController {
     @DeleteMapping("/{articleId}")
     public Api<Boolean> softDeleteArticle(@PathVariable String articleId, @AuthenticatedUser AuthUser authUser) {
         return Api.OK(deleteArticleUseCase.softDeleteArticle(articleId, authUser.getUserId()));
+    }
+
+    @PostMapping("/articles/{articleId}/bookmarks")
+    public Api<Boolean> bookmarkArticle(
+        @PathVariable String articleId,
+        @AuthenticatedUser AuthUser authUser) {
+        return Api.OK(bookmarkArticleUseCase.bookmarkArticle(articleId, authUser.getUserId()));
+    }
+
+    @DeleteMapping("/articles/{articleId}/bookmarks")
+    public Api<Boolean> unbookmarkArticle(
+        @PathVariable String articleId,
+        @AuthenticatedUser AuthUser authUser) {
+        return Api.OK(bookmarkArticleUseCase.unbookmarkArticle(articleId, authUser.getUserId()));
+    }
+
+    @GetMapping("/bookmarks")
+    public Api<List<ArticleInfoResponse>> getBookmarkArticle(@AuthenticatedUser AuthUser authUser) {
+        return Api.OK(getArticleUseCase.getBookmarkedArticles(authUser.getUserId()));
     }
 
     // Chat-Service Feign Client 에서 사용

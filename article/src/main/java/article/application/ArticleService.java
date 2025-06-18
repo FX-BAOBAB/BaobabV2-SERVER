@@ -9,6 +9,7 @@ import article.application.port.input.DefaultArticleUseCase;
 import article.application.port.output.ArticlePersistencePort;
 import article.core.common.error.article.ArticleErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
+import article.core.common.exception.article.BookmarkNotFoundException;
 import article.core.common.exception.article.NotPermittedException;
 import article.domain.command.ArticleSaleStatusUpdateCommand;
 import article.domain.command.ArticleSaveCommand;
@@ -159,6 +160,50 @@ public class ArticleService implements DefaultArticleUseCase {
                 ArticleVisibilityStatus.VISIBILITY)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
         return ArticleFeignResponse.of(article.getUserId(), article.getImageList().get(0));
+    }
+
+    @Override
+    public boolean bookmarkArticle(String articleId, String userId) {
+        Article article = articlePersistencePort.getArticleById(articleId,
+                ArticleVisibilityStatus.VISIBILITY)
+            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+
+        List<String> bookmarkUserIdList = article.getBookmarkUserIdList();
+        if (bookmarkUserIdList.contains(userId)) {
+            return true;
+        }
+
+        bookmarkUserIdList.add(userId);
+        article.setBookmarkUserIdList(bookmarkUserIdList);
+        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
+    }
+
+    @Override
+    public boolean unbookmarkArticle(String articleId, String userId) {
+        Article article = articlePersistencePort.getArticleById(articleId,
+                ArticleVisibilityStatus.VISIBILITY)
+            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+
+        if (!article.getBookmarkUserIdList().contains(userId)) {
+            throw new BookmarkNotFoundException(ArticleErrorCode.BOOKMARK_NOT_FOUND);
+        }
+
+        List<String> bookmarkUserIdList = article.getBookmarkUserIdList();
+        bookmarkUserIdList.remove(userId);
+        article.setBookmarkUserIdList(bookmarkUserIdList);
+        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
+    }
+
+    @Override
+    public List<ArticleInfoResponse> getBookmarkedArticles(String userId) {
+        List<Article> articles = articlePersistencePort.getBookmarkedArticles(userId);
+        return articles.stream()
+            .map(article -> {
+                boolean isMine = userId != null && userId.equals(article.getUserId());
+                return ArticleInfoResponse.of(article,
+                    userClient.getUserSimpleInfo(article.getUserId()), isMine);
+            })
+            .toList();
     }
 
 }

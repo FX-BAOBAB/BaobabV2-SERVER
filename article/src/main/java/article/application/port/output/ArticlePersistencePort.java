@@ -52,5 +52,7 @@ public interface ArticlePersistencePort {
 
     void updateArticles(List<ArticleUpdateForm> articleUpdateForms);
 
+    List<Article> getBookmarkedArticles(String userId);
+
 
 }
