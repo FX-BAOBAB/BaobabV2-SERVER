@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import article.adapter.input.web.request.ArticleSaveRequest;
+import article.adapter.input.web.response.ArticleInfoResponse;
 import article.adapter.output.persistence.ArticlePersistenceAdapter;
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleSaleStatus;
@@ -17,6 +18,7 @@ import article.domain.dto.ArticleImage;
 import config.EnableMongoTestServer;
 import file.domain.ImageKind;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,5 +117,49 @@ class ArticleServiceTest {
 //            assertFalse(articleMongoRepository.existsById(article.getId()));
 //        });
 //    }
+
+    @Test
+    void 게시글_북마크() {
+        articleMongoRepository.findAll().forEach(article -> {
+            articleService.bookmarkArticle(article.getId(), "userId");
+        });
+
+        articleMongoRepository.findAll().forEach(article -> {
+            assertTrue(article.getBookmarkUserIdList().contains("userId"));
+        });
+    }
+
+    @Test
+    void 게시글_북마크_조회() {
+        ArticleSaveRequest request = new ArticleSaveRequest(
+            "Test Article", "Test Content", ArticleCategory.CLOTHING, 10000);
+
+        ArticleSaveCommand command = ArticleSaveCommand.of(
+            request, imageList, "userId");
+
+        articleService.saveArticle(command);
+
+        articleMongoRepository.findAll().forEach(article -> {
+            articleService.bookmarkArticle(article.getId(), "userId");
+        });
+
+        articleMongoRepository.findAll().forEach(article -> {
+            assertTrue(article.getBookmarkUserIdList().contains("userId"));
+        });
+
+        List<Article> bookedArticle = articlePersistenceAdapter.getBookmarkedArticles("userId");
+        assertFalse(bookedArticle.isEmpty());
+    }
+
+    @Test
+    void 게시글_북마크_취소() {
+        articleMongoRepository.findAll().forEach(article -> {
+            articleService.unbookmarkArticle(article.getId(), "userId");
+        });
+
+        articleMongoRepository.findAll().forEach(article -> {
+            assertFalse(article.getBookmarkUserIdList().contains("userId"));
+        });
+    }
 
 }
