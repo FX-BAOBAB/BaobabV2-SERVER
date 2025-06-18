@@ -145,6 +145,13 @@ public class ArticleApiController {
         return Api.OK(bookmarkArticleUseCase.bookmarkArticle(articleId, authUser.getUserId()));
     }
 
+    @DeleteMapping("/articles/{articleId}/bookmarks")
+    public Api<Boolean> unbookmarkArticle(
+        @PathVariable String articleId,
+        @AuthenticatedUser AuthUser authUser) {
+        return Api.OK(bookmarkArticleUseCase.unbookmarkArticle(articleId, authUser.getUserId()));
+    }
+
     // Chat-Service Feign Client 에서 사용
     @GetMapping("/simple-info")
     public ArticleFeignResponse getArticleSimpleInfo(@RequestParam String articleId) {
