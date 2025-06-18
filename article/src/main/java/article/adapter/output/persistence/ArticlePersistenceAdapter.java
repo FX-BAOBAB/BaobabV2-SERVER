@@ -63,4 +63,9 @@ public class ArticlePersistenceAdapter implements ArticlePersistencePort {
         articleMongoRepository.saveAll(Article.of(articleUpdateForms));
     }
 
+    @Override
+    public List<Article> getBookmarkedArticles(String userId) {
+        return articleQueryRepository.getBookmarkedArticlesByUserId(userId);
+    }
+
 }

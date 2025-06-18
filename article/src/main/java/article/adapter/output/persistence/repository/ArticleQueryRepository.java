@@ -47,6 +47,15 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
             .fetch();
     }
 
+    public List<Article> getBookmarkedArticlesByUserId(String userId) {
+        BooleanBuilder builder = buildQueryConditions(userId);
+
+        return from(article)
+            .where(builder)
+            .orderBy(article.registeredAt.desc())
+            .fetch();
+    }
+
     private BooleanBuilder buildQueryConditions(ArticleSearchCommand command,
         ArticleVisibilityStatus visibilityStatus) {
 
@@ -77,6 +86,18 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
         }
 
         builder.and(article.visibilityStatus.eq(visibilityStatus));
+
+        return builder;
+    }
+
+    private BooleanBuilder buildQueryConditions(String userId) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (!isUserIdEmpty(userId)) {
+            builder.and(article.bookmarkUserIdList.contains(userId));
+        }
+
+        builder.and(article.visibilityStatus.eq(ArticleVisibilityStatus.VISIBILITY));
 
         return builder;
     }

@@ -194,4 +194,16 @@ public class ArticleService implements DefaultArticleUseCase {
         return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
     }
 
+    @Override
+    public List<ArticleInfoResponse> getBookmarkedArticles(String userId) {
+        List<Article> articles = articlePersistencePort.getBookmarkedArticles(userId);
+        return articles.stream()
+            .map(article -> {
+                boolean isMine = userId != null && userId.equals(article.getUserId());
+                return ArticleInfoResponse.of(article,
+                    userClient.getUserSimpleInfo(article.getUserId()), isMine);
+            })
+            .toList();
+    }
+
 }

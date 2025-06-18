@@ -21,4 +21,6 @@ public interface GetArticleUseCase {
 
     ArticleFeignResponse getArticleBy(String articleId);
 
+    List<ArticleInfoResponse> getBookmarkedArticles(String userId);
+
 }
