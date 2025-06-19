@@ -2,6 +2,7 @@ package article.core.common.exception;
 
 import article.core.common.error.article.ArticleErrorCode;
 import article.core.common.exception.article.ArticleNotFoundException;
+import article.core.common.exception.article.BookmarkNotFoundException;
 import article.core.common.exception.article.NotPermittedException;
 import global.api.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,13 @@ public class ArticleExceptionHandler {
         log.error("", e);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
             .body(Api.ERROR(ArticleErrorCode.NOT_PERMITTED));
+    }
+
+    @ExceptionHandler(value = BookmarkNotFoundException.class)
+    public ResponseEntity<Api<Object>> bookmarkNotFoundException(BookmarkNotFoundException e) {
+        log.error("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(ArticleErrorCode.BOOKMARK_NOT_FOUND));
     }
 
 }
