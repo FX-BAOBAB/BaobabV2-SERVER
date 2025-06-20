@@ -44,8 +44,11 @@ class ArticleServiceTest {
 
     @Test
     void 게시글_저장() {
-        ArticleSaveRequest request = new ArticleSaveRequest(
-            "Test Article", "Test Content", ArticleCategory.CLOTHING, 10000);
+        ArticleSaveRequest request = new ArticleSaveRequest();
+        request.setTitle("Test Article");
+        request.setContent("Test Content");
+        request.setCategory(ArticleCategory.CLOTHING);
+        request.setPrice(10000);
 
         ArticleSaveCommand command = ArticleSaveCommand.of(
             request, imageList, "userId");
@@ -68,13 +71,13 @@ class ArticleServiceTest {
         assertFalse(articleList.isEmpty());
 
         Article article = articleList.getFirst();
-        assertEquals(article.getTitle(), "Test Article");
-        assertEquals(article.getContent(), "Test Content");
-        assertEquals(article.getCategory(), ArticleCategory.CLOTHING);
-        assertEquals(article.getPrice(), 10000);
-        assertEquals(article.getSaleStatus(), ArticleSaleStatus.ON_SALE);
-        assertEquals(article.getVisibilityStatus(), ArticleVisibilityStatus.VISIBILITY);
-        assertEquals(article.getUserId(), "userId");
+        assertEquals("Test Article", article.getTitle());
+        assertEquals("Test Content", article.getContent());
+        assertEquals(ArticleCategory.CLOTHING, article.getCategory());
+        assertEquals(10000, article.getPrice());
+        assertEquals(ArticleSaleStatus.ON_SALE, article.getSaleStatus());
+        assertEquals(ArticleVisibilityStatus.VISIBILITY, article.getVisibilityStatus());
+        assertEquals("userId", article.getUserId());
     }
 
     @Test
@@ -88,7 +91,7 @@ class ArticleServiceTest {
             articleMongoRepository.save(article);
 
             ArticleUpdateCommand command = ArticleUpdateCommand.builder()
-                .id(article.getId())
+                .articleId(article.getId())
                 .title("Updated Article")
                 .content("Updated Content")
                 .category(ArticleCategory.CLOTHING)
@@ -101,11 +104,11 @@ class ArticleServiceTest {
             articleService.updateArticle(command);
 
             Article updatedArticle = articleMongoRepository.findById(article.getId()).get();
-            assertEquals(updatedArticle.getTitle(), "Updated Article");
-            assertEquals(updatedArticle.getContent(), "Updated Content");
-            assertEquals(updatedArticle.getPrice(), 20000);
-            assertEquals(updatedArticle.getSaleStatus(), ArticleSaleStatus.RESERVED);
-            assertEquals(updatedArticle.getVisibilityStatus(), ArticleVisibilityStatus.VISIBILITY);
+            assertEquals("Updated Article", updatedArticle.getTitle());
+            assertEquals("Updated Content", updatedArticle.getContent());
+            assertEquals(20000, updatedArticle.getPrice());
+            assertEquals(ArticleSaleStatus.RESERVED, updatedArticle.getSaleStatus());
+            assertEquals(ArticleVisibilityStatus.VISIBILITY, updatedArticle.getVisibilityStatus());
             assertFalse(updatedArticle.getImageList().contains(imageA));
         });
     }
@@ -131,8 +134,11 @@ class ArticleServiceTest {
 
     @Test
     void 게시글_북마크_조회() {
-        ArticleSaveRequest request = new ArticleSaveRequest(
-            "Test Article", "Test Content", ArticleCategory.CLOTHING, 10000);
+        ArticleSaveRequest request = new ArticleSaveRequest();
+        request.setTitle("Test Article");
+        request.setContent("Test Content");
+        request.setCategory(ArticleCategory.CLOTHING);
+        request.setPrice(10000);
 
         ArticleSaveCommand command = ArticleSaveCommand.of(
             request, imageList, "userId");
