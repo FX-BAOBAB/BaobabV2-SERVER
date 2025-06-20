@@ -6,15 +6,11 @@ import article.domain.command.ArticleSaveCommand;
 import file.domain.ImageMetaData;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ArticleSaveForm {
 
     private String title;

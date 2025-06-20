@@ -56,14 +56,13 @@ public class ArticleApiController {
 
     private final BookmarkArticleUseCase bookmarkArticleUseCase;
 
-    @PostMapping("/save")
+    @PostMapping("/articles")
     public Api<Boolean> save(
         @Valid @ModelAttribute ArticleSaveRequest request,
         @RequestPart("imageList") List<MultipartFile> imageList,
-        @AuthenticatedUser AuthUser authUser) {
-
+        @AuthenticatedUser AuthUser authUser
+    ) {
         ArticleSaveCommand command = ArticleSaveCommand.of(request, imageList, authUser.getUserId());
-
         return Api.OK(saveArticleUseCase.saveArticle(command));
     }
 

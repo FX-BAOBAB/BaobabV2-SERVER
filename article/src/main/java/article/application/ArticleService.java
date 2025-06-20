@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,13 +42,13 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final UserClient userClient;
 
+    @Transactional
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
         List<ImageMetaData> imageMetaDataList = imageMetaDataUseCase.processImageMetaDataList(
             ImageKind.ARTICLE, articleSaveCommand.getUserId(), articleSaveCommand.getImageList());
 
         ArticleSaveForm form = ArticleSaveForm.of(articleSaveCommand, imageMetaDataList);
-
         return articlePersistencePort.saveArticle(form);
     }
 
