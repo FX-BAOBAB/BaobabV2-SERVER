@@ -2,10 +2,12 @@ package article.adapter.input.web.request;
 
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleSaleStatus;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.domain.Pageable;
 
-@Data
+@Getter
+@Setter
 public class ArticleSearchCondition {
 
     private String title;

@@ -4,13 +4,11 @@ import article.adapter.output.persistence.enums.ReportReasonType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class ArticleReportSaveRequest {
 
     @NotNull(message = "필수 입력 사항입니다.")
