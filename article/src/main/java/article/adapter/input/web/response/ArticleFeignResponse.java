@@ -1,15 +1,11 @@
 package article.adapter.input.web.response;
 
 import article.domain.dto.ArticleImage;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ArticleFeignResponse {
 
     private String userId;

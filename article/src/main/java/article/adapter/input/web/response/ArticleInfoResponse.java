@@ -7,15 +7,11 @@ import article.adapter.output.persistence.repository.Article;
 import article.domain.dto.ArticleImage;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class ArticleInfoResponse {
 
     private String id;
