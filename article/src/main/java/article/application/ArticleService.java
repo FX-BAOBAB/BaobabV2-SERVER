@@ -70,9 +70,10 @@ public class ArticleService implements DefaultArticleUseCase {
             .toList();
     }
 
+    @Transactional
     @Override
     public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
-        Article article = articlePersistencePort.getArticleById(articleUpdateCommand.getId(),
+        Article article = articlePersistencePort.getArticleById(articleUpdateCommand.getArticleId(),
                 ArticleVisibilityStatus.VISIBILITY)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 

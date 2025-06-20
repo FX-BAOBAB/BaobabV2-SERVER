@@ -5,19 +5,15 @@ import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ArticleUpdateCommand {
 
-    private String id;
+    private String articleId;
 
     private String title;
 
@@ -38,9 +34,9 @@ public class ArticleUpdateCommand {
     private String userId;
 
     public static ArticleUpdateCommand of(ArticleUpdateRequest articleUpdateRequest,
-        List<MultipartFile> addImages, String userId) {
+        List<MultipartFile> addImages, String articleId, String userId) {
         return ArticleUpdateCommand.builder()
-            .id(articleUpdateRequest.getId())
+            .articleId(articleId)
             .title(articleUpdateRequest.getTitle())
             .content(articleUpdateRequest.getContent())
             .category(articleUpdateRequest.getCategory())

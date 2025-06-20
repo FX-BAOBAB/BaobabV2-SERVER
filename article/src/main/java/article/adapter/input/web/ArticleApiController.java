@@ -21,13 +21,11 @@ import global.resolver.AuthUser;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -38,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Slf4j
@@ -96,24 +95,28 @@ public class ArticleApiController {
         return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(articleId, userId)));
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<Void> update(
+    @PostMapping("/articles/{articleId}/edit")
+    public void update(
+        @PathVariable String articleId,
         @Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest,
         @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages,
-        @AuthenticatedUser AuthUser authUser) {
-
-        ArticleUpdateCommand command = ArticleUpdateCommand.of(articleUpdateRequest,
-            addImages, authUser.getUserId());
-
+        @AuthenticatedUser AuthUser authUser,
+        HttpServletResponse response
+    ) {
+        ArticleUpdateCommand command = ArticleUpdateCommand.of(articleUpdateRequest, addImages,
+            articleId, authUser.getUserId());
         updateArticleUseCase.updateArticle(command);
 
         String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/article/" + articleUpdateRequest.getId())
+            .path("/articles/" + articleId)
             .toUriString();
 
-        return ResponseEntity.status(HttpStatus.FOUND)
-            .location(URI.create(redirectUrl))
-            .build();
+        try {
+            response.sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            log.error("Error redirecting to article page: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/articles/sale-status")
@@ -164,5 +167,8 @@ public class ArticleApiController {
         return getArticleUseCase.getArticleBy(articleId);
     }
 
+    private String getUserId(AuthUser authUser) {
+        return authUser != null ? authUser.getUserId() : null;
+    }
 
 }

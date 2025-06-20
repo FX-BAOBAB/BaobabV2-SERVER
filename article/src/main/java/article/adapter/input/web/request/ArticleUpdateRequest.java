@@ -12,8 +12,6 @@ import lombok.Setter;
 @Setter
 public class ArticleUpdateRequest {
 
-    private String id;
-
     @NotBlank(message = "필수 입력 사항입니다.")
     @Size(max = 200, message = "최대 200자까지 입력 가능합니다.")
     private String title;

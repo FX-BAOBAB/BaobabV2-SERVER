@@ -8,13 +8,13 @@ import article.domain.command.ArticleUpdateCommand;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
 public class ArticleUpdateForm {
 
-    private String id;
+    private String articleId;
 
     private String title;
 
@@ -42,7 +42,7 @@ public class ArticleUpdateForm {
 
     public static ArticleUpdateForm of(ArticleUpdateCommand command, Article article) {
         return ArticleUpdateForm.builder()
-            .id(command.getId())
+            .articleId(article.getId())
             .title(command.getTitle())
             .content(command.getContent())
             .category(command.getCategory())
@@ -61,7 +61,7 @@ public class ArticleUpdateForm {
     public static List<ArticleUpdateForm> of(List<Article> articleList) {
         return articleList.stream()
             .map(article -> ArticleUpdateForm.builder()
-                .id(article.getId())
+                .articleId(article.getId())
                 .title(article.getTitle())
                 .content(article.getContent())
                 .category(article.getCategory())
@@ -80,7 +80,7 @@ public class ArticleUpdateForm {
 
     public static ArticleUpdateForm of(Article article) {
         return ArticleUpdateForm.builder()
-            .id(article.getId())
+            .articleId(article.getId())
             .title(article.getTitle())
             .content(article.getContent())
             .category(article.getCategory())
