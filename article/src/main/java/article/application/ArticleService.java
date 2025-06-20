@@ -88,6 +88,8 @@ public class ArticleService implements DefaultArticleUseCase {
             ArticleUpdateForm.of(articleUpdateCommand, article));
     }
 
+    @Transactional
+    @Override
     public boolean updateArticleSaleStatus(ArticleSaleStatusUpdateCommand command) {
         Article article = articlePersistencePort.getArticleById(command.getArticleId(),
                 ArticleVisibilityStatus.VISIBILITY)
@@ -98,7 +100,6 @@ public class ArticleService implements DefaultArticleUseCase {
         }
 
         article.setSaleStatus(command.getStatus());
-
         return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
     }
 

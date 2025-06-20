@@ -1,11 +1,11 @@
 package article.adapter.input.web;
 
-import article.adapter.input.web.request.ArticleSaleStatusUpdateRequest;
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.input.web.request.ArticleUpdateRequest;
 import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import article.application.port.input.BookmarkArticleUseCase;
 import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
@@ -26,15 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -119,40 +111,50 @@ public class ArticleApiController {
         }
     }
 
-    @PostMapping("/articles/sale-status")
+    @PostMapping("/articles/{articleId}/sale-status")
     public void updateSaleStatus(
-        @Valid @RequestBody ArticleSaleStatusUpdateRequest request,
+        @PathVariable String articleId,
+        @RequestBody ArticleSaleStatus status,
         @AuthenticatedUser AuthUser authUser,
-        HttpServletResponse response) throws IOException {
-
+        HttpServletResponse response
+    ) {
         ArticleSaleStatusUpdateCommand command = ArticleSaleStatusUpdateCommand.of(
-            request, authUser.getUserId());
-
+            status, articleId, authUser.getUserId());
         updateArticleUseCase.updateArticleSaleStatus(command);
 
         String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/article/" + request.getArticleId())
+            .path("/articles/" + articleId)
             .toUriString();
 
-        response.sendRedirect(redirectUrl);
+        try {
+            response.sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            log.error("Error redirecting to article page: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{articleId}")
-    public Api<Boolean> softDeleteArticle(@PathVariable String articleId, @AuthenticatedUser AuthUser authUser) {
+    public Api<Boolean> softDeleteArticle(
+        @PathVariable String articleId,
+        @AuthenticatedUser AuthUser authUser
+    ) {
         return Api.OK(deleteArticleUseCase.softDeleteArticle(articleId, authUser.getUserId()));
     }
 
     @PostMapping("/articles/{articleId}/bookmarks")
     public Api<Boolean> bookmarkArticle(
         @PathVariable String articleId,
-        @AuthenticatedUser AuthUser authUser) {
+        @AuthenticatedUser AuthUser authUser
+    ) {
         return Api.OK(bookmarkArticleUseCase.bookmarkArticle(articleId, authUser.getUserId()));
     }
 
     @DeleteMapping("/articles/{articleId}/bookmarks")
     public Api<Boolean> unbookmarkArticle(
         @PathVariable String articleId,
-        @AuthenticatedUser AuthUser authUser) {
+        @AuthenticatedUser AuthUser authUser
+    ) {
         return Api.OK(bookmarkArticleUseCase.unbookmarkArticle(articleId, authUser.getUserId()));
     }
 

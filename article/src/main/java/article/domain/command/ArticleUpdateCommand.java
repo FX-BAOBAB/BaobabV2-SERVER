@@ -33,8 +33,12 @@ public class ArticleUpdateCommand {
 
     private String userId;
 
-    public static ArticleUpdateCommand of(ArticleUpdateRequest articleUpdateRequest,
-        List<MultipartFile> addImages, String articleId, String userId) {
+    public static ArticleUpdateCommand of(
+        ArticleUpdateRequest articleUpdateRequest,
+        List<MultipartFile> addImages,
+        String articleId,
+        String userId
+    ) {
         return ArticleUpdateCommand.builder()
             .articleId(articleId)
             .title(articleUpdateRequest.getTitle())

@@ -1,6 +1,5 @@
 package article.domain.command;
 
-import article.adapter.input.web.request.ArticleSaleStatusUpdateRequest;
 import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +16,15 @@ public class ArticleSaleStatusUpdateCommand {
 
     private ArticleSaleStatus status;
 
-    public static ArticleSaleStatusUpdateCommand of(ArticleSaleStatusUpdateRequest request, String userId) {
+    public static ArticleSaleStatusUpdateCommand of(
+        ArticleSaleStatus status,
+        String articleId,
+        String userId
+    ) {
         return ArticleSaleStatusUpdateCommand.builder()
-            .articleId(request.getArticleId())
+            .articleId(articleId)
             .userId(userId)
-            .status(request.getStatus())
+            .status(status)
             .build();
     }
 

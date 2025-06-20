@@ -32,7 +32,8 @@ public class ArticleSaveCommand {
     public static ArticleSaveCommand of(
         ArticleSaveRequest request,
         List<MultipartFile> imageList,
-        String userId) {
+        String userId
+    ) {
         return ArticleSaveCommand.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
