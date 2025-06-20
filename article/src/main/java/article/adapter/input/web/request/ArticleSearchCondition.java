@@ -18,8 +18,6 @@ public class ArticleSearchCondition {
 
     private Pageable pageable;
 
-    private String userId;
-
     private String articleId;
 
     private ArticleSaleStatus status;

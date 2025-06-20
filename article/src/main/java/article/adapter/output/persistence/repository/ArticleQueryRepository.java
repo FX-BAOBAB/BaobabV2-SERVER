@@ -38,6 +38,12 @@ public class ArticleQueryRepository extends QuerydslRepositorySupport {
         BooleanBuilder builder = buildQueryConditions(articleSearchCommand, visibilityStatus);
 
         Pageable pageable = articleSearchCommand.getPageable();
+        if (pageable.isUnpaged()) {
+            return from(article)
+                .where(builder)
+                .orderBy(article.registeredAt.desc())
+                .fetch();
+        }
 
         return from(article)
             .where(builder)

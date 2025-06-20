@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,32 +65,35 @@ public class ArticleApiController {
         return Api.OK(saveArticleUseCase.saveArticle(command));
     }
 
-    @GetMapping({"/list","/article/{articleId}", "/auth-list", "/auth-article/{articleId}"})
+    @GetMapping({"/list", "/auth/list"})
     public Api<List<ArticleInfoResponse>> getAllArticles(
-        @PathVariable(required = false) String articleId,
         @ModelAttribute ArticleSearchCondition condition,
         @AuthenticatedUser(required = false) AuthUser authUser,
-        Pageable pageable) {
-
+        Pageable pageable
+    ) {
         condition.setPageable(pageable);
-
-        if(!StringUtils.isEmpty(articleId)) {
-            condition.setArticleId(articleId);
-        }
-
-        String userId = authUser != null ? authUser.getUserId() : null;
-        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition), userId));
+        String userId = getUserId(authUser);
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition, userId)));
     }
 
     @GetMapping("/my-articles")
     public Api<List<ArticleInfoResponse>> getMyArticles(
         @ModelAttribute ArticleSearchCondition condition,
         @AuthenticatedUser AuthUser authUser,
-        Pageable pageable) {
-
+        Pageable pageable
+    ) {
         condition.setPageable(pageable);
-        condition.setUserId(authUser.getUserId());
-        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition), authUser.getUserId()));
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition,
+            authUser.getUserId())));
+    }
+
+    @GetMapping({"/articles/{articleId}", "/auth/articles/{articleId}"})
+    public Api<List<ArticleInfoResponse>> getArticle(
+        @PathVariable String articleId,
+        @AuthenticatedUser(required = false) AuthUser authUser
+    ) {
+        String userId = getUserId(authUser);
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(articleId, userId)));
     }
 
     @PostMapping("/update")
@@ -161,5 +163,6 @@ public class ArticleApiController {
     public ArticleFeignResponse getArticleSimpleInfo(@RequestParam String articleId) {
         return getArticleUseCase.getArticleBy(articleId);
     }
+
 
 }

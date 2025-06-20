@@ -52,16 +52,18 @@ public class ArticleService implements DefaultArticleUseCase {
         return articlePersistencePort.saveArticle(form);
     }
 
+    @Transactional
     @Override
-    public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand command, String userId) {
-        if (command.getArticleId() != null) {
-            articleViewService.increaseViewCount(command.getArticleId(), userId);
-        }
+    public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand command) {
+        String userId = command.getUserId();
 
-        List<Article> articles = articlePersistencePort.getArticleList(command, ArticleVisibilityStatus.VISIBILITY);
+        increaseViewCount(command.getArticleId(), userId);
+
+        List<Article> articles = articlePersistencePort.getArticleList(command,
+            ArticleVisibilityStatus.VISIBILITY);
         return articles.stream()
             .map(article -> {
-                boolean isMine = userId != null && userId.equals(article.getUserId());
+                boolean isMine = isOwner(article, userId);
                 return ArticleInfoResponse.of(article,
                     userClient.getUserSimpleInfo(article.getUserId()), isMine);
             })
@@ -205,6 +207,16 @@ public class ArticleService implements DefaultArticleUseCase {
                     userClient.getUserSimpleInfo(article.getUserId()), isMine);
             })
             .toList();
+    }
+
+    private void increaseViewCount(String articleId, String userId) {
+        if (articleId != null) {
+            articleViewService.increaseViewCount(articleId, userId);
+        }
+    }
+
+    private boolean isOwner(Article article, String userId) {
+        return userId != null && userId.equals(article.getUserId());
     }
 
 }
