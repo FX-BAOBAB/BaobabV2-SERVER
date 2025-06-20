@@ -3,16 +3,12 @@ package article.domain.command;
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleSaleStatus;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import org.springframework.data.domain.Pageable;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ArticleSearchCommand {
 
     private String title;
@@ -29,16 +25,23 @@ public class ArticleSearchCommand {
 
     private ArticleSaleStatus status;
 
-    // static factory Method
-    public static ArticleSearchCommand of(ArticleSearchCondition condition){
+    public static ArticleSearchCommand of(ArticleSearchCondition condition, String userId) {
         return ArticleSearchCommand.builder()
                 .title(condition.getTitle())
                 .content(condition.getContent())
                 .category(condition.getCategory())
                 .pageable(condition.getPageable())
                 .status(condition.getStatus())
-                .userId(condition.getUserId())
+                .userId(userId)
                 .articleId(condition.getArticleId())
+                .build();
+    }
+
+    public static ArticleSearchCommand of(String articleId, String userId) {
+        return ArticleSearchCommand.builder()
+                .articleId(articleId)
+                .pageable(Pageable.unpaged())
+                .userId(userId)
                 .build();
     }
 

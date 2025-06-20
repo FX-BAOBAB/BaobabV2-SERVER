@@ -17,7 +17,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final List<String> WHITE_LIST = List.of(
         "/list",
-        "/article/{articleId}",
+        "/articles/{articleId}",
         "/simple-info"
     );
 

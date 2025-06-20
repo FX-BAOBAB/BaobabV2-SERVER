@@ -87,8 +87,9 @@ class ArticleViewServiceTest {
 
         List<String> redisKeys = List.of(redisKey);
 
-        Article article = new Article();
-        article.setId(articleId);
+        Article article =  Article.builder()
+            .id(articleId)
+            .build();
         article.setViewCount(10L);
 
         when(redisCachePort.getKeysByPrefix("article:view:count:")).thenReturn(redisKeys);

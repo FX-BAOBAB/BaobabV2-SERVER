@@ -5,16 +5,12 @@ import article.adapter.output.persistence.enums.ArticleCategory;
 import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ArticleSaveCommand {
 
     private String title;
@@ -36,7 +32,8 @@ public class ArticleSaveCommand {
     public static ArticleSaveCommand of(
         ArticleSaveRequest request,
         List<MultipartFile> imageList,
-        String userId) {
+        String userId
+    ) {
         return ArticleSaveCommand.builder()
                 .title(request.getTitle())
                 .content(request.getContent())

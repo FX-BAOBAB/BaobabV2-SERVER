@@ -5,29 +5,25 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class ArticleUpdateRequest {
 
-    private String id;
-
-    @NotBlank(message = "제목을 입력하세요")
-    @Size(max = 200, message = "제목은 200자 이내로 작성하세요")
+    @NotBlank(message = "필수 입력 사항입니다.")
+    @Size(max = 200, message = "최대 200자까지 입력 가능합니다.")
     private String title;
 
-    @NotBlank(message = "물품에 대한 설명을 입력하세요")
-    @Size(max = 500, message = "물품에 대한 설명은 500자 이내로 작성하세요")
+    @NotBlank(message = "필수 입력 사항입니다.")
+    @Size(max = 500, message = "최대 500자까지 입력 가능합니다.")
     private String content;
 
-    @NotNull(message = "카테고리를 선택하세요")
+    @NotNull(message = "필수 선택 사항입니다.")
     private ArticleCategory category;
 
-    @NotNull(message = "가격을 입력하세요")
+    @NotNull(message = "필수 입력 사항입니다.")
     private Integer price;
 
     private List<String> deleteImageIdList;

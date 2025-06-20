@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,81 +42,126 @@ public class ArticleService implements DefaultArticleUseCase {
 
     private final UserClient userClient;
 
+    @Transactional
     @Override
     public boolean saveArticle(ArticleSaveCommand articleSaveCommand) {
         List<ImageMetaData> imageMetaDataList = imageMetaDataUseCase.processImageMetaDataList(
             ImageKind.ARTICLE, articleSaveCommand.getUserId(), articleSaveCommand.getImageList());
 
         ArticleSaveForm form = ArticleSaveForm.of(articleSaveCommand, imageMetaDataList);
-
         return articlePersistencePort.saveArticle(form);
     }
 
+    @Transactional
     @Override
-    public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand command, String userId) {
-        if (command.getArticleId() != null) {
-            articleViewService.increaseViewCount(command.getArticleId(), userId);
-        }
+    public List<ArticleInfoResponse> getArticleList(ArticleSearchCommand command) {
+        String userId = command.getUserId();
 
-        List<Article> articles = articlePersistencePort.getArticleList(command, ArticleVisibilityStatus.VISIBILITY);
+        increaseViewCount(command.getArticleId(), userId);
+
+        List<Article> articles = articlePersistencePort.getArticleList(command,
+            ArticleVisibilityStatus.VISIBILITY);
         return articles.stream()
             .map(article -> {
-                boolean isMine = userId != null && userId.equals(article.getUserId());
+                boolean isMine = isOwner(article, userId);
                 return ArticleInfoResponse.of(article,
                     userClient.getUserSimpleInfo(article.getUserId()), isMine);
             })
             .toList();
     }
 
+    @Transactional
     @Override
-    public boolean updateArticle(ArticleUpdateCommand articleUpdateCommand) {
-        Article article = articlePersistencePort.getArticleById(articleUpdateCommand.getId(),
-                ArticleVisibilityStatus.VISIBILITY)
-            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+    public boolean updateArticle(ArticleUpdateCommand command) {
+        Article article = getVisibleArticleOrThrow(command.getArticleId());
 
-        if (!articleUpdateCommand.getUserId().equals(article.getUserId())) {
-            throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
-        }
+        checkUserPermission(article.getUserId(), command.getUserId());
 
-        deleteArticleImages(articleUpdateCommand, article);
-        addArticleImages(articleUpdateCommand, article);
+        deleteArticleImages(command, article);
+        addArticleImages(command, article);
 
         return articlePersistencePort.updateArticle(
-            ArticleUpdateForm.of(articleUpdateCommand, article));
+            ArticleUpdateForm.of(command, article));
     }
 
+    @Transactional
+    @Override
     public boolean updateArticleSaleStatus(ArticleSaleStatusUpdateCommand command) {
-        Article article = articlePersistencePort.getArticleById(command.getArticleId(),
-                ArticleVisibilityStatus.VISIBILITY)
-            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+        Article article = getVisibleArticleOrThrow(command.getArticleId());
 
-        if (!command.getUserId().equals(article.getUserId())) {
-            throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
-        }
+        checkUserPermission(article.getUserId(), command.getUserId());
 
         article.setSaleStatus(command.getStatus());
-
         return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
     }
 
+    @Transactional
     @Override
     public boolean softDeleteArticle(String articleId, String userId) {
-        Article article = articlePersistencePort.getArticleById(articleId,
-                ArticleVisibilityStatus.VISIBILITY)
-            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+        Article article = getVisibleArticleOrThrow(articleId);
 
-        if (!userId.equals(article.getUserId())) {
-            throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
-        }
+        checkUserPermission(article.getUserId(), userId);
 
         article.setVisibilityStatus(ArticleVisibilityStatus.DELETED);
         return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
     }
 
+    @Transactional
     @Override
     public void hardDeleteArticle(String articleId, List<ArticleImage> articleImageList) {
-        articleImageList.forEach(image -> imageStorageUseCase.deleteImage(image.getImageId()));
+        articleImageList.forEach(image -> imageStorageUseCase.deleteImage(
+            image.getImageId()));
         articlePersistencePort.deleteArticle(articleId);
+    }
+
+    @Transactional
+    @Override
+    public ArticleFeignResponse getArticleBy(String articleId) {
+        Article article = getVisibleArticleOrThrow(articleId);
+        return ArticleFeignResponse.of(article.getUserId(), article.getImageList().getFirst());
+    }
+
+    @Transactional
+    @Override
+    public boolean bookmarkArticle(String articleId, String userId) {
+        Article article = getVisibleArticleOrThrow(articleId);
+
+        List<String> bookmarkUserIdList = article.getBookmarkUserIdList();
+        if (bookmarkUserIdList.contains(userId)) {
+            return true;
+        }
+
+        bookmarkUserIdList.add(userId);
+        article.setBookmarkUserIdList(bookmarkUserIdList);
+        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
+    }
+
+    @Transactional
+    @Override
+    public boolean unbookmarkArticle(String articleId, String userId) {
+        Article article = getVisibleArticleOrThrow(articleId);
+
+        if (!article.getBookmarkUserIdList().contains(userId)) {
+            throw new BookmarkNotFoundException(ArticleErrorCode.BOOKMARK_NOT_FOUND);
+        }
+
+        List<String> bookmarkUserIdList = article.getBookmarkUserIdList();
+        bookmarkUserIdList.remove(userId);
+        article.setBookmarkUserIdList(bookmarkUserIdList);
+        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
+    }
+
+    @Transactional
+    @Override
+    public List<ArticleInfoResponse> getBookmarkedArticles(String userId) {
+        List<Article> articles = articlePersistencePort.getBookmarkedArticles(userId);
+        return articles.stream()
+            .map(article -> {
+                boolean isMine = isOwner(article, userId);
+                return ArticleInfoResponse.of(article,
+                    userClient.getUserSimpleInfo(article.getUserId()), isMine);
+            })
+            .toList();
     }
 
     private void deleteArticleImages(ArticleUpdateCommand articleUpdateCommand, Article article) {
@@ -154,56 +200,26 @@ public class ArticleService implements DefaultArticleUseCase {
             });
     }
 
-    @Override
-    public ArticleFeignResponse getArticleBy(String articleId) {
-        Article article = articlePersistencePort.getArticleById(articleId,
-                ArticleVisibilityStatus.VISIBILITY)
-            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
-        return ArticleFeignResponse.of(article.getUserId(), article.getImageList().get(0));
-    }
-
-    @Override
-    public boolean bookmarkArticle(String articleId, String userId) {
-        Article article = articlePersistencePort.getArticleById(articleId,
-                ArticleVisibilityStatus.VISIBILITY)
-            .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
-
-        List<String> bookmarkUserIdList = article.getBookmarkUserIdList();
-        if (bookmarkUserIdList.contains(userId)) {
-            return true;
+    private void increaseViewCount(String articleId, String userId) {
+        if (articleId != null) {
+            articleViewService.increaseViewCount(articleId, userId);
         }
-
-        bookmarkUserIdList.add(userId);
-        article.setBookmarkUserIdList(bookmarkUserIdList);
-        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
     }
 
-    @Override
-    public boolean unbookmarkArticle(String articleId, String userId) {
-        Article article = articlePersistencePort.getArticleById(articleId,
-                ArticleVisibilityStatus.VISIBILITY)
+    private boolean isOwner(Article article, String userId) {
+        return userId != null && userId.equals(article.getUserId());
+    }
+
+    private Article getVisibleArticleOrThrow(String articleId) {
+        return articlePersistencePort.getArticleById(articleId, ArticleVisibilityStatus.VISIBILITY)
             .orElseThrow(() -> new ArticleNotFoundException(ArticleErrorCode.ARTICLE_NOT_FOUND));
-
-        if (!article.getBookmarkUserIdList().contains(userId)) {
-            throw new BookmarkNotFoundException(ArticleErrorCode.BOOKMARK_NOT_FOUND);
-        }
-
-        List<String> bookmarkUserIdList = article.getBookmarkUserIdList();
-        bookmarkUserIdList.remove(userId);
-        article.setBookmarkUserIdList(bookmarkUserIdList);
-        return articlePersistencePort.updateArticle(ArticleUpdateForm.of(article));
     }
 
-    @Override
-    public List<ArticleInfoResponse> getBookmarkedArticles(String userId) {
-        List<Article> articles = articlePersistencePort.getBookmarkedArticles(userId);
-        return articles.stream()
-            .map(article -> {
-                boolean isMine = userId != null && userId.equals(article.getUserId());
-                return ArticleInfoResponse.of(article,
-                    userClient.getUserSimpleInfo(article.getUserId()), isMine);
-            })
-            .toList();
+    // Spring Security를 사용하도록 변경할 예정
+    private void checkUserPermission(String ownerId, String userId) {
+        if (!ownerId.equals(userId)) {
+            throw new NotPermittedException(ArticleErrorCode.NOT_PERMITTED);
+        }
     }
 
 }

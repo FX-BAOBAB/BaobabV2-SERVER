@@ -6,15 +6,11 @@ import article.domain.command.ArticleSaveCommand;
 import file.domain.ImageMetaData;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ArticleSaveForm {
 
     private String title;
@@ -43,8 +39,8 @@ public class ArticleSaveForm {
             .status(command.getStatus())
             .userId(command.getUserId())
             .imageList(imageList.stream().map(imageMetaData ->
-                    ArticleImage.of(imageMetaData.getId(), imageMetaData.getUrl(), imageMetaData.getKind()))
-                .toList())
+                    ArticleImage.of(imageMetaData.getId(), imageMetaData.getUrl(),
+                        imageMetaData.getKind())).toList())
             .build();
     }
 

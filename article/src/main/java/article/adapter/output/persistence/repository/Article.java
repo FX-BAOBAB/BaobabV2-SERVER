@@ -9,18 +9,16 @@ import article.domain.dto.ArticleUpdateForm;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.querydsl.core.annotations.QueryEntity;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
+@Getter
+@Setter
 @Builder
 @QueryEntity
-@NoArgsConstructor
-@AllArgsConstructor
 @Document(collection = "article")
 public class Article {
 
@@ -70,7 +68,7 @@ public class Article {
 
     public static Article of(ArticleUpdateForm form) {
         return Article.builder()
-            .id(form.getId())
+            .id(form.getArticleId())
             .title(form.getTitle())
             .content(form.getContent())
             .category(form.getCategory())
@@ -89,7 +87,7 @@ public class Article {
     public static List<Article> of(List<ArticleUpdateForm> forms) {
         return forms.stream()
             .map(form -> Article.builder()
-                .id(form.getId())
+                .id(form.getArticleId())
                 .title(form.getTitle())
                 .content(form.getContent())
                 .category(form.getCategory())

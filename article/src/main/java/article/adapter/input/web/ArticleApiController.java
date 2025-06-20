@@ -1,11 +1,11 @@
 package article.adapter.input.web;
 
-import article.adapter.input.web.request.ArticleSaleStatusUpdateRequest;
 import article.adapter.input.web.request.ArticleSaveRequest;
 import article.adapter.input.web.request.ArticleSearchCondition;
 import article.adapter.input.web.request.ArticleUpdateRequest;
 import article.adapter.input.web.response.ArticleFeignResponse;
 import article.adapter.input.web.response.ArticleInfoResponse;
+import article.adapter.output.persistence.enums.ArticleSaleStatus;
 import article.application.port.input.BookmarkArticleUseCase;
 import article.application.port.input.DeleteArticleUseCase;
 import article.application.port.input.GetArticleUseCase;
@@ -21,24 +21,14 @@ import global.resolver.AuthUser;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Slf4j
@@ -56,99 +46,97 @@ public class ArticleApiController {
 
     private final BookmarkArticleUseCase bookmarkArticleUseCase;
 
-    @PostMapping("/save")
+    @PostMapping("/articles")
     public Api<Boolean> save(
         @Valid @ModelAttribute ArticleSaveRequest request,
         @RequestPart("imageList") List<MultipartFile> imageList,
-        @AuthenticatedUser AuthUser authUser) {
-
+        @AuthenticatedUser AuthUser authUser
+    ) {
         ArticleSaveCommand command = ArticleSaveCommand.of(request, imageList, authUser.getUserId());
-
         return Api.OK(saveArticleUseCase.saveArticle(command));
     }
 
-    @GetMapping({"/list","/article/{articleId}", "/auth-list", "/auth-article/{articleId}"})
+    @GetMapping({"/list", "/auth/list"})
     public Api<List<ArticleInfoResponse>> getAllArticles(
-        @PathVariable(required = false) String articleId,
         @ModelAttribute ArticleSearchCondition condition,
         @AuthenticatedUser(required = false) AuthUser authUser,
-        Pageable pageable) {
-
+        Pageable pageable
+    ) {
         condition.setPageable(pageable);
-
-        if(!StringUtils.isEmpty(articleId)) {
-            condition.setArticleId(articleId);
-        }
-
-        String userId = authUser != null ? authUser.getUserId() : null;
-        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition), userId));
+        String userId = getUserId(authUser);
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition, userId)));
     }
 
     @GetMapping("/my-articles")
     public Api<List<ArticleInfoResponse>> getMyArticles(
         @ModelAttribute ArticleSearchCondition condition,
         @AuthenticatedUser AuthUser authUser,
-        Pageable pageable) {
-
+        Pageable pageable
+    ) {
         condition.setPageable(pageable);
-        condition.setUserId(authUser.getUserId());
-        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition), authUser.getUserId()));
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(condition,
+            authUser.getUserId())));
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<Void> update(
+    @GetMapping({"/articles/{articleId}", "/auth/articles/{articleId}"})
+    public Api<List<ArticleInfoResponse>> getArticle(
+        @PathVariable String articleId,
+        @AuthenticatedUser(required = false) AuthUser authUser
+    ) {
+        String userId = getUserId(authUser);
+        return Api.OK(getArticleUseCase.getArticleList(ArticleSearchCommand.of(articleId, userId)));
+    }
+
+    @PostMapping("/articles/{articleId}/edit")
+    public void update(
+        @PathVariable String articleId,
         @Valid @ModelAttribute ArticleUpdateRequest articleUpdateRequest,
         @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages,
-        @AuthenticatedUser AuthUser authUser) {
-
-        ArticleUpdateCommand command = ArticleUpdateCommand.of(articleUpdateRequest,
-            addImages, authUser.getUserId());
-
+        @AuthenticatedUser AuthUser authUser,
+        HttpServletResponse response
+    ) {
+        ArticleUpdateCommand command = ArticleUpdateCommand.of(articleUpdateRequest, addImages,
+            articleId, authUser.getUserId());
         updateArticleUseCase.updateArticle(command);
 
-        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/article/" + articleUpdateRequest.getId())
-            .toUriString();
-
-        return ResponseEntity.status(HttpStatus.FOUND)
-            .location(URI.create(redirectUrl))
-            .build();
+        redirectToArticle(response, articleId);
     }
 
-    @PostMapping("/articles/sale-status")
+    @PostMapping("/articles/{articleId}/sale-status")
     public void updateSaleStatus(
-        @Valid @RequestBody ArticleSaleStatusUpdateRequest request,
+        @PathVariable String articleId,
+        @RequestBody ArticleSaleStatus status,
         @AuthenticatedUser AuthUser authUser,
-        HttpServletResponse response) throws IOException {
-
+        HttpServletResponse response
+    ) {
         ArticleSaleStatusUpdateCommand command = ArticleSaleStatusUpdateCommand.of(
-            request, authUser.getUserId());
-
+            status, articleId, authUser.getUserId());
         updateArticleUseCase.updateArticleSaleStatus(command);
 
-        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/article/" + request.getArticleId())
-            .toUriString();
-
-        response.sendRedirect(redirectUrl);
+        redirectToArticle(response, articleId);
     }
 
     @DeleteMapping("/{articleId}")
-    public Api<Boolean> softDeleteArticle(@PathVariable String articleId, @AuthenticatedUser AuthUser authUser) {
+    public Api<Boolean> softDeleteArticle(
+        @PathVariable String articleId,
+        @AuthenticatedUser AuthUser authUser
+    ) {
         return Api.OK(deleteArticleUseCase.softDeleteArticle(articleId, authUser.getUserId()));
     }
 
     @PostMapping("/articles/{articleId}/bookmarks")
     public Api<Boolean> bookmarkArticle(
         @PathVariable String articleId,
-        @AuthenticatedUser AuthUser authUser) {
+        @AuthenticatedUser AuthUser authUser
+    ) {
         return Api.OK(bookmarkArticleUseCase.bookmarkArticle(articleId, authUser.getUserId()));
     }
 
     @DeleteMapping("/articles/{articleId}/bookmarks")
     public Api<Boolean> unbookmarkArticle(
         @PathVariable String articleId,
-        @AuthenticatedUser AuthUser authUser) {
+        @AuthenticatedUser AuthUser authUser
+    ) {
         return Api.OK(bookmarkArticleUseCase.unbookmarkArticle(articleId, authUser.getUserId()));
     }
 
@@ -161,6 +149,23 @@ public class ArticleApiController {
     @GetMapping("/simple-info")
     public ArticleFeignResponse getArticleSimpleInfo(@RequestParam String articleId) {
         return getArticleUseCase.getArticleBy(articleId);
+    }
+
+    private String getUserId(AuthUser authUser) {
+        return authUser != null ? authUser.getUserId() : null;
+    }
+
+    private void redirectToArticle(HttpServletResponse response, String articleId) {
+        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/articles/" + articleId)
+            .toUriString();
+
+        try {
+            response.sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            log.error("Error redirecting to article page: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
