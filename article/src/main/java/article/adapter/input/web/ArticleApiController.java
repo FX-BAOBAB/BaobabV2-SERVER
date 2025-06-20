@@ -99,16 +99,7 @@ public class ArticleApiController {
             articleId, authUser.getUserId());
         updateArticleUseCase.updateArticle(command);
 
-        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/articles/" + articleId)
-            .toUriString();
-
-        try {
-            response.sendRedirect(redirectUrl);
-        } catch (IOException e) {
-            log.error("Error redirecting to article page: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        redirectToArticle(response, articleId);
     }
 
     @PostMapping("/articles/{articleId}/sale-status")
@@ -122,16 +113,7 @@ public class ArticleApiController {
             status, articleId, authUser.getUserId());
         updateArticleUseCase.updateArticleSaleStatus(command);
 
-        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/articles/" + articleId)
-            .toUriString();
-
-        try {
-            response.sendRedirect(redirectUrl);
-        } catch (IOException e) {
-            log.error("Error redirecting to article page: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        redirectToArticle(response, articleId);
     }
 
     @DeleteMapping("/{articleId}")
@@ -171,6 +153,19 @@ public class ArticleApiController {
 
     private String getUserId(AuthUser authUser) {
         return authUser != null ? authUser.getUserId() : null;
+    }
+
+    private void redirectToArticle(HttpServletResponse response, String articleId) {
+        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/articles/" + articleId)
+            .toUriString();
+
+        try {
+            response.sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            log.error("Error redirecting to article page: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
